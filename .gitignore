@@ -1,0 +1,13 @@
+% Matlab
+*.asv
+*.mex*
+% Other
+*.pdf
+*.exe
+*.bat
+*.png
+*.lsm
+*.mat
+*.avi
+*.mp4
+*.zip

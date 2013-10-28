@@ -1,0 +1,68 @@
+OFD - Decomposition of Optical Flow on the Sphere
+Version 1.0, 2013
+
+Clemens Kirisits (clemens.kirisits@univie.ac.at)
+Lukas Lang (lukas.lang@univie.ac.at)
+Computational Science Center, University of Vienna, Austria. http://www.csc.univie.ac.at/
+
+1. Introduction
+
+This is a MATLAB implementation of Decomposition of Optical Flow on the Sphere (OFD) as described in:
+
+TODO: Add paper.
+
+If you use this software in your work you must cite the abovementioned paper in any resulting publication!
+
+BibTeX:
+
+TODO: Add BibTeX
+
+2. License & Disclaimer
+
+Copyright 2013 Clemens Kirisits and Lukas Lang.
+
+This file is part of OFD. OFD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+OFD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with OFD.  If not, see <http://www.gnu.org/licenses/>.
+
+For the full license statement see the file COPYING.
+
+Moreover, this work incorporates source code from the color wheel by Deqing Sun, Department of Computer Science, Brown University. The license statement can be found in the respective files.
+
+3. Requirements
+
+This software was written for and tested with Matlab R2012b.
+
+The following libraries are required for parts of this sofware:
+
+TODO: Add sphereFit?
+
+xUnit: used for testing.
+URL: http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework 
+
+export_fig: used for producing high quality figures from the results.
+URL: http://www.mathworks.com/matlabcentral/fileexchange/23629-exportfig
+
+4. Usage
+
+For easier use we provide a startup script (startup.m), which sets up the Matlab search path. It includes required libraries and adds required subdirectories. Make sure to download the required packages and to set the library paths properly. Then simply run the startup script.
+
+To run the test cases execute
+
+>> runtests test
+
+or
+
+>> runtests test -verbose
+
+to get more information (see xUnit for more information).
+
+% TODO: document ofd usage.
+
+5. Acknowledgements
+
+This implementation includes parts of the color wheel source code by Deqing Sun, Department of Computer Science, Brown University. The original is available at http://vision.middlebury.edu/flow/.
+
+We thank Pia Aanstad from the University of Innsbruck for sharing her biological insight and for kindly providing the microscopy data. This work has been supported by the Vienna Graduate School in Computational Science (IK I059-N) funded by the University of Vienna. In addition, we acknowledge the support by the Austrian Science Fund (FWF) within the national research networks "Photoacoustic Imaging in Biology and Medicine" (project S10505-N20, Reconstruction Algorithms for PAI) and "Geometry + Simulation" (project S11704, Variational Methods for Imaging on Manifolds).
