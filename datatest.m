@@ -59,8 +59,8 @@ rs = linspace(r-40, r+40, 80);
 [X, Y, Z] = ndgrid(1:um, 1:un, 1:uo);
 f = maximumIntensity(c, m, n, rs, X, Y, 4.2832 * Z, u);
 
-% Create sphere for visualisation.
-[x, y, z] = sphericalBand(m, n, r);
+% Create unit sphere for visualisation.
+[x, y, z] = sphericalBand(m, n, 1);
 
 % Plot sphere.
 figure;
@@ -72,3 +72,28 @@ surf(x, y, z, 255 * f, 'Facecolor', 'texturemap', 'EdgeColor', 'none');
 daspect([1, 1, 1]);
 view(3);
 colormap(cmap);
+
+% Create parametrisation and polar coordinates.
+[phi, t] = ndgrid(linspace(-pi, pi, m), linspace(-1, 1, n));
+
+% Convert to cartesian coordinates.
+r = 1;
+x = r .* sqrt(1 - t .^2) .* cos(phi);
+y = r .* sqrt(1 - t .^2) .* sin(phi);
+z = r .* t;
+
+% Fit spherical harmonics.
+N = 10;
+[a, Ynj] = spharmFit(N, phi(:), t(:), f(:));
+
+% Recover fitted solution.
+g = Ynj*a;
+g = reshape(g, m, n);
+
+% Visualise fit.
+figure;
+surf(x, y, z, g, 'FaceColor', 'texturemap', 'EdgeColor', 'none');
+daspect([1, 1, 1]);
+view(3);
+
+fprintf('Least-squares error is %f.\n', norm(f-g, 2)^2);

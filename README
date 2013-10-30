@@ -37,13 +37,14 @@ This software was written for and tested with Matlab R2012b.
 
 The following libraries are required for parts of this sofware:
 
-TODO: Add sphereFit?
-
 xUnit: used for testing.
 URL: http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework 
 
 export_fig: used for producing high quality figures from the results.
 URL: http://www.mathworks.com/matlabcentral/fileexchange/23629-exportfig
+
+sphereFit: used for fitting a sphere to data.
+http://www.mathworks.com/matlabcentral/fileexchange/34129-sphere-fit-least-squared
 
 4. Usage
 
