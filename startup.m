@@ -26,6 +26,9 @@ addpath(genpath(fullfile(libraryPath, 'matlab_xunit\')));
 addpath(genpath(fullfile(libraryPath, 'sphereFit\')));
 % Export Figure is required for saving figures.
 addpath(genpath(fullfile(libraryPath, 'visualization\export_fig\')));
+% Toolbox is used for creating triangulations of the unit sphere.
+addpath(fullfile(libraryPath, 'bioelectromagnetism\'));
+clear libraryPath;
 
 % Add all subfolders.
 y = dir('.');
