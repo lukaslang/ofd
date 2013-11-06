@@ -14,23 +14,14 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
+function v = sphericalIntegral(phi, t, f)
+%SPHERICALINTEGRAL Numerically integrates a function on the unit sphere.
+%
+%   v = SPHERICALINTEGRAL(phi, t, f) takes a cylindrical parametrisation
+%   (phi, t) each of size m-times-n and data f of same size and returns the
+%   surface integral over f on the unit sphere.
 
-% This script sets up the paths of the libraries and adds all subfolders.
+I = trapz(phi(:, 1), f, 1);
+v = trapz(t(1, :), I);
 
-% Set library path.
-libraryPath = 'Z:\libraries\';
-
-% xUnit is required for testing.
-addpath(genpath(fullfile(libraryPath, 'matlab_xunit\')));
-% sphereFit is used to fit sphere to data.
-addpath(genpath(fullfile(libraryPath, 'sphereFit\')));
-% Export Figure is required for saving figures.
-addpath(genpath(fullfile(libraryPath, 'visualization\export_fig\')));
-
-% Add all subfolders.
-y = dir('.');
-y = y([y.isdir]);
-y = y(~cellfun(@(x) strcmp(x, '.git') || strcmp(x, '.') || strcmp(x, '..') || strcmp(x, 'results'), {y.name}));
-% Add to path.
-cellfun(@(x) addpath(genpath(fullfile(pwd, x))), {y.name});
-clear y;
+end

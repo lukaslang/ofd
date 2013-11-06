@@ -21,7 +21,7 @@ function [Y1, Y2] = vspharm(n, phi, t, o, p)
 %   harmonics Y_nj of degree n >= 0 and j=-n,...,n. phi must be in [0, 2pi[ and
 %   t in [-1, 1].
 %
-%   Note that size(Yi) = [length(phi), 2n + 1] for i={1, 2}.
+%   Note that size(Yi) = [m, n, 2*n + 1, 3] for i={1, 2}.
 
 m = length(phi);
 
