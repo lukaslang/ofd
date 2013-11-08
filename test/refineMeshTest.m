@@ -14,26 +14,42 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
+function test_suite = refineMeshTest
+    initTestSuite;
+end
 
-% This script sets up the paths of the libraries and adds all subfolders.
+function resultTest
 
-% Set library path.
-libraryPath = 'Z:\libraries\';
+% Generate icosahedron.
+[F, V] = sphTriang;
+assertFalse(isempty(F));
+assertFalse(isempty(V));
+assertEqual(size(F), [20, 3]);
+assertEqual(size(V), [12, 3]);
 
-% xUnit is required for testing.
-addpath(genpath(fullfile(libraryPath, 'matlab_xunit\')));
-% sphereFit is used to fit sphere to data.
-addpath(genpath(fullfile(libraryPath, 'sphereFit\')));
-% Export Figure is required for saving figures.
-addpath(genpath(fullfile(libraryPath, 'visualization\export_fig\')));
+numF = size(F, 1);
+numV = size(V, 1);
 
-% Add all subfolders.
-y = dir('.');
-y = y([y.isdir]);
-y = y(~cellfun(@(x) strcmp(x, '.git') || strcmp(x, '.') || strcmp(x, '..') || strcmp(x, 'results'), {y.name}));
-% Add to path.
-cellfun(@(x) addpath(genpath(fullfile(pwd, x))), {y.name});
+% Refine.
+[F, V] = refineMesh(F, V);
+assertFalse(isempty(F));
+assertFalse(isempty(V));
+assertEqual(size(F), [80, 3]);
+assertEqual(size(V), [42, 3]);
 
-% Clean up.
-clear y;
-clear libraryPath;
+end
+
+function visualiseTest
+
+[F, V] = sphTriang;
+[F, V] = refineMesh(F, V);
+assertFalse(isempty(F));
+assertFalse(isempty(V));
+assertEqual(size(F), [80, 3]);
+assertEqual(size(V), [42, 3]);
+
+figure;
+trisurf(F, V(:, 1), V(:, 2), V(:, 3));
+daspect([1, 1, 1]);
+
+end
