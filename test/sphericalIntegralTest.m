@@ -30,7 +30,7 @@ n = 500;
 for d=0:5
     % Create spherical harmonics.
     N = d;
-    Ynj = spharm(N, phi(:), t(:));
+    Ynj = spharmp(N, phi, t);
     assertFalse(isempty(Ynj));
     assertEqual(size(Ynj), [m*n, 2*N + 1]);
 

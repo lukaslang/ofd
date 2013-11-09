@@ -49,13 +49,12 @@ function visualiseTest
 m = 100;
 n = 100;
 
-% Create parametrisation and polar coordinates.
-%[phi, t] = ndgrid(linspace(-pi, pi, m), linspace(-1, 1, n));
+% Create parametrisation (without poles) and polar coordinates.
 t = linspace(-1, 1, n+2);
 [phi, t] = ndgrid(linspace(-pi, pi, m), t(2:end-1));
 
 % Create two images.
-Ynj = spharm(5, phi(:), t(:));
+Ynj = spharmp(5, phi, t);
 f1 = 255 * reshape(Ynj(:, 3), m, n);
 f2 = circshift(f1, [m/10, 0]);
 

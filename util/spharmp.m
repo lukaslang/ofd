@@ -14,28 +14,32 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [a, Ynj] = spharmFit(n, phi, t, f)
-%SPHARMFIT Fits spherical harmonics.
+function Y = spharmp(N, phi, t)
+%SPHARMP Generates fully normalised spherical harmonics on cylindrical
+%parametrisation.
 %
-%   [a, Ynj] = SPHARMFIT(n, phi, t, f) fits spherical harmonics of degree n 
-%   through data f at points [phi, t, 1] and returns coefficients a_nj.
-%   Note that n is scalar and phi, t, and f are vectors. Moreover, phi is 
+%   Y = SPHARMP(n, phi, t) takes matrices phi and t from a cylindrical 
+%   parametrisation (e.g. created by ndgrid) and returns spherical 
+%   harmonics Y_nj of degree N >= 0 and j=-N,...,N. Note that phi must be 
 %   in [0, 2pi[ and t in [-1, 1].
+%
+%   Note that size(Y) = [m*n, 2*N + 1].
 
-m = length(phi);
+[m, n] = size(phi);
 
-assert(n >= 0);
-assert(size(phi, 1) == m);
-assert(size(phi, 2) == 1);
+assert(N >= 0);
 assert(size(t, 1) == m);
-assert(size(t, 2) == 1);
-assert(size(f, 1) == m);
-assert(size(f, 2) == 1);
+assert(size(t, 2) == n);
 
-% Create m times (n+1)^2 matrix of spherical harmonics.
-Ynj = cell2mat(arrayfun(@(m) spharm(m, phi, t), 0:n, 'UniformOutput', false));
+% Compute legendre polynomials.
+P = legendre(N, t(:), 'norm')';
 
-% Solve linear system.
-a = cgs(Ynj'*Ynj, Ynj'*f, 10e-6, 30);
+% Fully normalise.
+P = P .* [repmat(sqrt(2), m*n, 1), repmat(2, m*n, N)] ./ sqrt(4*pi);
+
+% Reorder so that order is -n,...,n.
+y = repmat(-N:N, m*n, 1) .* repmat(phi(:), 1, 2*N + 1);
+y = [cos(y(:, 1:N+1)), sin(y(:, N+2:2*N+1))];
+Y = y .* [flipdim(P, 2), P(:, 2:end)];
 
 end

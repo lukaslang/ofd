@@ -14,7 +14,7 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = vspharmTest
+function test_suite = vspharmpTest
     initTestSuite;
 end
 
@@ -29,7 +29,7 @@ n = 20;
 
 % Create spherical harmonics.
 N = 5;
-[Y1, Y2] = vspharm(N, phi(:), t(:), m, n);
+[Y1, Y2] = vspharmp(N, phi, t);
 assertFalse(isempty(Y1));
 assertEqual(size(Y1), [m, n, 2*N + 1, 3]);
 assertFalse(isempty(Y2));
@@ -49,7 +49,7 @@ t = linspace(-1, 1, n+2);
 
 % Create spherical harmonics.
 N = 5;
-[Y1, Y2] = vspharm(N, phi(:), t(:), m, n);
+[Y1, Y2] = vspharmp(N, phi, t);
 
 % Compute R3 inner product.
 ip = Y1(:, :, :, 1) .* Y2(:, :, :, 1) + Y1(:, :, :, 2) .* Y2(:, :, :, 2) + Y1(:, :, :, 3) .* Y2(:, :, :, 3);
@@ -69,7 +69,7 @@ t = linspace(-1, 1, n+2);
 
 % Create spherical harmonics.
 N = 3;
-[Y1, Y2] = vspharm(N, phi(:), t(:), m, n);
+[Y1, Y2] = vspharmp(N, phi, t);
 assertFalse(isempty(Y1));
 assertEqual(size(Y1), [m, n, 2*N + 1, 3]);
 assertFalse(isempty(Y2));
@@ -81,7 +81,7 @@ y = sqrt(1 - t .^2) .* sin(phi);
 z = t;
 
 % Create spherical harmonics for visualisation.
-Ynj = spharm(N, phi(:), t(:));
+Ynj = spharmp(N, phi(:), t(:));
 
 figure;
 for k=1:2*N+1

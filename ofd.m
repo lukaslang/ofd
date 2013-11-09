@@ -46,7 +46,7 @@ Y2 = zeros(m, n, N^2 + 2*N, 3);
 % Create spherical harmonics.
 c = 1;
 for k=1:N
-    [Yi, Yj] = vspharm(k, phi(:), t(:), m, n);
+    [Yi, Yj] = vspharmp(k, phi, t);
     Y1(:, :, c:(c+2*k), :) = Yi;
     Y2(:, :, c:(c+2*k), :) = Yj;
     % Save eigenvalues.

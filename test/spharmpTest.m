@@ -14,7 +14,7 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = spharmTest
+function test_suite = spharmpTest
     initTestSuite;
 end
 
@@ -28,7 +28,7 @@ n = 20;
 [phi, t] = ndgrid(linspace(-pi, pi, m), linspace(-1, 1, n));
 
 % Create spherical harmonics.
-Ynj = spharm(5, phi(:), t(:));
+Ynj = spharmp(5, phi, t);
 assertFalse(isempty(Ynj));
 assertEqual(size(Ynj), [m*n, 11]);
 
@@ -45,7 +45,7 @@ n = 200;
 
 % Create spherical harmonics.
 N = 3;
-Ynj = spharm(N, phi(:), t(:));
+Ynj = spharmp(N, phi, t);
 assertFalse(isempty(Ynj));
 assertEqual(size(Ynj), [m*n, 2*N + 1]);
 

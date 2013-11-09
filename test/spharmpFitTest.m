@@ -49,7 +49,7 @@ view(3);
 
 % Fit spherical harmonics.
 N = 3;
-[a, Ynj] = spharmFit(N, phi(:), t(:), f(:));
+[a, Ynj] = spharmpFit(N, phi, t, f);
 assertFalse(isempty(a));
 assertFalse(isempty(Ynj));
 assertEqual(length(a), (N+1)^2);
