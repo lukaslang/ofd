@@ -98,6 +98,9 @@ end
 
 % Create system matrix A.
 A = [At + spdiags(alpha*D, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N)), At; At, At + spdiags(beta ./ D, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N))];
+clear At;
+clear Z;
+clear D;
 
 % Solve linear system.
 z = cgs(A, repmat(b, 2, 1), 10e-6, 30);
