@@ -18,9 +18,9 @@ function Y = spharmp(N, phi, t)
 %SPHARMP Generates fully normalised spherical harmonics on cylindrical
 %parametrisation.
 %
-%   Y = SPHARMP(n, phi, t) takes matrices phi and t from a cylindrical 
+%   Y = SPHARMP(N, phi, t) takes matrices phi and t from a cylindrical 
 %   parametrisation (e.g. created by ndgrid) and returns spherical 
-%   harmonics Y_nj of degree N >= 0 and j=-N,...,N. Note that phi must be 
+%   harmonics Y_Nj of degree N >= 0 and j=-N,...,N. Note that phi must be 
 %   in [0, 2pi[ and t in [-1, 1].
 %
 %   Note that size(Y) = [m*n, 2*N + 1].
@@ -39,7 +39,7 @@ P = P .* [repmat(sqrt(2), m*n, 1), repmat(2, m*n, N)] ./ sqrt(4*pi);
 
 % Reorder so that order is -n,...,n.
 y = repmat(-N:N, m*n, 1) .* repmat(phi(:), 1, 2*N + 1);
-y = [cos(y(:, 1:N+1)), sin(y(:, N+2:2*N+1))];
+y = [cos(y(:, 1:N + 1)), sin(y(:, N + 2:2*N + 1))];
 Y = y .* [flipdim(P, 2), P(:, 2:end)];
 
 end
