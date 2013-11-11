@@ -52,7 +52,7 @@ N = 5;
 [Y1, Y2] = vspharmp(N, phi, t);
 
 % Compute R3 inner product.
-ip = Y1(:, :, :, 1) .* Y2(:, :, :, 1) + Y1(:, :, :, 2) .* Y2(:, :, :, 2) + Y1(:, :, :, 3) .* Y2(:, :, :, 3);
+ip = dot(Y1, Y2, 4);
 assertAlmostEqual(ip, zeros(m, n, 2*N + 1));
 
 end

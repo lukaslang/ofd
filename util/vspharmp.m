@@ -20,7 +20,7 @@ function [Y1, Y2] = vspharmp(N, phi, t)
 %
 %   [Y1, Y2] = VSPHARMP(N, phi, t) takes grid matrices phi, t of size 
 %   m-times-n (e.g. obtained by ndgrid) and returns vector spherical 
-%   harmonics Y_nj of degree n >= 0 and j=-n,...,n. phi must be in [0, 2pi[
+%   harmonics Y_Nj of degree N >= 0 and j=-N,...,N. phi must be in [0, 2pi[
 %   and t in [-1, 1].
 %
 %   Note that size(Yi) = [m, n, 2*N + 1, 3] for i={1, 2}.

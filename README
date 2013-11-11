@@ -33,7 +33,7 @@ Moreover, this work incorporates source code from the color wheel by Deqing Sun,
 
 3. Requirements
 
-This software was written for and tested with Matlab R2012b.
+This software was written for and tested with Matlab R2012b. Note that this software uses the TriRep class which since R2013a is marked as 'will be removed in a future release' (see http://www.mathworks.de/de/help/matlab/release-notes.html for further details).
 
 The following libraries are required for parts of this sofware:
 
