@@ -14,10 +14,11 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [U, V] = ofd(N, f1, f2, h, alpha, beta)
-%OFD Returns an optical flow decomposition.
+function [U, V] = ofdp(N, f1, f2, h, alpha, beta)
+%OFDP Returns an optical flow decomposition using a cylindrical
+%parametrisation.
 %
-%   [U, V] = OFD(N, f1, f2, h, alpha, beta) takes equally sized images f1
+%   [U, V] = OFDP(N, f1, f2, h, alpha, beta) takes equally sized images f1
 %   and f2, a spacing parameter h, and regularisation parameters alpha and
 %   beta, returns an optical flow decomposition U, V.
 %

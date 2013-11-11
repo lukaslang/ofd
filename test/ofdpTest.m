@@ -14,7 +14,7 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = ofdTest
+function test_suite = ofdpTest
     initTestSuite;
 end
 
@@ -32,7 +32,7 @@ h = 1;
 alpha = 1;
 beta = 1;
 
-[u, v] = ofd(N, f1, f2, h, alpha, beta);
+[u, v] = ofdp(N, f1, f2, h, alpha, beta);
 
 assertFalse(isempty(u));
 assertFalse(isempty(v));
@@ -63,7 +63,7 @@ h = 1;
 alpha = 10;
 beta = 1000;
 
-[u, v] = ofd(N, f1, f2, h, alpha, beta);
+[u, v] = ofdp(N, f1, f2, h, alpha, beta);
 
 assertFalse(isempty(u));
 assertFalse(isempty(v));
