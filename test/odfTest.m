@@ -67,13 +67,19 @@ f2 = Ynj(:, 3);
 N = 3;
 h = 1;
 alpha = 10;
-beta = 100;
+beta = 1000;
 
 [u, v] = ofd(N, F, V, f1, f2, h, alpha, beta);
 assertFalse(isempty(u));
 assertFalse(isempty(v));
 assertEqual(size(u), [n, 3]);
 assertEqual(size(v), [n, 3]);
+
+% Compute residual.
+gradf = grad(F, V, f1);
+dfdt = sum(f2(F) - f1(F), 2) ./ 3;
+res = triangIntegral(F, V, (dot(gradf, u + v, 2) + dfdt) .^2);
+fprintf('Residual: %f.\n', res);
 
 figure;
 subplot(1, 2, 1);
