@@ -20,12 +20,12 @@ function [Y1, Y2] = vspharm(N, F, V)
 %
 %   [Y1, Y2] = VSPHARM(N, F, V) takes a triangulation F, V of the unit 
 %   sphere and returns fully normalised vector spherical harmonics Y_Nj of 
-%   degree N >= 0 and j=-N,...,N.
+%   degree N > 0 and j=-N,...,N.
 %
 %   Note that size(Yi) = [n, 2*N + 1, 3] for i={1, 2}, where n is the
 %   number of faces F.
 
-assert(N >= 0);
+assert(N > 0);
 assert(size(F, 2) == 3);
 assert(size(V, 2) == 3);
 
