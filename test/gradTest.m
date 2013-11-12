@@ -38,6 +38,29 @@ assertEqual(g, zeros(20, 3));
 
 end
 
+function resultWithHeightTest
+
+% Generate icosahedron.
+[F, V] = sphTriang;
+assertFalse(isempty(F));
+assertFalse(isempty(V));
+assertEqual(size(F), [20, 3]);
+assertEqual(size(V), [12, 3]);
+
+% Compute heights.
+H = height(F, V);
+
+% Create sample function.
+f = ones(12, 1);
+
+% Compute gradient.
+g = grad(F, V, f, H);
+assertFalse(isempty(g));
+assertEqual(size(g), [20, 3]);
+assertEqual(g, zeros(20, 3));
+
+end
+
 function visualiseTest
 
 % Generate icosahedron.

@@ -35,6 +35,9 @@ n = size(F, 1);
 T = TriRep(F, V);
 Fn = T.faceNormals;
 
+% Compute triangle heigts.
+H = height(F, V);
+
 % Compute spherical harmonics.
 Ynj = spharm(N, V);
 
@@ -42,7 +45,7 @@ Ynj = spharm(N, V);
 Y1 = zeros(n, 2*N + 1, 3);
 Y2 = zeros(n, 2*N + 1, 3);
 for k=1:2*N+1
-    Y1(:, k, :) = grad(F, V, Ynj(:, k));
+    Y1(:, k, :) = grad(F, V, Ynj(:, k), H);
     Y2(:, k, :) = cross(squeeze(Y1(:, k, :)), Fn);
 end
 

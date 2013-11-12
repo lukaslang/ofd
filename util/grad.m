@@ -14,7 +14,7 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function gradf = grad(F, V, f)
+function gradf = grad(F, V, f, H)
 %GRAD Computes the gradient of a function on a triangulation. The function
 %is assumed to be piecewise linear and given at the vertices of the
 %triangulation.
@@ -22,13 +22,23 @@ function gradf = grad(F, V, f)
 %   gradf = grad(F, V, f) takes a triangulation F, V and a vector f defined
 %   on the vertices V and returns the gradient for each triangle in F.
 %
+%   gradf = grad(F, V, f, H) additionally takes a size(F, 1)-by-3-by-3 
+%   matrix H containing the height vectors of the triangles F to be more 
+%   efficient in cases where GRAD is called very often.
+%
 %   Note that size(gradf) = [size(F, 1), 3].
 
 assert(isvector(f));
 assert(length(f) == size(V, 1));
 
+if(nargin == 4)
+    assert(size(H, 1) == size(F, 1));
+end
+
 % Compute height vectors.
-H = height(F, V);
+if(nargin == 3)
+    H = height(F, V);
+end
 lenH = sum(H(:, 2:3, :).^2, 3);
 
 % Compute values for triangles.
