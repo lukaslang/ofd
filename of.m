@@ -97,15 +97,15 @@ toc;
 clear Z;
 
 % Create system matrix A.
-disp('Solving linear system...');
-tic;
 A = At + spdiags(alpha*D, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N));
-toc;
 clear At;
 clear D;
 
 % Solve linear system.
+disp('Solve linear system...');
+tic;
 u = cgs(A, b, 10e-6, 30);
+toc;
 
 % Recover vector field.
 disp('Recover vector field.');

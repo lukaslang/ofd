@@ -105,15 +105,15 @@ toc;
 clear Z;
 
 % Create system matrix A.
-disp('Solving linear system...');
-tic;
 A = [At + spdiags(alpha*D, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N)), At; At, At + spdiags(beta ./ D, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N))];
-toc;
 clear At;
 clear D;
 
 % Solve linear system.
+disp('Solve linear system...');
+tic;
 z = cgs(A, repmat(b, 2, 1), 10e-6, 30);
+toc;
 
 % Recover coefficients.
 u = z(1:2*(N^2 + 2*N));
