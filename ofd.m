@@ -77,17 +77,21 @@ for p=1:2*(N^2 + 2*N)
         At(q, p) = At(p, q);
     end
 end
+clear P;
 
 % Create vector b.
 b = zeros(2*(N^2 + 2*N), 1);
 for p=1:2*(N^2 + 2*N)
     b(p) = - triangIntegral(F, V, dfdt .* Z(:, p));
 end
+clear Z;
 
 % Create system matrix A.
+disp('Solving linear system...');
+tic;
 A = [At + spdiags(alpha*D, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N)), At; At, At + spdiags(beta ./ D, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N))];
+toc;
 clear At;
-clear Z;
 clear D;
 
 % Solve linear system.
