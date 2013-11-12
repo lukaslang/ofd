@@ -47,7 +47,6 @@ end
 
 function visualiseTest
 
-
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
 n = size(F, 1);
