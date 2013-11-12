@@ -65,12 +65,19 @@ D = repmat(D, 2, 1);
 % Compute surface gradient of first image.
 gradf = grad(F, V, f1);
 
+% Find indices where grad f is greater than epsilon. In areas where the
+% length of the image gradient is almost zero inner products and thus
+% surface integrals will be alomost zeros and thus can be excluded from
+% integration.
+tol = 1e-6;
+idx = sqrt(sum(gradf.^2, 2)) > tol;
+
 % Compute inner products grad f \cdot Y.
 disp('Computing inner products grad f cdot Y.');
 Z = zeros(n, 2*(N^2 + 2*N));
 tic;
 for k=1:2*(N^2 + 2*N)
-    Z(:, k) = dot(gradf, squeeze(Y(:, k, :)), 2);
+    Z(idx, k) = dot(gradf(idx, :), squeeze(Y(idx, k, :)), 2);
 end
 toc;
 
@@ -80,7 +87,7 @@ At = zeros(2*(N^2 + 2*N), 2*(N^2 + 2*N));
 tic;
 for p=1:2*(N^2 + 2*N)
     for q=1:p
-        At(p, q) = triangIntegral(F, V, Z(:, p) .* Z(:, q), a);
+        At(p, q) = triangIntegral(F(idx, :), V, Z(idx, p) .* Z(idx, q), a(idx));
         At(q, p) = At(p, q);
     end
 end
@@ -92,7 +99,7 @@ disp('Computing vector b.');
 b = zeros(2*(N^2 + 2*N), 1);
 tic;
 for p=1:2*(N^2 + 2*N)
-    b(p) = - triangIntegral(F, V, dfdt .* Z(:, p), a);
+    b(p) = - triangIntegral(F(idx, :), V, dfdt(idx, :) .* Z(idx, p), a(idx));
 end
 toc;
 clear Z;
