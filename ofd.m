@@ -73,7 +73,6 @@ for k=1:2*(N^2 + 2*N)
     Z(:, k) = dot(gradf, squeeze(Y(:, k, :)), 2);
 end
 toc;
-%W = cell2mat(arrayfun(@(k) dot(gradf, squeeze(Y(:, k, :)), 2), 1:2*(N^2 + 2*N), 'UniformOutput', false));
 
 % Create matrix A tilde.
 disp('Computing A tilde.');
