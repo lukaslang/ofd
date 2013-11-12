@@ -40,6 +40,9 @@ assert(h > 0);
 % Compute approximate time derivative for each face.
 dfdt = sum(f2(F) - f1(F), 2) ./ 3;
 
+% Compute triangle areas to be used in integration.
+a = triangArea(F, V);
+
 % Vector containing eigenvalues.
 D = zeros(N^2 + 2*N, 1);
 
@@ -63,27 +66,36 @@ D = repmat(D, 2, 1);
 gradf = grad(F, V, f1);
 
 % Compute inner products grad f \cdot Y.
+disp('Computing inner products grad f cdot Y.');
 Z = zeros(n, 2*(N^2 + 2*N));
+tic;
 for k=1:2*(N^2 + 2*N)
     Z(:, k) = dot(gradf, squeeze(Y(:, k, :)), 2);
 end
+toc;
+%W = cell2mat(arrayfun(@(k) dot(gradf, squeeze(Y(:, k, :)), 2), 1:2*(N^2 + 2*N), 'UniformOutput', false));
 
 % Create matrix A tilde.
+disp('Computing A tilde.');
 At = zeros(2*(N^2 + 2*N), 2*(N^2 + 2*N));
+tic;
 for p=1:2*(N^2 + 2*N)
     for q=1:p
-        P = Z(:, p) .* Z(:, q);
-        At(p, q) = triangIntegral(F, V, P);
+        At(p, q) = triangIntegral(F, V, Z(:, p) .* Z(:, q), a);
         At(q, p) = At(p, q);
     end
 end
+toc;
 clear P;
 
 % Create vector b.
+disp('Computing vector b.');
 b = zeros(2*(N^2 + 2*N), 1);
+tic;
 for p=1:2*(N^2 + 2*N)
-    b(p) = - triangIntegral(F, V, dfdt .* Z(:, p));
+    b(p) = - triangIntegral(F, V, dfdt .* Z(:, p), a);
 end
+toc;
 clear Z;
 
 % Create system matrix A.
