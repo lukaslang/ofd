@@ -32,6 +32,20 @@ assertAlmostEqual(v, 4*pi, 1e-2);
 
 end
 
+function constantFunctionWithAreaTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+n = size(F, 1);
+
+% Compute surface integral over function which is constant one.
+v = triangIntegral(F, V, ones(n, 1), triangArea(F, V));
+
+assertTrue(isscalar(v));
+assertAlmostEqual(v, 4*pi, 1e-2);
+
+end
+
 function vspharmOnbTest
 
 % Create triangulation of unit sphere.
