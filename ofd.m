@@ -23,7 +23,7 @@ function [U, V] = ofd(N, F, V, f1, f2, h, alpha, beta)
 %   alpha, beta are regularisation parameters.
 %
 %   U and V are defined on the faces F and are of size [n, 3], where 
-%   n = size(F, 1) is the numbero f faces.
+%   n = size(F, 1) is the number of faces.
 
 m = size(V, 1);
 n = size(F, 1);
@@ -113,11 +113,8 @@ u = z(1:2*(N^2 + 2*N));
 v = z(2*(N^2 + 2*N)+1:end);
 
 % Recover vector field.
-U = zeros(n, 3);
-V = zeros(n, 3);
-for p=1:2*(N^2 + 2*N)
-    U = U + u(p) * squeeze(Y(:, p, :));
-    V = V + v(p) * squeeze(Y(:, p, :));
-end
+disp('Recover vector field.');
+U = squeeze(sum(repmat(u', [n, 1, 3]) .* Y, 2));
+V = squeeze(sum(repmat(v', [n, 1, 3]) .* Y, 2));
 
 end
