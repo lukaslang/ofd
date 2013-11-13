@@ -37,7 +37,7 @@ load(fullfile(path, 'cmapblue.mat'));
 frame = 114;
 
 % Set decomposition parameters.
-N = 10;
+N = 5;
 h = 1;
 alpha = 10;
 beta = 100;
@@ -52,7 +52,10 @@ shift = -min(Z);
 [c, r] = sphereFit([X(:), Y(:), Z(:) + shift]);
 
 % Create triangulation of fitted sphere.
-[F, V] = sphTriang(7);
+%[F, V] = sphTriang(7);
+
+% Create triangulation of northern hemisphere of the fitted sphere.
+[F, V] = halfsphTriang(7);
 
 figure;
 f = cell(2);
@@ -96,31 +99,34 @@ toc;
 TR = TriRep(F, V);
 P = TR.incenters;
 
-% Plot result.
+% Plot colour images of projections.
+nmax = max(sqrt(u(:, 1).^2 + u(:, 2).^2));
+c = double(squeeze(computeColour(u(:, 1)/nmax, u(:, 2)/nmax))) ./ 255;
 figure;
-subplot(1, 3, 1);
-axis([-1, 1, -1, 1, -1, 1]);
-hold on;
-trisurf(F, V(:, 1), V(:, 2), V(:, 3), f{1});
-shading interp;
+axis([-1, 1, -1, 1, 0, 1]);
+trisurf(F, V(:, 1), V(:, 2), V(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
 daspect([1, 1, 1]);
 view(3);
-quiver3(P(:, 1), P(:, 2), P(:, 3), u(:, 1), u(:, 2), u(:, 3), 1, 'g');
 
-subplot(1, 3, 2);
-axis([-1, 1, -1, 1, -1, 1]);
-hold on;
-trisurf(F, V(:, 1), V(:, 2), V(:, 3), f{1});
-shading interp;
+nmax = max(sqrt(v(:, 1).^2 + v(:, 2).^2));
+c = double(squeeze(computeColour(v(:, 1)/nmax, v(:, 2)/nmax))) ./ 255;
+figure;
+axis([-1, 1, -1, 1, 0, 1]);
+trisurf(F, V(:, 1), V(:, 2), V(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
 daspect([1, 1, 1]);
 view(3);
-quiver3(P(:, 1), P(:, 2), P(:, 3), v(:, 1), v(:, 2), v(:, 3), 1, 'y');
 
-subplot(1, 3, 3);
-axis([-1, 1, -1, 1, -1, 1]);
-hold on;
-trisurf(F, V(:, 1), V(:, 2), V(:, 3), f{1});
-shading interp;
+nmax = max(sqrt((u(:, 1) + v(:, 1)).^2 + (u(:, 2) + v(:, 2)).^2));
+c = double(squeeze(computeColour((u(:, 1) + v(:, 1))/nmax, (u(:, 2) + v(:, 2))/nmax))) ./ 255;
+figure;
+axis([-1, 1, -1, 1, 0, 1]);
+trisurf(F, V(:, 1), V(:, 2), V(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
 daspect([1, 1, 1]);
 view(3);
-quiver3(P(:, 1), P(:, 2), P(:, 3), u(:, 1)+v(:, 1), u(:, 2)+v(:, 2), u(:, 3)+v(:, 3), 1, 'm');
+
+% Plot colourwheel.
+figure;
+cw = colourWheel;
+surf(1:200, 1:200, zeros(200, 200), cw, 'FaceColor','texturemap', 'EdgeColor', 'none');
+daspect([1, 1, 1]);
+view(3);

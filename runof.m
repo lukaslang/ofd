@@ -37,7 +37,7 @@ load(fullfile(path, 'cmapblue.mat'));
 frame = 114;
 
 % Set decomposition parameters.
-N = 10;
+N = 5;
 h = 1;
 alpha = 0.01;
 
@@ -51,7 +51,10 @@ shift = -min(Z);
 [c, r] = sphereFit([X(:), Y(:), Z(:) + shift]);
 
 % Create triangulation of fitted sphere.
-[F, V] = sphTriang(7);
+%[F, V] = sphTriang(7);
+
+% Create triangulation of northern hemisphere of the fitted sphere.
+[F, V] = halfsphTriang(7);
 
 figure;
 f = cell(2);
@@ -69,7 +72,7 @@ for k=1:2
     fb = dataFromCube(c(1)+VB(:, 1), c(2)+VB(:, 2), c(3)+VB(:, 3), X, Y, 4.2832 * Z, u);
     f{k} = max(reshape(fb, size(V, 1), length(rs)), [], 2);
 
-    subplot(1, 3, k);
+    subplot(1, 2, k);
     axis([-1, 1, -1, 1, -1, 1]);
     trisurf(F, V(:, 1), V(:, 2), V(:, 3), f{k}, 'EdgeColor', 'none');
     shading interp;
@@ -96,11 +99,27 @@ TR = TriRep(F, V);
 P = TR.incenters;
 
 % Plot result.
-subplot(1, 3, 3);
-axis([-1, 1, -1, 1, -1, 1]);
+figure;
+axis([-1, 1, -1, 1, 0, 1]);
 hold on;
 trisurf(F, V(:, 1), V(:, 2), V(:, 3), f{1});
 shading interp;
 daspect([1, 1, 1]);
 view(3);
 quiver3(P(:, 1), P(:, 2), P(:, 3), u(:, 1), u(:, 2), u(:, 3), 1, 'm');
+
+% Compute colour of projection.
+nmax = max(sqrt(u(:, 1).^2 + u(:, 2).^2));
+c = double(squeeze(computeColour(u(:, 1)/nmax, u(:, 2)/nmax))) ./ 255;
+figure;
+axis([-1, 1, -1, 1, 0, 1]);
+trisurf(F, V(:, 1), V(:, 2), V(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
+daspect([1, 1, 1]);
+view(3);
+
+% Plot colourwheel.
+figure;
+cw = colourWheel;
+surf(1:200, 1:200, zeros(200, 200), cw, 'FaceColor','texturemap', 'EdgeColor', 'none');
+daspect([1, 1, 1]);
+view(3);
