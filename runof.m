@@ -108,9 +108,12 @@ daspect([1, 1, 1]);
 view(3);
 quiver3(P(:, 1), P(:, 2), P(:, 3), u(:, 1), u(:, 2), u(:, 3), 1, 'm');
 
+% Compute colour space scaling.
+nmax = max(sqrt(sum(u.^2, 2)));
+
 % Compute colour of projection.
-nmax = max(sqrt(u(:, 1).^2 + u(:, 2).^2));
 c = double(squeeze(computeColour(u(:, 1)/nmax, u(:, 2)/nmax))) ./ 255;
+
 figure;
 axis([-1, 1, -1, 1, 0, 1]);
 trisurf(F, V(:, 1), V(:, 2), V(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');

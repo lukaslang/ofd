@@ -99,8 +99,10 @@ toc;
 TR = TriRep(F, V);
 P = TR.incenters;
 
+% Compute colour space scaling.
+nmax = max(sqrt(sum((u + v).^2, 2)));
+
 % Plot colour images of projections.
-nmax = max(sqrt(u(:, 1).^2 + u(:, 2).^2));
 c = double(squeeze(computeColour(u(:, 1)/nmax, u(:, 2)/nmax))) ./ 255;
 figure;
 axis([-1, 1, -1, 1, 0, 1]);
@@ -108,7 +110,6 @@ trisurf(F, V(:, 1), V(:, 2), V(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c,
 daspect([1, 1, 1]);
 view(3);
 
-nmax = max(sqrt(v(:, 1).^2 + v(:, 2).^2));
 c = double(squeeze(computeColour(v(:, 1)/nmax, v(:, 2)/nmax))) ./ 255;
 figure;
 axis([-1, 1, -1, 1, 0, 1]);
@@ -116,7 +117,6 @@ trisurf(F, V(:, 1), V(:, 2), V(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c,
 daspect([1, 1, 1]);
 view(3);
 
-nmax = max(sqrt((u(:, 1) + v(:, 1)).^2 + (u(:, 2) + v(:, 2)).^2));
 c = double(squeeze(computeColour((u(:, 1) + v(:, 1))/nmax, (u(:, 2) + v(:, 2))/nmax))) ./ 255;
 figure;
 axis([-1, 1, -1, 1, 0, 1]);
