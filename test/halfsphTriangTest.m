@@ -92,7 +92,7 @@ function visualiseRefinementTest
 
 % Generate icosahedron.
 tic;
-[F, V] = halfsphTriang(7);
+[F, V] = halfsphTriang(4);
 toc;
 assertFalse(isempty(F));
 assertFalse(isempty(V));
