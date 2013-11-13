@@ -51,6 +51,9 @@ function vspharmOnbTest
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
 
+% Compute triangle areas.
+a = triangArea(F, V);
+
 % Check if vector spherical harmonics form an ONB of norm one.
 for N=1:5
     % Create vector spherical harmonics.
@@ -60,12 +63,12 @@ for N=1:5
         fprintf('Checking norm of degree %i, order %i...\n', N, k);
         
         % Compute surface integral.
-        v = triangIntegral(F, V, dot(Y1(:, k, :), Y1(:, k, :), 3));
+        v = triangIntegral(F, V, dot(Y1(:, k, :), Y1(:, k, :), 3), a);
         assertTrue(isscalar(v));
         assertAlmostEqual(sqrt(v), 1, 1e-2);
         
         % Compute surface integral.
-        v = triangIntegral(F, V, dot(Y2(:, k, :), Y2(:, k, :), 3));
+        v = triangIntegral(F, V, dot(Y2(:, k, :), Y2(:, k, :), 3), a);
         assertTrue(isscalar(v));
         assertAlmostEqual(sqrt(v), 1, 1e-2);
     end
@@ -77,6 +80,9 @@ function vspharmIntegralTest
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
 
+% Compute triangle areas.
+a = triangArea(F, V);
+
 % Check if surface integral over vector spherical harmonics are zero/one.
 for N=1:4
     % Create vector spherical harmonics.
@@ -85,7 +91,7 @@ for N=1:4
         for l=1:2*N+1
             fprintf('Checking int Y_nj^i cdot Y_nk^j of degree n=%i, orders j=%i and k=%i...\n', N, k, l);
             % Compute surface integral.
-            v = triangIntegral(F, V, dot(Y1(:, k, :), Y1(:, l, :), 3));
+            v = triangIntegral(F, V, dot(Y1(:, k, :), Y1(:, l, :), 3), a);
             assertTrue(isscalar(v));
             if(l == k)
                 assertAlmostEqual(v, 1, 1e-2);
@@ -93,11 +99,11 @@ for N=1:4
                 assertAlmostEqual(v, 0, 1e-2);
             end
             % Compute surface integral.
-            v = triangIntegral(F, V, dot(Y1(:, k, :), Y2(:, l, :), 3));
+            v = triangIntegral(F, V, dot(Y1(:, k, :), Y2(:, l, :), 3), a);
             assertTrue(isscalar(v));
             assertAlmostEqual(sqrt(v), 0, 1e-2);
             % Compute surface integral.
-            v = triangIntegral(F, V, dot(Y2(:, k, :), Y2(:, l, :), 3));
+            v = triangIntegral(F, V, dot(Y2(:, k, :), Y2(:, l, :), 3), a);
             assertTrue(isscalar(v));
             if(l == k)
                 assertAlmostEqual(v, 1, 1e-2);

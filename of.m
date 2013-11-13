@@ -42,24 +42,8 @@ dfdt = sum(f2(F) - f1(F), 2) ./ 3;
 % Compute triangle areas to be used in integration.
 a = triangArea(F, V);
 
-% Vector containing eigenvalues.
-D = zeros(N^2 + 2*N, 1);
-
-Y1 = zeros(n, N^2 + 2*N, 3);
-Y2 = zeros(n, N^2 + 2*N, 3);
-
-% Create spherical harmonics.
-c = 1;
-for k=1:N
-    [Yi, Yj] = vspharm(k, F, V);
-    Y1(:, c:(c+2*k), :) = Yi;
-    Y2(:, c:(c+2*k), :) = Yj;
-    % Save eigenvalues.
-    D(c:(c+2*k)) = repmat(k*(k+1), (c+2*k)-c+1, 1);
-    c = c + 2*k + 1;
-end
-Y = cat(2, Y1, Y2);
-D = repmat(D, 2, 1);
+% Create vector spherical harmonics up to degree N.
+[Y, d] = vspharmn(N, F, V);
 
 % Compute surface gradient of first image.
 gradf = grad(F, V, f1);
@@ -97,7 +81,7 @@ toc;
 clear Z;
 
 % Create system matrix A.
-A = At + spdiags(alpha*D, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N));
+A = At + spdiags(alpha*d, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N));
 clear At;
 clear D;
 
