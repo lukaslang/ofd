@@ -45,25 +45,43 @@ a = triangArea(F, V);
 % Create vector spherical harmonics up to degree N.
 [Y, d] = vspharmn(N, F, V);
 
+% Compute dimension.
+dim = 2*(N^2 + 2*N);
+
 % Compute surface gradient of first image.
 gradf = grad(F, V, f1);
 
+% Find indices where grad f is greater than epsilon. In areas where the
+% length of the image gradient is almost zero inner products and thus
+% surface integrals will be alomost zeros and thus can be excluded from
+% numerical integration.
+tol = 1e-6;
+idx = sqrt(sum(gradf.^2, 2)) > tol;
+
+% Constrain data.
+Fc = F(idx, :);
+nc = size(Fc, 1);
+gradfc = gradf(idx, :);
+Yc = Y(idx, :, :);
+ac = a(idx);
+dfdtc = dfdt(idx);
+
 % Compute inner products grad f \cdot Y.
 disp('Computing inner products grad f cdot Y.');
-Z = zeros(n, 2*(N^2 + 2*N));
+Z = zeros(nc, dim);
 tic;
-for k=1:2*(N^2 + 2*N)
-    Z(:, k) = dot(gradf, squeeze(Y(:, k, :)), 2);
+for k=1:dim
+    Z(:, k) = dot(gradfc, squeeze(Yc(:, k, :)), 2);
 end
 toc;
 
 % Create matrix A tilde.
 disp('Computing A tilde.');
-At = zeros(2*(N^2 + 2*N), 2*(N^2 + 2*N));
+At = zeros(dim, dim);
 tic;
-for p=1:2*(N^2 + 2*N)
+for p=1:dim
     for q=1:p
-        At(p, q) = triangIntegral(F, V, Z(:, p) .* Z(:, q), a);
+        At(p, q) = triangIntegral(Fc, V, Z(:, p) .* Z(:, q), ac);
         At(q, p) = At(p, q);
     end
 end
@@ -72,27 +90,32 @@ clear P;
 
 % Create vector b.
 disp('Computing vector b.');
-b = zeros(2*(N^2 + 2*N), 1);
+b = zeros(dim, 1);
 tic;
-for p=1:2*(N^2 + 2*N)
-    b(p) = - triangIntegral(F, V, dfdt .* Z(:, p), a);
+for k=1:dim
+    b(k) = - triangIntegral(Fc, V, dfdtc .* Z(:, k), ac);
 end
 toc;
 clear Z;
 
 % Create system matrix A.
-A = At + spdiags(alpha*d, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N));
+A = At + spdiags(alpha*d, 0, dim, dim);
 clear At;
-clear D;
+clear d;
 
 % Solve linear system.
 disp('Solve linear system...');
 tic;
 u = cgs(A, b, 10e-6, 30);
 toc;
+clear A;
+clear b;
 
 % Recover vector field.
 disp('Recover vector field.');
-U = squeeze(sum(repmat(u', [n, 1, 3]) .* Y, 2));
+U = zeros(n, 3);
+for k=1:dim
+    U = U + u(k) * squeeze(Y(:, k, :));
+end
 
 end
