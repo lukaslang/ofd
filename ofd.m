@@ -118,8 +118,6 @@ v = z(dim+1:end);
 
 % Recover vector field.
 disp('Recover vector field.');
-%U = squeeze(sum(repmat(u', [n, 1, 3]) .* Y, 2));
-%V = squeeze(sum(repmat(v', [n, 1, 3]) .* Y, 2));
 U = zeros(n, 3);
 V = zeros(n, 3);
 for k=1:dim
