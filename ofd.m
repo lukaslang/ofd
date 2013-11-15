@@ -71,45 +71,38 @@ dfdtc = dfdt(idx);
 disp('Computing inner products grad f cdot Y.');
 Z = zeros(nc, dim);
 tic;
-for k=1:dim
+parfor k=1:dim
     Z(:, k) = dot(gradfc, squeeze(Yc(:, k, :)), 2);
 end
 toc;
 
 % Create matrix A tilde.
 disp('Computing A tilde.');
-At = zeros(dim, dim);
 tic;
-for p=1:dim
-    for q=1:p
-        At(p, q) = triangIntegral(Fc, V, Z(:, p) .* Z(:, q), ac);
-        At(q, p) = At(p, q);
-    end
-end
+At = matrixAt(dim, Z, Fc, V, ac);
 toc;
-clear P;
 
 % Create vector b.
 disp('Computing vector b.');
 b = zeros(dim, 1);
 tic;
-for k=1:dim
+parfor k=1:dim
     b(k) = - triangIntegral(Fc, V, dfdtc .* Z(:, k), ac);
 end
 toc;
 clear Z;
 
-% Create system matrix A.
-A = [At + spdiags(alpha*d, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N)), At; At, At + spdiags(beta ./ d, 0, 2*(N^2 + 2*N), 2*(N^2 + 2*N))];
-clear At;
-clear d;
+% Create function handle.
+function v = fun(x)
+    tv = At * (x(1:dim) + x(dim+1:end));
+    v = repmat(tv, 2, 1) + [alpha .* d; beta ./ d] .* x;
+end
 
 % Solve linear system.
 disp('Solve linear system...');
 tic;
-z = cgs(A, repmat(b, 2, 1), 10e-6, 30);
+z = cgs(@fun, repmat(b, 2, 1), 10e-6, 30);
 toc;
-clear A;
 clear b;
 
 % Recover coefficients.
@@ -120,7 +113,7 @@ v = z(dim+1:end);
 disp('Recover vector field.');
 U = zeros(n, 3);
 V = zeros(n, 3);
-for k=1:dim
+parfor k=1:dim
     U = U + u(k) * squeeze(Y(:, k, :));
     V = V + v(k) * squeeze(Y(:, k, :));
 end

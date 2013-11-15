@@ -70,51 +70,43 @@ dfdtc = dfdt(idx);
 disp('Computing inner products grad f cdot Y.');
 Z = zeros(nc, dim);
 tic;
-for k=1:dim
+parfor k=1:dim
     Z(:, k) = dot(gradfc, squeeze(Yc(:, k, :)), 2);
 end
 toc;
 
 % Create matrix A tilde.
 disp('Computing A tilde.');
-At = zeros(dim, dim);
 tic;
-for p=1:dim
-    for q=1:p
-        At(p, q) = triangIntegral(Fc, V, Z(:, p) .* Z(:, q), ac);
-        At(q, p) = At(p, q);
-    end
-end
+At = matrixAt(dim, Z, Fc, V, ac);
 toc;
-clear P;
 
 % Create vector b.
 disp('Computing vector b.');
 b = zeros(dim, 1);
 tic;
-for k=1:dim
+parfor k=1:dim
     b(k) = - triangIntegral(Fc, V, dfdtc .* Z(:, k), ac);
 end
 toc;
 clear Z;
 
-% Create system matrix A.
-A = At + spdiags(alpha*d, 0, dim, dim);
-clear At;
-clear d;
+% Create function handle.
+function v = fun(x)
+    v = At*x + alpha * d .* x;
+end
 
 % Solve linear system.
 disp('Solve linear system...');
 tic;
-u = cgs(A, b, 10e-6, 30);
+u = cgs(@fun, b, 10e-6, 30);
 toc;
-clear A;
 clear b;
 
 % Recover vector field.
 disp('Recover vector field.');
 U = zeros(n, 3);
-for k=1:dim
+parfor k=1:dim
     U = U + u(k) * squeeze(Y(:, k, :));
 end
 
