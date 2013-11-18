@@ -36,65 +36,10 @@ assert(alpha > 0);
 assert(h > 0);
 assert(N > 0);
 
-% Compute approximate time derivative for each face.
-dfdt = sum(f2(F) - f1(F), 2) ./ 3;
-
-% Compute triangle areas to be used in integration.
-a = triangArea(F, V);
-
-% Create vector spherical harmonics up to degree N.
-[Y, d] = vspharmn(N, F, V);
-
-% Compute dimension.
-dim = 2*(N^2 + 2*N);
-
-% Compute surface gradient of first image.
-gradf = grad(F, V, f1);
-
-% Find indices where grad f is greater than epsilon. In areas where the
-% length of the image gradient is almost zero inner products and thus
-% surface integrals will be alomost zeros and thus can be excluded from
-% numerical integration.
-tol = 1e-6;
-idx = sqrt(sum(gradf.^2, 2)) > tol;
-
-% Constrain data.
-Fc = F(idx, :);
-nc = size(Fc, 1);
-gradfc = gradf(idx, :);
-Yc = Y(idx, :, :);
-ac = a(idx);
-dfdtc = dfdt(idx);
-
-% Compute inner products grad f \cdot Y.
-disp('Computing inner products grad f cdot Y.');
-Z = zeros(nc, dim);
-tic;
-parfor k=1:dim
-    Z(:, k) = dot(gradfc, squeeze(Yc(:, k, :)), 2);
-end
-toc;
-
-% Create matrix A tilde.
-disp('Computing A tilde.');
-tic;
-At = matrixAt(dim, Z, Fc, V, ac);
-toc;
-
-% Create vector b.
-disp('Computing vector b.');
-b = zeros(dim, 1);
-tic;
-parfor k=1:dim
-    b(k) = - triangIntegral(Fc, V, dfdtc .* Z(:, k), ac);
-end
-toc;
-clear Z;
+% Compute functions needed for solving the linear system.
+[dim, At, d, Y, b] = computeDataFunctions(F, V, N, f1, f2, h, 1e-6);
 
 % Solve linear system.
-disp('Solve linear system.');
-tic;
 [U, ~] = ofsolve(dim, At, b, Y, d, alpha);
-toc;
 
 end
