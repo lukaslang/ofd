@@ -26,7 +26,6 @@ function [U, V] = ofd(N, F, V, f1, f2, h, alpha, beta)
 %   n = size(F, 1) is the number of faces.
 
 m = size(V, 1);
-n = size(F, 1);
 assert(size(F, 2) == 3);
 assert(size(V, 2) == 3);
 assert(isvector(f1));
@@ -92,30 +91,10 @@ end
 toc;
 clear Z;
 
-% Create function handle.
-function v = fun(x)
-    tv = At * (x(1:dim) + x(dim+1:end));
-    v = repmat(tv, 2, 1) + [alpha .* d; beta ./ d] .* x;
-end
-
 % Solve linear system.
-disp('Solve linear system...');
+disp('Solve linear system.');
 tic;
-z = cgs(@fun, repmat(b, 2, 1), 10e-6, 30);
+[U, V, ~, ~] = ofdsolve(dim, At, b, Y, d, alpha, beta);
 toc;
-clear b;
-
-% Recover coefficients.
-u = z(1:dim);
-v = z(dim+1:end);
-
-% Recover vector field.
-disp('Recover vector field.');
-U = zeros(n, 3);
-V = zeros(n, 3);
-parfor k=1:dim
-    U = U + u(k) * squeeze(Y(:, k, :));
-    V = V + v(k) * squeeze(Y(:, k, :));
-end
 
 end

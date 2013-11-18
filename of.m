@@ -26,7 +26,6 @@ function U = of(N, F, V, f1, f2, h, alpha)
 %   n = size(F, 1) is the number of faces.
 
 m = size(V, 1);
-n = size(F, 1);
 assert(size(F, 2) == 3);
 assert(size(V, 2) == 3);
 assert(isvector(f1));
@@ -35,6 +34,7 @@ assert(size(f1, 1) == m);
 assert(size(f2, 1) == m);
 assert(alpha > 0);
 assert(h > 0);
+assert(N > 0);
 
 % Compute approximate time derivative for each face.
 dfdt = sum(f2(F) - f1(F), 2) ./ 3;
@@ -91,23 +91,10 @@ end
 toc;
 clear Z;
 
-% Create function handle.
-function v = fun(x)
-    v = At*x + alpha * d .* x;
-end
-
 % Solve linear system.
-disp('Solve linear system...');
+disp('Solve linear system.');
 tic;
-u = cgs(@fun, b, 10e-6, 30);
+[U, ~] = ofsolve(dim, At, b, Y, d, alpha);
 toc;
-clear b;
-
-% Recover vector field.
-disp('Recover vector field.');
-U = zeros(n, 3);
-parfor k=1:dim
-    U = U + u(k) * squeeze(Y(:, k, :));
-end
 
 end
