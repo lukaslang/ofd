@@ -14,10 +14,10 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [U, V, u, v] = ofdsolve(dim, At, b, Y, d, alpha, beta)
+function [U, V, u, v, L] = ofdsolve(dim, At, b, Y, d, alpha, beta)
 %OFDSOLVE Solves the linear system.
 %
-%   [U, V, u, v] = OFDSOLVE(dim, At, b, Y, d, alpha, beta) takes 
+%   [U, V, u, v, L] = OFDSOLVE(dim, At, b, Y, d, alpha, beta) takes 
 %   precomputed functions and solves the actual linear system for optical 
 %   flow.
 %
@@ -25,6 +25,8 @@ function [U, V, u, v] = ofdsolve(dim, At, b, Y, d, alpha, beta)
 %   [n, 3], where n = size(Y, 1) is the number of faces.
 %
 %   u and v are vectors of coefficients of vector spherical harmonics Y.
+%
+%   L is a struct containing information about the linear system solve.
 
 assert(alpha > 0);
 assert(beta > 0);
@@ -44,8 +46,22 @@ function v = fun(x)
     v = repmat(tv, 2, 1) + [alpha .* d; beta ./ d] .* x;
 end
 
+% Store norm of rhs.
+rhs = repmat(b, 2, 1);
+L.rhs = norm(rhs, 2);
+
 % Solve linear system.
-z = cgs(@fun, repmat(b, 2, 1), 10e-6, 30);
+ticId = tic;
+[z, flag, relres, iter, resvec] = cgs(@fun, rhs, 1e-6, 30);
+
+% Store solver information.
+L.time = toc(ticId);
+L.flag = flag;
+L.relres = relres;
+L.iter = iter;
+L.resvec = resvec;
+L.tol = 1e-6;
+L.maxit = 30;
 
 % Recover coefficients.
 u = z(1:dim);

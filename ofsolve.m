@@ -14,16 +14,18 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [U, u] = ofsolve(dim, At, b, Y, d, alpha)
+function [U, u, L] = ofsolve(dim, At, b, Y, d, alpha)
 %OFSOLVE Solves the linear system.
 %
-%   [U, u] = OFSOLVE(dim, At, b, Y, d, alpha) takes precomputed functions 
+%   [U, u, L] = OFSOLVE(dim, At, b, Y, d, alpha) takes precomputed functions 
 %   and solves the actual linear system for optical flow.
 %
 %   U is defined on the faces of the triangulation and is of size [n, 3], 
 %   where n = size(Y, 1) is the number of faces.
 %
 %   u is a vector of coefficients of vector spherical harmonics Y.
+%
+%   L is a struct containing information about the linear system solve.
 
 assert(alpha > 0);
 assert(dim > 0);
@@ -41,8 +43,21 @@ function v = fun(x)
     v = At*x + alpha * d .* x;
 end
 
+% Store norm of rhs.
+L.rhs = norm(b, 2);
+
 % Solve linear system.
-u = cgs(@fun, b, 10e-6, 30);
+ticId = tic;
+[u, flag, relres, iter, resvec] = cgs(@fun, b, 1e-6, 30);
+
+% Store solver information.
+L.time = toc(ticId);
+L.flag = flag;
+L.relres = relres;
+L.iter = iter;
+L.resvec = resvec;
+L.tol = 1e-6;
+L.maxit = 30;
 
 % Recover vector field.
 U = zeros(n, 3);
