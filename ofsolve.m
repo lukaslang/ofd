@@ -48,7 +48,7 @@ L.rhs = norm(b, 2);
 
 % Solve linear system.
 ticId = tic;
-[u, flag, relres, iter, resvec] = cgs(@fun, b, 1e-6, 30);
+[u, flag, relres, iter, resvec] = gmres(@fun, b, [], 1e-6, 30);
 
 % Store solver information.
 L.time = toc(ticId);
@@ -58,6 +58,8 @@ L.iter = iter;
 L.resvec = resvec;
 L.tol = 1e-6;
 L.maxit = 30;
+L.solver = 'gmres';
+L.restart = 0;
 
 % Recover vector field.
 U = zeros(n, 3);
