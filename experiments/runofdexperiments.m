@@ -22,8 +22,8 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 genPath = fullfile('./', 'data', name, 'generated');
-load(fullfile(genPath, 'gen-30-7.mat'));
-load(fullfile(genPath, 'dat-30-7.mat'));
+load(fullfile(genPath, 'gen-50-7.mat'));
+load(fullfile(genPath, 'dat-50-7.mat'));
 
 % Create folder for results.
 resultsPath = fullfile('./', 'results', name, 'ofd', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));

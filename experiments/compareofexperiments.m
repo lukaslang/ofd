@@ -20,7 +20,7 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-resultsPath = fullfile('./', 'results', name, 'of', '2013-11-19-10-16-14');
+resultsPath = fullfile('./', 'results', name, 'of', '2013-11-19-11-23-50');
 files = getFiles(resultsPath);
 
 % Import data.
