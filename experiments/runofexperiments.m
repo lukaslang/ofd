@@ -30,20 +30,20 @@ resultsPath = fullfile('./', 'results', name, 'of', datestr(now, 'yyyy-mm-dd-HH-
 mkdir(resultsPath);
 
 % Set range for parameters.
-rng = [0.01, 0.1, 1, 10, 100, 1000];
+rng = [0.001, 0.01, 0.1, 1, 10, 100, 1000];
 
 % Run experiments.
 run = 1;
 runs = length(rng);
 for alpha=rng
-    fprintf('Computing flow %d/%d: %0.2f-cgs\n', run, runs, alpha);
+    fprintf('Computing flow %d/%d: %g-cgs\n', run, runs, alpha);
     ticId = tic;
     [U, u, L] = ofsolve(dim, At, b, Y, d, alpha);
     elapsedTime = toc(ticId);
     fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
     % Create filename.
-    wsFilename = sprintf('of-%s-%0.2f-cgs.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha);
+    wsFilename = sprintf('of-%s-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha, L.solver);
     % Save workspace.
     save(fullfile(resultsPath, wsFilename), 'U', 'u', 'L', 'alpha', '-v7.3');
     run = run + 1;

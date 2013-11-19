@@ -30,22 +30,22 @@ resultsPath = fullfile('./', 'results', name, 'ofd', datestr(now, 'yyyy-mm-dd-HH
 mkdir(resultsPath);
 
 % Set range for parameters.
-rng1 = [0.01, 1, 100];
-rng2 = [0.01, 1, 100];
+rng1 = [0.001, 0.01, 0.1];
+rng2 = [1, 10, 100, 1000];
 
 % Run experiments.
 run = 1;
 runs = length(rng1)*length(rng2);
 for alpha=rng1
     for beta=rng2
-        fprintf('Computing decomposition %d/%d: %0.2f-%0.2f-cgs\n', run, runs, alpha, beta);
+        fprintf('Computing decomposition %d/%d: %g-%g-cgs\n', run, runs, alpha, beta);
         ticId = tic;
         [U, V, u, v, L] = ofdsolve(dim, At, b, Y, d, alpha, beta);
         elapsedTime = toc(ticId);
         fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
         % Create filename.
-        wsFilename = sprintf('ofd-%s-%0.2f-%0.2f-cgs.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha, beta);
+        wsFilename = sprintf('ofd-%s-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha, beta, L.solver);
         % Save workspace.
         save(fullfile(resultsPath, wsFilename), 'U', 'V', 'u', 'v', 'L', 'alpha', 'beta', '-v7.3');
         run = run + 1;

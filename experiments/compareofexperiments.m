@@ -20,7 +20,7 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-resultsPath = fullfile('./', 'results', name, 'of', '2013-11-18-18-47-13');
+resultsPath = fullfile('./', 'results', name, 'of', '2013-11-19-10-16-14');
 files = getFiles(resultsPath);
 
 % Import data.
@@ -50,11 +50,23 @@ for k=1:length(files)
     fprintf('Plotting residual %d/%d\n', k, length(files));
     subplot(rows, cols, k);
     hold on;
-    title(sprintf('alpha=%0.2f', E{k}.alpha));
-    plot(0:length(E{k}.L.resvec)-1, E{k}.L.resvec/E{k}.L.rhs, 'b-');
-    hold on;
-    plot(E{k}.L.iter, E{k}.L.relres, 'rx');
-    text(E{k}.L.iter, E{k}.L.relres, sprintf('%0.5f', E{k}.L.relres), 'HorizontalAlignment', 'left', 'VerticalAlignment', 'bottom');
+    title(sprintf('alpha=%g', E{k}.alpha));
+    if(strcmp(E{k}.L.solver, 'cgs'))
+        plot(0:length(E{k}.L.resvec)-1, E{k}.L.resvec/E{k}.L.rhs, 'b-');
+        hold on;
+        plot(E{k}.L.iter, E{k}.L.relres, 'rx');
+        text(E{k}.L.iter, E{k}.L.relres, sprintf('%0.5f', E{k}.L.relres), 'HorizontalAlignment', 'left', 'VerticalAlignment', 'bottom');
+    elseif(strcmp(E{k}.L.solver, 'gmres'))
+        plot(0:length(E{k}.L.resvec)-1, E{k}.L.resvec/E{k}.L.rhs, 'b-');
+        hold on;
+        if(isempty(E{k}.L.restart))
+            pos = E{k}.L.iter(2);
+        else
+            pos = (E{k}.L.iter(1)-1)*E{k}.L.restart+E{k}.L.iter(2);
+        end
+        plot(pos, E{k}.L.relres, 'rx');
+        text(pos, E{k}.L.relres,  sprintf('%0.5f', E{k}.L.relres), 'horizontal', 'right', 'vertical', 'bottom');
+    end
 end
 
 % Plot coefficients.
@@ -63,40 +75,33 @@ for k=1:length(files)
     fprintf('Plotting coefficients %d/%d\n', k, length(files));
     subplot(length(files), 1, k);
     hold on;
-    title(sprintf('u, alpha=%0.2f', E{k}.alpha));
+    title(sprintf('u, alpha=%g', E{k}.alpha));
     bar(E{k}.u);
 end
 
-% Plot data.
-figure;
-colormap(cmap);
+% Plot data and flow.
 for k=1:length(files)
+    figure;
+    colormap(cmap);
     for l=1:2
-        subplot(length(files), 2, 2*(k-1)+l);
+        subplot(1, 3, l);
         hold on;
         axis([-1, 1, -1, 1, 0, 1]);
-        title(sprintf('alpha=%0.2f', E{k}.alpha));
+        title(sprintf('alpha=%g', E{k}.alpha));
         trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), f{l}, 'EdgeColor', 'none');
         shading interp;
         daspect([1, 1, 1]);
         view(2);
     end
-end
-
-% Plot flow.
-figure;
-for k=1:length(files)
+    fprintf('Plotting flow %d/%d\n', k, length(files));
     % Compute colour space scaling.
     nmax = max(sqrt(sum(E{k}.U.^2, 2)));
-
     % Compute colour of projection.
     c = double(squeeze(computeColour(E{k}.U(:, 1)/nmax, E{k}.U(:, 2)/nmax))) ./ 255;
-    
-    fprintf('Plotting flow %d/%d\n', k, length(files));
-    subplot(rows, cols, k);
+    subplot(1, 3, 3);
     hold on;
     axis([-1, 1, -1, 1, 0, 1]);
-    title(sprintf('alpha=%0.2f', E{k}.alpha));
+    title(sprintf('alpha=%g', E{k}.alpha));
     trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
     daspect([1, 1, 1]);
     view(2);
