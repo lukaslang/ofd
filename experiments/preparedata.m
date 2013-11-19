@@ -37,7 +37,7 @@ load(fullfile(path, 'cmapblue.mat'));
 frame = 114;
 
 % Set parameters.
-N = 10;
+N = 30;
 h = 1;
 tol = 1e-6;
 
@@ -51,7 +51,7 @@ shift = -min(Z);
 [c, r] = sphereFit([X(:), Y(:), Z(:) + shift]);
 
 % Create triangulation of northern hemisphere of the fitted sphere.
-ref = 5;
+ref = 7;
 [Faces, Verts] = halfsphTriang(ref);
 
 f = cell(2);
@@ -73,6 +73,7 @@ end
 % Free memory.
 clear VB;
 clear U;
+clear u;
 clear X;
 clear Y;
 clear Z;

@@ -20,8 +20,14 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-resultsPath = fullfile('./', 'results', name, 'ofd', '2013-11-18-17-49-09');
+resultsPath = fullfile('./', 'results', name, 'ofd', '2013-11-18-18-39-11');
 files = getFiles(resultsPath);
+
+% Import data.
+disp('Loading precomputed data.');
+name = 'cxcr4aMO2_290112';
+genPath = fullfile('./', 'data', name, 'generated');
+load(fullfile(genPath, 'dat-30-7.mat'));
 
 % Load colormap for proper visualisation.
 load(fullfile('./', 'data', name, 'cmapblue.mat'));
@@ -45,10 +51,22 @@ for k=1:length(files)
     subplot(rows, cols, k);
     hold on;
     title(sprintf('alpha=%0.2f, beta=%0.2f', E{k}.alpha, E{k}.beta));
-    plot(0:length(E{k}.L.resvec)-1, E{k}.L.resvec/E{k}.L.rhs, 'b-');
-    hold on;
-    plot(E{k}.L.iter, E{k}.L.relres, 'rx');
-    text(E{k}.L.iter, E{k}.L.relres, sprintf('%0.5f', E{k}.L.relres), 'HorizontalAlignment', 'left', 'VerticalAlignment', 'bottom');
+    if(strcmp(E{k}.L.solver, 'cgs'))
+        plot(0:length(E{k}.L.resvec)-1, E{k}.L.resvec/E{k}.L.rhs, 'b-');
+        hold on;
+        plot(E{k}.L.iter, E{k}.L.relres, 'rx');
+        text(E{k}.L.iter, E{k}.L.relres, sprintf('%0.5f', E{k}.L.relres), 'HorizontalAlignment', 'left', 'VerticalAlignment', 'bottom');
+    elseif(strcmp(E{k}.L.solver, 'gmres'))
+        plot(0:length(E{k}.L.resvec)-1, E{k}.L.resvec/E{k}.L.rhs, 'b-');
+        hold on;
+        if(isempty(E{k}.L.restart))
+            pos = E{k}.L.iter(2);
+        else
+            pos = (E{k}.L.iter(1)-1)*E{k}.L.restart+E{k}.L.iter(2);
+        end
+        plot(pos, E{k}.L.relres, 'rx');
+        text(pos, E{k}.L.relres,  sprintf('%0.5f', E{k}.L.relres), 'horizontal', 'right', 'vertical', 'bottom');
+    end
 end
 
 % Plot coefficients.
@@ -74,7 +92,7 @@ for k=1:length(files)
         hold on;
         axis([-1, 1, -1, 1, 0, 1]);
         title(sprintf('alpha=%0.2f, beta=%0.2f', E{k}.alpha, E{k}.beta));
-        trisurf(E{k}.Faces, E{k}.Verts(:, 1), E{k}.Verts(:, 2), E{k}.Verts(:, 3), E{k}.f{l}, 'EdgeColor', 'none');
+        trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), f{l}, 'EdgeColor', 'none');
         shading interp;
         daspect([1, 1, 1]);
         view(2);
@@ -94,7 +112,7 @@ for k=1:length(files)
     c = double(squeeze(computeColour(E{k}.U(:, 1)/nmax, E{k}.U(:, 2)/nmax))) ./ 255;
     axis([-1, 1, -1, 1, 0, 1]);
     title(sprintf('U, alpha=%0.2f, beta=%0.2f', E{k}.alpha, E{k}.beta));
-    trisurf(E{k}.Faces, E{k}.Verts(:, 1), E{k}.Verts(:, 2), E{k}.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
+    trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
     daspect([1, 1, 1]);
     view(2);
 
@@ -103,7 +121,7 @@ for k=1:length(files)
     c = double(squeeze(computeColour(E{k}.V(:, 1)/nmax, E{k}.V(:, 2)/nmax))) ./ 255;
     axis([-1, 1, -1, 1, 0, 1]);
     title(sprintf('V, alpha=%0.2f, beta=%0.2f', E{k}.alpha, E{k}.beta));
-    trisurf(E{k}.Faces, E{k}.Verts(:, 1), E{k}.Verts(:, 2), E{k}.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
+    trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
     daspect([1, 1, 1]);
     view(2);
 
@@ -112,7 +130,7 @@ for k=1:length(files)
     c = double(squeeze(computeColour((E{k}.U(:, 1) + E{k}.V(:, 1))/nmax, (E{k}.U(:, 2) + E{k}.V(:, 2))/nmax))) ./ 255;
     axis([-1, 1, -1, 1, 0, 1]);
     title(sprintf('U+V, alpha=%0.2f, beta=%0.2f', E{k}.alpha, E{k}.beta));
-    trisurf(E{k}.Faces, E{k}.Verts(:, 1), E{k}.Verts(:, 2), E{k}.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
+    trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
     daspect([1, 1, 1]);
     view(2);
 end

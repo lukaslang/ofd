@@ -22,15 +22,15 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 genPath = fullfile('./', 'data', name, 'generated');
-load(fullfile(genPath, 'gen-10-5.mat'));
-load(fullfile(genPath, 'dat-10-5.mat'));
+load(fullfile(genPath, 'gen-30-7.mat'));
+load(fullfile(genPath, 'dat-30-7.mat'));
 
 % Create folder for results.
 resultsPath = fullfile('./', 'results', name, 'of', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
 mkdir(resultsPath);
 
 % Set range for parameters.
-rng = [0.01, 0.1, 1];
+rng = [0.01, 0.1, 1, 10, 100, 1000];
 
 % Run experiments.
 run = 1;
@@ -45,6 +45,6 @@ for alpha=rng
     % Create filename.
     wsFilename = sprintf('of-%s-%0.2f-cgs.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha);
     % Save workspace.
-    save(fullfile(resultsPath, wsFilename), '-v7.3');
+    save(fullfile(resultsPath, wsFilename), 'U', 'u', 'L', 'alpha', '-v7.3');
     run = run + 1;
 end

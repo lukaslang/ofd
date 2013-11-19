@@ -20,8 +20,14 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-resultsPath = fullfile('./', 'results', name, 'of', '2013-11-18-17-30-42');
+resultsPath = fullfile('./', 'results', name, 'of', '2013-11-18-18-47-13');
 files = getFiles(resultsPath);
+
+% Import data.
+disp('Loading precomputed data.');
+name = 'cxcr4aMO2_290112';
+genPath = fullfile('./', 'data', name, 'generated');
+load(fullfile(genPath, 'dat-30-7.mat'));
 
 % Load colormap for proper visualisation.
 load(fullfile('./', 'data', name, 'cmapblue.mat'));
@@ -70,7 +76,7 @@ for k=1:length(files)
         hold on;
         axis([-1, 1, -1, 1, 0, 1]);
         title(sprintf('alpha=%0.2f', E{k}.alpha));
-        trisurf(E{k}.Faces, E{k}.Verts(:, 1), E{k}.Verts(:, 2), E{k}.Verts(:, 3), E{k}.f{l}, 'EdgeColor', 'none');
+        trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), f{l}, 'EdgeColor', 'none');
         shading interp;
         daspect([1, 1, 1]);
         view(2);
@@ -91,7 +97,7 @@ for k=1:length(files)
     hold on;
     axis([-1, 1, -1, 1, 0, 1]);
     title(sprintf('alpha=%0.2f', E{k}.alpha));
-    trisurf(E{k}.Faces, E{k}.Verts(:, 1), E{k}.Verts(:, 2), E{k}.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
+    trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
     daspect([1, 1, 1]);
     view(2);
 end
