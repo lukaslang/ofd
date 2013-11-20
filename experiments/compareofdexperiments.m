@@ -27,7 +27,7 @@ files = getFiles(resultsPath);
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 genPath = fullfile('./', 'data', name, 'generated');
-load(fullfile(genPath, 'dat-30-7.mat'));
+load(fullfile(genPath, 'dat-50-7.mat'));
 
 % Load colormap for proper visualisation.
 load(fullfile('./', 'data', name, 'cmapblue.mat'));
