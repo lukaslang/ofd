@@ -35,6 +35,68 @@ assertEqual(size(d), [2*(N^2 + 2*N), 1]);
 
 end
 
+function invalidIntervalTest
+try
+    vspharm([], [], []);
+    assertTrue(false, 'Assertion is required to fail.');  
+end
+try
+    vspharm(0:3, [], []);
+    assertTrue(false, 'Assertion is required to fail.');  
+end
+try
+    vspharm(-1:3, [], []);
+    assertTrue(false, 'Assertion is required to fail.');  
+end   
+try
+    vspharm([1, 1, 2], [], []);
+    assertTrue(false, 'Assertion is required to fail.');  
+end
+try
+    vspharm([1, 2, 4], [], []);
+    assertTrue(false, 'Assertion is required to fail.');  
+end
+try
+    vspharm([1, 3, 2], [], []);
+    assertTrue(false, 'Assertion is required to fail.');  
+end
+try
+    vspharm([3, 2, 1], [], []);
+    assertTrue(false, 'Assertion is required to fail.');  
+end
+end
+
+function intervalTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(3);
+n = size(F, 1);
+
+% Create vector spherical harmonics up to degree N.
+l = 2;
+Nu = 5;
+[Y, d] = vspharmn(l:Nu, F, V);
+assertFalse(isempty(Y));
+assertEqual(size(Y), [n, 2*(Nu^2 + 2*Nu - l^2 + 1), 3]);
+assertFalse(isempty(d));
+assertTrue(isvector(d));
+assertEqual(size(d), [2*(Nu^2 + 2*Nu - l^2 + 1), 1]);
+
+end
+
+function interval2Test
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(3);
+
+% Create vector spherical harmonics up to degree 5.
+[Y1, d1] = vspharmn(5, F, V);
+[Y2, d2] = vspharmn(1:5, F, V);
+assertAlmostEqual(Y1, Y2);
+assertAlmostEqual(d1, d2);
+
+end
+
 function onbTest
 
 % Create triangulation of unit sphere.
