@@ -32,8 +32,8 @@ assert(isvector(f1));
 assert(isvector(f2));
 assert(size(f1, 1) == m);
 assert(size(f2, 1) == m);
-assert(alpha > 0);
-assert(beta > 0);
+assert(alpha >= 0);
+assert(beta >= 0);
 assert(h > 0);
 
 % Compute functions needed for solving the linear system.

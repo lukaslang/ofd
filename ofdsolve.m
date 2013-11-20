@@ -28,8 +28,8 @@ function [U, V, u, v, L] = ofdsolve(dim, At, b, Y, d, alpha, beta)
 %
 %   L is a struct containing information about the linear system solve.
 
-assert(alpha > 0);
-assert(beta > 0);
+assert(alpha >= 0);
+assert(beta >= 0);
 assert(dim > 0);
 assert(isvector(d));
 assert(length(d) == dim);
