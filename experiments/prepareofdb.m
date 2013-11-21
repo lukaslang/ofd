@@ -37,7 +37,8 @@ load(fullfile(path, 'cmapblue.mat'));
 frame = 114;
 
 % Set parameters.
-N = 50;
+M = 1:5;
+N = 6:10;
 h = 1;
 tol = 1e-6;
 
@@ -79,19 +80,19 @@ clear Y;
 clear Z;
 clear fb;
 
-% Compute data function.
-disp('Compute data functions.');
-[dim, At, d, Y, b] = computeDataFunctions(Faces, Verts, N, f{1}, f{2}, h, tol);
+% Compute linear system.
+disp('Compute linear system.');
+[dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearSystem(Faces, Verts, M, N, f{1}, f{2}, h, tol);
 
 % Create directory.
-path = fullfile(path, 'generated');
+path = fullfile(path, 'generated', 'ofdb');
 mkdir(path);
 
 % Define output files.
-dataOut = sprintf('dat-%i-%i.mat', N, ref);
-genOut = sprintf('gen-%i-%i.mat', N, ref);
+dataOut = sprintf('dat-%i-%i-%i-%i-%i.mat', M(1), M(end), N(1), N(end), ref);
+genOut = sprintf('gen-%i-%i-%i-%i-%i.mat', M(1), M(end), N(1), N(end), ref);
 
 % Write output.
 disp('Saving generated data.');
-save(fullfile(path, dataOut), 'Faces', 'Verts', 'f', 'N', 'ref', 'c', 'r', 'h', 'name', 'tol', '-v7.3');
-save(fullfile(path, genOut), 'dim', 'At', 'd', 'Y', 'b', '-v7.3');
+save(fullfile(path, dataOut), 'Faces', 'Verts', 'f', 'M', 'N', 'ref', 'c', 'r', 'h', 'name', 'tol', '-v7.3');
+save(fullfile(path, genOut), 'dim1', 'dim2', 'U', 'V', 'W', 'd1', 'd2', 'Y1', 'Y2', 'b', '-v7.3');

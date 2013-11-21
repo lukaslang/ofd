@@ -79,7 +79,6 @@ assertAlmostEqual(Y1i, Y1);
 assertAlmostEqual(Y2i, Y2);
 assertAlmostEqual(bi, b);
 
-
 end
 
 function differentIntervalsTest

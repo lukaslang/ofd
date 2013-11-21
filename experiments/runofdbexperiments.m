@@ -21,12 +21,20 @@ clc;
 % Import data.
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
-genPath = fullfile('./', 'data', name, 'generated', 'ofd');
-load(fullfile(genPath, 'gen-10-7.mat'));
-load(fullfile(genPath, 'dat-10-7.mat'));
+genPath = fullfile('./', 'data', name, 'generated', 'ofdb');
+load(fullfile(genPath, 'gen-1-5-6-10-7.mat'));
+load(fullfile(genPath, 'dat-1-5-6-10-7.mat'));
+
+% Rename matrices.
+Um = U;
+Vm = V;
+Wm = W;
+clear U;
+clear V;
+clear W;
 
 % Create folder for results.
-resultsPath = fullfile('./', 'results', name, 'ofd', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
+resultsPath = fullfile('./', 'results', name, 'ofdb', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
 mkdir(resultsPath);
 
 % Set range for parameters.
@@ -40,12 +48,12 @@ for alpha=rng1
     for beta=rng2
         fprintf('Computing decomposition %d/%d: %g-%g-cgs\n', run, runs, alpha, beta);
         ticId = tic;
-        [U, V, u, v, L] = ofdsolve(dim, At, b, Y, d, alpha, beta);
+        [U, V, u, v, L] = ofdbsolve(dim1, dim2, Um, Vm, Wm, d1, d2, Y1, Y2, b, alpha, beta);
         elapsedTime = toc(ticId);
         fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
         % Create filename.
-        wsFilename = sprintf('ofd-%s-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha, beta, L.solver);
+        wsFilename = sprintf('ofdb-%s-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha, beta, L.solver);
         % Save workspace.
         save(fullfile(resultsPath, wsFilename), 'U', 'V', 'u', 'v', 'L', 'alpha', 'beta', '-v7.3');
         run = run + 1;
