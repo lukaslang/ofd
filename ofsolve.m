@@ -14,11 +14,11 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [U, u, L] = ofsolve(dim, At, b, Y, d, alpha)
+function [U, u, L] = ofsolve(dim, At, b, Y, d, alpha, s)
 %OFSOLVE Solves the linear system.
 %
-%   [U, u, L] = OFSOLVE(dim, At, b, Y, d, alpha) takes precomputed functions 
-%   and solves the actual linear system for optical flow.
+%   [U, u, L] = OFSOLVE(dim, At, b, Y, d, alpha, s) takes precomputed 
+%   functions and solves the actual linear system for optical flow.
 %
 %   U is defined on the faces of the triangulation and is of size [n, 3], 
 %   where n = size(Y, 1) is the number of faces.
@@ -34,13 +34,17 @@ assert(length(d) == dim);
 assert(size(At, 1) == dim);
 assert(size(At, 2) == dim);
 assert(size(Y, 2) == dim);
+assert(isscalar(s));
 
 % Get number of faces.
 n = size(Y, 1);
 
+% Compute coefficients of norm.
+ds = alpha * d .^ s;
+
 % Create function handle.
 function v = fun(x)
-    v = At*x + alpha * d .* x;
+    v = At * x + ds .* x;
 end
 
 % Store norm of rhs.
