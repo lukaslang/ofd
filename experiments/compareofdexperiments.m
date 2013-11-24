@@ -20,14 +20,14 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-resultsPath = fullfile('./', 'results', name, 'ofd', '2013-11-21-13-47-52');
+resultsPath = fullfile('./', 'results', name, 'ofd', '2013-11-22-16-24-49');
 files = getFiles(resultsPath);
 
 % Import data.
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 genPath = fullfile('./', 'data', name, 'generated', 'ofd');
-load(fullfile(genPath, 'dat-10-7.mat'));
+load(fullfile(genPath, 'dat-50-7.mat'));
 
 % Load colormap for proper visualisation.
 load(fullfile('./', 'data', name, 'cmapblue.mat'));
@@ -128,6 +128,38 @@ for k=1:length(files)
     trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
     daspect([1, 1, 1]);
     view(2);
+end
+
+% Get incenters of triangles.
+TR = TriRep(Faces, Verts);
+P = TR.incenters;
+% Plot data and flows.
+for k=1:length(files)
+    % Compute colour space scaling.
+    nmax = max(sqrt(sum((E{k}.U + E{k}.V).^2, 2)));
+    c = double(squeeze(computeColour(E{k}.V(:, 1)/nmax, E{k}.V(:, 2)/nmax))) ./ 255;
+    figure;
+    subplot(1, 2, 1);
+    colormap(cmap);
+    axis([0.0782, 0.2845, 0.1198, 0.3261, 0, 1]);
+    hold on;
+    title(sprintf('V, alpha=%g, beta=%g', E{k}.alpha, E{k}.beta));
+    trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), f{1});
+    shading interp;
+    daspect([1, 1, 1]);
+    view(2);
+    quiver3(P(:, 1), P(:, 2), P(:, 3), E{k}.U(:, 1), E{k}.U(:, 2), E{k}.U(:, 3), 0, 'g');
+    quiver3(P(:, 1), P(:, 2), P(:, 3), E{k}.V(:, 1), E{k}.V(:, 2), E{k}.V(:, 3), 0, 'm');
+    % Second plot.
+    subplot(1, 2, 2);
+    axis([0.0782, 0.2845, 0.1198, 0.3261, 0, 1]);
+    hold on;
+    title(sprintf('V, alpha=%g, beta=%g', E{k}.alpha, E{k}.beta));
+    trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
+    daspect([1, 1, 1]);
+    view(2);
+    quiver3(P(:, 1), P(:, 2), P(:, 3), E{k}.U(:, 1), E{k}.U(:, 2), E{k}.U(:, 3), 0, 'g');
+    quiver3(P(:, 1), P(:, 2), P(:, 3), E{k}.V(:, 1), E{k}.V(:, 2), E{k}.V(:, 3), 0, 'm');
 end
 
 % Plot colourwheel.

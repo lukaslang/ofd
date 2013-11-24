@@ -22,8 +22,8 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 genPath = fullfile('./', 'data', name, 'generated', 'ofdb');
-load(fullfile(genPath, 'gen-1-5-6-10-7.mat'));
-load(fullfile(genPath, 'dat-1-5-6-10-7.mat'));
+load(fullfile(genPath, 'gen-1-20-21-50-7.mat'));
+load(fullfile(genPath, 'dat-1-20-21-50-7.mat'));
 
 % Rename matrices.
 Um = U;
@@ -38,8 +38,8 @@ resultsPath = fullfile('./', 'results', name, 'ofdb', datestr(now, 'yyyy-mm-dd-H
 mkdir(resultsPath);
 
 % Set range for parameters.
-rng1 = [0.001, 0.01, 0.1];
-rng2 = [1, 10, 100, 1000];
+rng1 = [0.001, 0.01, 0.1, 1, 10];
+rng2 = [10, 100, 1000, 10000, 100000, 1000000];
 
 % Run experiments.
 run = 1;

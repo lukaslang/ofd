@@ -37,8 +37,8 @@ load(fullfile(path, 'cmapblue.mat'));
 frame = 114;
 
 % Set parameters.
-M = 1:5;
-N = 6:10;
+M = 1:20;
+N = 60:80;
 h = 1;
 tol = 1e-6;
 

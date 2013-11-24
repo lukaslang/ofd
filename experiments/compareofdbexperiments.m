@@ -20,14 +20,14 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-resultsPath = fullfile('./', 'results', name, 'ofdb', '2013-11-21-13-32-22');
+resultsPath = fullfile('./', 'results', name, 'ofdb', '2013-11-22-09-58-59');
 files = getFiles(resultsPath);
 
 % Import data.
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 genPath = fullfile('./', 'data', name, 'generated', 'ofdb');
-load(fullfile(genPath, 'dat-1-5-6-10-7.mat'));
+load(fullfile(genPath, 'dat-1-20-60-80-7.mat'));
 
 % Load colormap for proper visualisation.
 load(fullfile('./', 'data', name, 'cmapblue.mat'));
@@ -70,14 +70,16 @@ for k=1:length(files)
 end
 
 % Plot coefficients.
-figure;
 for k=1:length(files)
+    if(mod(k, 10) == 1)
+        figure;
+    end
     fprintf('Plotting coefficients %d/%d\n', k, length(files));
-    subplot(length(files), 2, 2*(k-1)+1);
+    subplot(10, 2, mod(2*(k-1), 20)+1);
     hold on;
     title(sprintf('u, alpha=%g, beta=%g', E{k}.alpha, E{k}.beta));
     bar(E{k}.u);
-    subplot(length(files), 2, 2*(k-1)+2);
+    subplot(10, 2, mod(2*(k-1), 20)+2);
     hold on;
     title(sprintf('v, alpha=%g, beta=%g', E{k}.alpha, E{k}.beta));
     bar(E{k}.v);
@@ -129,6 +131,23 @@ for k=1:length(files)
     daspect([1, 1, 1]);
     view(2);
 end
+
+
+% % Get incenters of triangles.
+% TR = TriRep(Faces, Verts);
+% P = TR.incenters;
+% % Plot data and flows.
+% for k=1:length(files)
+%     figure;
+%     colormap(cmap); 
+%     axis([-1, 1, -1, 1, 0, 1]);
+%     hold on;
+%     trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), f{1});
+%     shading interp;
+%     daspect([1, 1, 1]);
+%     view(3);
+%     quiver3(P(:, 1), P(:, 2), P(:, 3), E{k}.V(:, 1), E{k}.V(:, 2), E{k}.V(:, 3), 1, 'm');
+% end
 
 % Plot colourwheel.
 figure;
