@@ -21,30 +21,35 @@ clc;
 % Import data.
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
-genPath = fullfile('./', 'data', name, 'generated');
-load(fullfile(genPath, 'gen-50-7.mat'));
-load(fullfile(genPath, 'dat-50-7.mat'));
+path = fullfile('./', 'data', name, 'generated');
+file = 'gen-frames-114-116-unfiltered-1-10-7.mat';
+D = load(fullfile(path, file));
 
 % Create folder for results.
 resultsPath = fullfile('./', 'results', name, 'of', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
 mkdir(resultsPath);
 
-% Set range for parameters.
-rng = [0.001, 0.01, 0.1, 1, 10, 100, 1000];
+% Set range for Sobolev parameter s.
+rng1 = [-1, 0, 1];
+% Set range for alpha.
+rng2 = [0.001, 0.01, 0.1, 1, 10, 100, 1000];
 
 % Run experiments.
 run = 1;
-runs = length(rng);
-for alpha=rng
-    fprintf('Computing flow %d/%d: %g-cgs\n', run, runs, alpha);
-    ticId = tic;
-    [U, u, L] = ofsolve(dim, At, b, Y, d, alpha);
-    elapsedTime = toc(ticId);
-    fprintf('Elapsed time %d seconds.\n', elapsedTime);
+runs = length(rng1)*length(rng2);
+[~, filename, ~] = fileparts(file);
+for s=rng1
+    for alpha=rng2
+        fprintf('Computing flow %d/%d: %g-%g-cgs\n', run, runs, s, alpha);
+        ticId = tic;
+        [U, u, L] = ofsolve(D.dim, D.U, D.b, D.Y, D.d, alpha, s);
+        elapsedTime = toc(ticId);
+        fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
-    % Create filename.
-    wsFilename = sprintf('of-%s-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha, L.solver);
-    % Save workspace.
-    save(fullfile(resultsPath, wsFilename), 'U', 'u', 'L', 'alpha', '-v7.3');
-    run = run + 1;
+        % Create filename.
+        wsFilename = sprintf('%s-%s-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), filename, s, alpha, L.solver);
+        % Save workspace.
+        save(fullfile(resultsPath, wsFilename), 'U', 'u', 'L', 'alpha', 's', '-v7.3');
+        run = run + 1;
+    end
 end

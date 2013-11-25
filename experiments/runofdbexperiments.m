@@ -21,41 +21,43 @@ clc;
 % Import data.
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
-genPath = fullfile('./', 'data', name, 'generated', 'ofdb');
-load(fullfile(genPath, 'gen-1-20-21-50-7.mat'));
-load(fullfile(genPath, 'dat-1-20-21-50-7.mat'));
-
-% Rename matrices.
-Um = U;
-Vm = V;
-Wm = W;
-clear U;
-clear V;
-clear W;
+path = fullfile('./', 'data', name, 'generated');
+file = 'gen-frames-114-116-unfiltered-1-5-6-10-7.mat';
+D = load(fullfile(path, file));
 
 % Create folder for results.
 resultsPath = fullfile('./', 'results', name, 'ofdb', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
 mkdir(resultsPath);
 
-% Set range for parameters.
-rng1 = [0.001, 0.01, 0.1, 1, 10];
-rng2 = [10, 100, 1000, 10000, 100000, 1000000];
+% Set range for Sobolev parameter s1.
+rng1 = [1];
+% Set range for Sobolev parameter s2.
+rng2 = [-1];
+% Set range for alpha.
+rng3 = [0.001, 0.01, 0.1, 1];
+% Set range for beta.
+rng4 = [1, 10, 100, 1000];
 
 % Run experiments.
 run = 1;
-runs = length(rng1)*length(rng2);
-for alpha=rng1
-    for beta=rng2
-        fprintf('Computing decomposition %d/%d: %g-%g-cgs\n', run, runs, alpha, beta);
-        ticId = tic;
-        [U, V, u, v, L] = ofdbsolve(dim1, dim2, Um, Vm, Wm, d1, d2, Y1, Y2, b, alpha, beta);
-        elapsedTime = toc(ticId);
-        fprintf('Elapsed time %d seconds.\n', elapsedTime);
+runs = length(rng1)*length(rng2)*length(rng3)*length(rng4);
+[~, filename, ~] = fileparts(file);
+for s1=rng1
+    for s2=rng2
+        for alpha=rng3
+            for beta=rng4
+                fprintf('Computing flow %d/%d: %g-%g-%g-%g-cgs\n', run, runs, s1, s2, alpha, beta);
+                ticId = tic;
+                [U, V, u, v, L] = ofdbsolve(D.dim1, D.dim2, D.U, D.V, D.W, D.d1, D.d2, D.Y1, D.Y2, D.b, alpha, beta, s1, s2);
+                elapsedTime = toc(ticId);
+                fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
-        % Create filename.
-        wsFilename = sprintf('ofdb-%s-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), alpha, beta, L.solver);
-        % Save workspace.
-        save(fullfile(resultsPath, wsFilename), 'U', 'V', 'u', 'v', 'L', 'alpha', 'beta', '-v7.3');
-        run = run + 1;
+                % Create filename.
+                wsFilename = sprintf('%s-%s-%g-%g-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), filename, s1, s2, alpha, beta, L.solver);
+                % Save workspace.
+                save(fullfile(resultsPath, wsFilename), 'U', 'V', 'u', 'v', 'L', 'alpha', 'beta', 's1', 's2', '-v7.3');
+                run = run + 1;
+            end
+        end
     end
 end
