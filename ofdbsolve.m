@@ -14,11 +14,11 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [Uf, Vf, u, v, L] = ofdbsolve(dim1, dim2, U, V, W, d1, d2, Y1, Y2, b, alpha, beta)
+function [Uf, Vf, u, v, L] = ofdbsolve(dim1, dim2, U, V, W, d1, d2, Y1, Y2, b, alpha, beta, s1, s2)
 %OFDBSOLVE Solves the linear system where U and V are represented in
 %different bases.
 %
-%   [Uf, Vf, u, v, L] = OFDBSOLVE(dim1, dim2, U, V, W, d1, d2, Y1, Y2, b, alpha, beta)
+%   [Uf, Vf, u, v, L] = OFDBSOLVE(dim1, dim2, U, V, W, d1, d2, Y1, Y2, b, alpha, beta, s1, s2)
 %   takes precomputed functions and solves the actual linear system for 
 %   optical flow decomposition.
 %
@@ -48,15 +48,20 @@ assert(size(W, 2) == dim2);
 assert(size(Y1, 2) == dim1);
 assert(size(Y2, 2) == dim2);
 assert(size(Y1, 1) == size(Y2, 1));
+assert(isscalar(s1));
+assert(isscalar(s2));
 
 % Get number of faces.
 n = size(Y1, 1);
+
+% Compute coefficients of norms.
+ds = [alpha * (d1 .^ s1); beta * (d2 .^ s2)];
 
 % Create function handle.
 function v = fun(x)
     v1 = U * x(1:dim1) + W * x(dim1+1:dim1+dim2);
     v2 = W' * x(1:dim1) + V * x(dim1+1:dim1+dim2);
-    v = [v1; v2] + [alpha .* d1; beta ./ d2] .* x;
+    v = [v1; v2] + ds .* x;
 end
 
 % Store norm of rhs.

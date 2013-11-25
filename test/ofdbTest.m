@@ -44,6 +44,32 @@ assertEqual(v, zeros(n, 3));
 
 end
 
+function sobolevNormsTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(3);
+m = size(V, 1);
+n = size(F, 1);
+
+% Create two images.
+f1 = zeros(m, 1);
+f2 = zeros(m, 1);
+
+N = 5;
+h = 1;
+alpha = 1;
+beta = 1;
+
+[u, v] = ofdb(N, N, F, V, f1, f2, h, alpha, beta, 1.5, -1.5);
+assertFalse(isempty(u));
+assertFalse(isempty(v));
+assertEqual(size(u), [n, 3]);
+assertEqual(size(v), [n, 3]);
+assertEqual(u, zeros(n, 3));
+assertEqual(v, zeros(n, 3));
+
+end
+
 function intervalTest
 
 % Create triangulation of unit sphere.
@@ -137,12 +163,12 @@ T = [   cos(theta),     sin(theta), 0;
 Ynj = spharm(5, V*T);
 f2 = Ynj(:, 3);
 
-N = 3;
+N = 5;
 h = 1;
-alpha = 10;
-beta = 1000;
+alpha = 1;
+beta = 10;
 
-[u, v] = ofdb(N, N, F, V, f1, f2, h, alpha, beta);
+[u, v] = ofdb(N, N, F, V, f1, f2, h, alpha, beta, 0.5, -0.5);
 assertFalse(isempty(u));
 assertFalse(isempty(v));
 assertEqual(size(u), [n, 3]);

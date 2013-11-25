@@ -14,7 +14,7 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [U, V] = ofdb(M, N, F, V, f1, f2, h, alpha, beta)
+function [U, V] = ofdb(M, N, F, V, f1, f2, h, alpha, beta, s1, s2)
 %OFDB Returns an optical flow decomposition on a triangulation using
 %different bases for U and V.
 %
@@ -22,6 +22,10 @@ function [U, V] = ofdb(M, N, F, V, f1, f2, h, alpha, beta)
 %   F, V and images f1, f2 on the vertices of the triangulation and returns
 %   an optical flow decomposition U, V. Scalar h is a spacing parameter and
 %   alpha, beta are regularisation parameters.
+%
+%   [U, V] = OFDB(M, N, F, V, f1, f2, h, alpha, beta, s1, s2) takes 
+%   additional real scalars s1, s2 as the parameters of the Sobolev spaces 
+%   H^{s1}(S, TS), H^{s2}(S, TS).
 %
 %   Degrees M, N can be either scalars M, N > 0 then the bases are vector
 %   spherical harmonics of degrees 1:M and 1:N for U and V, respectively,
@@ -42,12 +46,19 @@ assert(size(f2, 1) == m);
 assert(alpha >= 0);
 assert(beta >= 0);
 assert(h > 0);
+if(nargin == 11)
+    assert(isscalar(s1));
+    assert(isscalar(s2));
+elseif(nargin == 9)
+    s1 = 1;
+    s2 = 1;
+end
 
 % Compute linear system.
 [dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearSystem(F, V, M, N, f1, f2, h, 1e-6);
 
 
 % Solve linear system.
-[U, V, ~, ~, ~] = ofdbsolve(dim1, dim2, U, V, W, d1, d2, Y1, Y2, b, alpha, beta);
+[U, V, ~, ~, ~] = ofdbsolve(dim1, dim2, U, V, W, d1, d2, Y1, Y2, b, alpha, beta, s1, s2);
 
 end

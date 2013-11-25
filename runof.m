@@ -25,8 +25,8 @@ path = fullfile('./', 'data', name);
 
 % Import data.
 disp('Loading image data.');
-%load(fullfile(path, 'frames-114-116-filtered.mat'));
-load(fullfile(path, 'frames-56-58-filtered.mat'));
+load(fullfile(path, 'frames-114-116-filtered.mat'));
+%load(fullfile(path, 'frames-56-58-filtered.mat'));
 
 % Import cell centres.
 disp('Loading cell centres.');
@@ -35,13 +35,14 @@ load(fullfile(path, 'thresholdedcenters.mat'));
 % Load colormap for proper visualisation.
 load(fullfile(path, 'cmapblue.mat'));
 
-%frame = 114;
-frame = 56;
+frame = 114;
+%frame = 56;
 
 % Set decomposition parameters.
 N = 10;
 h = 1;
-alpha = 0.01;
+alpha = 1e5;
+s = -1;
 
 % Prepare cell centres.
 X = F{frame}.X;
@@ -93,7 +94,7 @@ clear fb;
 % Compute decomposition.
 disp('Computing optical flow...');
 tic;
-u = of(N, F, V, f{1}, f{2}, h, alpha);
+u = of(N, F, V, f{1}, f{2}, h, alpha, s);
 toc;
 
 % Get incenters of triangles.

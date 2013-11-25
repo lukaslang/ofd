@@ -40,7 +40,7 @@ assert(isscalar(s));
 n = size(Y, 1);
 
 % Compute coefficients of norm.
-ds = alpha * d .^ s;
+ds = alpha * (d .^ s);
 
 % Create function handle.
 function v = fun(x)

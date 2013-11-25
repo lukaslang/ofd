@@ -14,10 +14,10 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [U, V, u, v, L] = ofdsolve(dim, At, b, Y, d, alpha, beta)
+function [U, V, u, v, L] = ofdsolve(dim, At, b, Y, d, alpha, beta, s1, s2)
 %OFDSOLVE Solves the linear system.
 %
-%   [U, V, u, v, L] = OFDSOLVE(dim, At, b, Y, d, alpha, beta) takes 
+%   [U, V, u, v, L] = OFDSOLVE(dim, At, b, Y, d, alpha, beta, s1, s2) takes 
 %   precomputed functions and solves the actual linear system for optical 
 %   flow.
 %
@@ -36,14 +36,19 @@ assert(length(d) == dim);
 assert(size(At, 1) == dim);
 assert(size(At, 2) == dim);
 assert(size(Y, 2) == dim);
+assert(isscalar(s1));
+assert(isscalar(s2));
 
 % Get number of faces.
 n = size(Y, 1);
 
+% Compute coefficients of norms.
+ds = [alpha * (d .^ s1); beta * (d .^ s2)];
+
 % Create function handle.
 function v = fun(x)
     tv = At * (x(1:dim) + x(dim+1:end));
-    v = repmat(tv, 2, 1) + [alpha .* d; beta ./ d] .* x;
+    v = repmat(tv, 2, 1) + ds .* x;
 end
 
 % Store norm of rhs.
