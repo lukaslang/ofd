@@ -55,7 +55,7 @@ elseif(nargin == 9)
 end
 
 % Compute linear system.
-[dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearSystem(F, V, M, N, f1, f2, h, 1e-6);
+[dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearsystemdb(F, V, M, N, f1, f2, h, 1e-6);
 
 
 % Solve linear system.

@@ -14,25 +14,25 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function At = matrixAt(dim, Z, Fc, V, ac)
-%MATRIXAT Creates the matrix \tilde{A}.
+function U = matrixU(dim, Z, Fc, V, ac)
+%MATRIXAT Creates the matrix U.
 %
-%   At = MATRIXAT(dim, Z, Fc, V, ac) returns a symmetric full matrix At
-%   with surface integrals \tilde{a}_pq = int_S Z_p*Z_q.
+%   U = MATRIXU(dim, Z, Fc, V, ac) returns a symmetric full matrix U
+%   with surface integrals u_{pq} = int_S Z_p*Z_q.
 %
 %   Note that size(At) = [dim, dim].
 %
-%   Note that At is symmetric and thus contains at most dim*(dim+1)/2
+%   Note that U is symmetric and thus contains at most dim*(dim+1)/2
 %   unique entries. However, using a sparse matrix representation with
 %   adjusted vector-matrix multiplication results in slow matrix solves.
 %   Thus, for the time being, a full matrix is used here to the
 %   disadvantage of memory requirements.
 
-At = zeros(dim, dim);
+U = zeros(dim, dim);
 for p=1:dim
     for q=1:p
-        At(p, q) = triangIntegral(Fc, V, Z(:, p) .* Z(:, q), ac);
-        At(q, p) = At(p, q);
+        U(p, q) = triangIntegral(Fc, V, Z(:, p) .* Z(:, q), ac);
+        U(q, p) = U(p, q);
     end
 end
 

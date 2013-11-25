@@ -48,9 +48,9 @@ elseif(nargin == 8)
 end
 
 % Compute functions needed for solving the linear system.
-[dim, At, d, Y, b] = computeDataFunctions(F, V, N, f1, f2, h, 1e-6);
+[dim, Um, d, Y, b] = linearsystem(F, V, N, f1, f2, h, 1e-6);
 
 % Solve linear system.
-[U, V, ~, ~] = ofdsolve(dim, At, b, Y, d, alpha, beta, s1, s2);
+[U, V, ~, ~] = ofdsolve(dim, Um, b, Y, d, alpha, beta, s1, s2);
 
 end

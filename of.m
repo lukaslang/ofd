@@ -45,9 +45,9 @@ else
 end
 
 % Compute functions needed for solving the linear system.
-[dim, At, d, Y, b] = computeDataFunctions(F, V, N, f1, f2, h, 1e-6);
+[dim, U, d, Y, b] = linearsystem(F, V, N, f1, f2, h, 1e-6);
 
 % Solve linear system.
-[U, ~] = ofsolve(dim, At, b, Y, d, alpha, s);
+[U, ~] = ofsolve(dim, U, b, Y, d, alpha, s);
 
 end

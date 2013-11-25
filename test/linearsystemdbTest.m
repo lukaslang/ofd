@@ -14,7 +14,7 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = linearSystemTest
+function test_suite = linearsystemdbTest
     initTestSuite;
 end
 
@@ -36,7 +36,7 @@ tol = 1e-6;
 % Create linear system.
 M = 5;
 N = 5;
-[dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearSystem(Faces, Verts, M, N, f1, f2, h, tol);
+[dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearsystemdb(Faces, Verts, M, N, f1, f2, h, tol);
 
 % Check results.
 assertEqual(dim1 + dim2, 4*(N^2 + 2*N));
@@ -67,7 +67,7 @@ assertAlmostEqual(U, W);
 % Try with intervals.
 M = 1:5;
 N = 1:5;
-[dim1i, dim2i, Ui, Vi, Wi, d1i, d2i, Y1i, Y2i, bi] = linearSystem(Faces, Verts, M, N, f1, f2, h, tol);
+[dim1i, dim2i, Ui, Vi, Wi, d1i, d2i, Y1i, Y2i, bi] = linearsystemdb(Faces, Verts, M, N, f1, f2, h, tol);
 assertAlmostEqual(dim1, dim1i);
 assertAlmostEqual(dim2, dim2i);
 assertAlmostEqual(Ui, U);
@@ -99,7 +99,7 @@ tol = 1e-6;
 % Create linear system.
 M = 1:3;
 N = 4:5;
-[dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearSystem(F, V, M, N, f1, f2, h, tol);
+[dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearsystemdb(F, V, M, N, f1, f2, h, tol);
 
 % Check results.
 assertEqual(dim1, 2*(M(end)^2 + 2*M(end) - M(1)^2 + 1));

@@ -14,33 +14,32 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearSystem(F, V, M, N, f1, f2, h, tol)
+function [dim, U, d, Y, b] = linearsystem(F, V, N, f1, f2, h, tol)
 %LINEARSYSTEM Generates the computationally expensive parts of the 
-%decomposition for different bases for later use.
+%decomposition for the same basis for later use.
 %
-%   [dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = LINEARSYSTEM(F, V, M, N, f1, f2, h, tol)
-%   takes a triangulation F, V, degrees M and N, images f1, f2 on the 
-%   vertices V of the triangulation, and a finite-difference parameter h 
-%   for the time derivative of f1, f2 and returns the linear system needed 
-%   for optical flow computation and the decomposition. The scalar tol is a
-%   tolerance parameter for numerical integration.
+%   [dim, U, d, Y, b] = LINEARSYSTEM(F, V, N, f1, f2, h, tol)
+%   takes a triangulation F, V, degree N, images f1, f2 on the vertices V 
+%   of the triangulation, and a finite-difference parameter h for the time 
+%   derivative of f1, f2 and returns the linear system needed for optical 
+%   flow computation and the decomposition. The scalar tol is a tolerance 
+%   parameter for numerical integration.
 %
-%   Note that degrees must be either scalars M, N > 0 or vectors of 
-%   consecutive positive integers!
+%   Note that degree must be either a scalar N > 0 or a vector of 
+%   consecutive positive integers 1...n!
 %
-%   The linear system returned is [U, V; V', W]*x = b. If M==N then all
-%   four matrices are the same and are generated only once. Solving Ax=b 
-%   can be implemented faster in an iterative manner. See
-%   computeDataFunctions!
+%   The linear system returned is
 %
-%   dim1, dim2 are scalars so that dim1 + dim2 is the dimension of the linear
-%   system.
+%   [U+diag(d),    U;
+%    U',        U+diag(d)] * x = [b; b].
 %
-%   d1, d2 are a vectors of length dim1 and dim2, respectively, and contain
-%   the eigenvalues of the bases Y1 and Y2.
+%   dim is a scalar so that 2*dim is the dimension of the linear system.
 %
-%   b is the right hand side and is of length dim1 + dim2.
+%   d is a vector of length dim and contains the eigenvalues of the bases Y.
+%
+%   b is the right hand side and is of length dim.
 
+assert(N > 0);
 assert(h > 0);
 assert(isvector(f1));
 assert(isvector(f2));
@@ -55,13 +54,11 @@ dfdt = sum(f2(F) - f1(F), 2) ./ 3;
 % Compute triangle areas to be used in integration.
 a = triangArea(F, V);
 
-% Create vector spherical harmonics.
-[Y1, d1] = vspharmn(M, F, V);
-[Y2, d2] = vspharmn(N, F, V);
+% Create vector spherical harmonics up to degree N.
+[Y, d] = vspharmn(N, F, V);
 
 % Compute dimension.
-dim1 = length(d1);
-dim2 = length(d2);
+dim = 2*(N^2 + 2*N);
 
 % Compute surface gradient of first image.
 gradf = grad(F, V, f1);
@@ -76,40 +73,23 @@ idx = sqrt(sum(gradf.^2, 2)) > tol;
 Fc = F(idx, :);
 nc = size(Fc, 1);
 gradfc = gradf(idx, :);
-Y1c = Y1(idx, :, :);
-Y2c = Y2(idx, :, :);
+Yc = Y(idx, :, :);
 ac = a(idx);
 dfdtc = dfdt(idx);
 
 % Compute inner products grad f \cdot Y.
-Z1 = zeros(nc, dim1);
-parfor k=1:dim1
-    Z1(:, k) = dot(gradfc, squeeze(Y1c(:, k, :)), 2);
-end
-Z2 = zeros(nc, dim2);
-parfor k=1:dim2
-    Z2(:, k) = dot(gradfc, squeeze(Y2c(:, k, :)), 2);
+Z = zeros(nc, dim);
+parfor k=1:dim
+    Z(:, k) = dot(gradfc, squeeze(Yc(:, k, :)), 2);
 end
 
-% Create matrices U and V.
-U = matrixAt(dim1, Z1, Fc, V, ac);
-V = matrixAt(dim2, Z2, Fc, V, ac);
-
-% Create matrix W.
-W = zeros(dim1, dim2);
-for p=1:dim1
-    for q=1:dim2
-        W(p, q) = triangIntegral(Fc, V, Z1(:, p) .* Z2(:, q), ac);
-    end
-end
+% Create matrix U.
+U = matrixU(dim, Z, Fc, V, ac);
 
 % Create vector b.
-b = zeros(dim1 + dim2, 1);
-parfor k=1:dim1
-    b(k) = - triangIntegral(Fc, V, dfdtc .* Z1(:, k), ac);
-end
-parfor k=1:dim2
-    b(dim1 + k) = - triangIntegral(Fc, V, dfdtc .* Z2(:, k), ac);
+b = zeros(dim, 1);
+parfor k=1:dim
+    b(k) = - triangIntegral(Fc, V, dfdtc .* Z(:, k), ac);
 end
 
 end
