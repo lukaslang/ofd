@@ -41,8 +41,8 @@ frame = 114;
 % Set decomposition parameters.
 N = 10;
 h = 1;
-alpha = 1e5;
-s = -1;
+alpha = 1;
+s = 1;
 
 % Prepare cell centres.
 X = F{frame}.X;

@@ -14,16 +14,14 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [U, u, L] = ofsolve(dim, At, b, Y, d, alpha, s)
+function [u, L] = ofsolve(dim, U, b, d, alpha, s)
 %OFSOLVE Solves the linear system.
 %
-%   [U, u, L] = OFSOLVE(dim, At, b, Y, d, alpha, s) takes precomputed 
-%   functions and solves the actual linear system for optical flow.
+%   [u, L] = OFSOLVE(dim, U, b, d, alpha, s) takes precomputed 
+%   functions and solves the linear system (U+diag(d))*u = b.
 %
-%   U is defined on the faces of the triangulation and is of size [n, 3], 
-%   where n = size(Y, 1) is the number of faces.
-%
-%   u is a vector of coefficients of vector spherical harmonics Y.
+%   u is a vector of coefficients of the vector spherical harmonics basis 
+%   and is of length dim.
 %
 %   L is a struct containing information about the linear system solve.
 
@@ -31,20 +29,15 @@ assert(alpha >= 0);
 assert(dim > 0);
 assert(isvector(d));
 assert(length(d) == dim);
-assert(size(At, 1) == dim);
-assert(size(At, 2) == dim);
-assert(size(Y, 2) == dim);
+assert(all(size(U, 1) == [dim, dim]));
 assert(isscalar(s));
-
-% Get number of faces.
-n = size(Y, 1);
 
 % Compute coefficients of norm.
 ds = alpha * (d .^ s);
 
 % Create function handle.
 function v = fun(x)
-    v = At * x + ds .* x;
+    v = U * x + ds .* x;
 end
 
 % Store norm of rhs.
@@ -64,11 +57,5 @@ L.tol = 1e-6;
 L.maxit = 30;
 L.solver = 'gmres';
 L.restart = 0;
-
-% Recover vector field.
-U = zeros(n, 3);
-parfor k=1:dim
-    U = U + u(k) * squeeze(Y(:, k, :));
-end
 
 end

@@ -36,27 +36,23 @@ alpha = 1;
 beta = 1;
 
 % Compute linear system.
-[dim1, dim2, U, V, W, d1, d2, Y1, Y2, bi] = linearsystemdb(Faces, Verts, M, N, f1, f2, h, 1e-6);
+[dim1, dim2, U2, V2, W2, d1, d2, Y1, Y2, bi] = linearsystemdb(Faces, Verts, M, N, f1, f2, h, 1e-6);
 % Solve linear system.
-[Ui, Vi, ui, vi, ~] = ofdbsolve(dim1, dim2, U, V, W, d1, d2, Y1, Y2, bi, alpha, beta, 1, -1);
+[Ui, Vi, ui, vi, ~] = ofdbsolve(dim1, dim2, U2, V2, W2, d1, d2, Y1, Y2, bi, alpha, beta, 1, -1);
 
 % Compute functions for same basis.
-[dim, At, d, Y, b] = linearsystem(Faces, Verts, N, f1, f2, h, 1e-6);
+[dim, U, d, b] = linearsystem(Faces, Verts, 1:N, f1, f2, h, 1e-6);
 assertAlmostEqual(dim, dim1);
 assertAlmostEqual(dim, dim2);
-assertAlmostEqual(At, U);
-assertAlmostEqual(At, V);
-assertAlmostEqual(At, W);
+assertAlmostEqual(U, U2);
+assertAlmostEqual(U, V2);
+assertAlmostEqual(U, W2);
 assertAlmostEqual(d, d1);
 assertAlmostEqual(d, d2);
-assertAlmostEqual(Y, Y1);
-assertAlmostEqual(Y, Y2);
 assertAlmostEqual([b; b], bi);
 
 % Solve linear system.
-[U, V, u, v, ~] = ofdsolve(dim, At, b, Y, d, alpha, beta, 1, -1);
-assertAlmostEqual(U, Ui, 1e-10);
-assertAlmostEqual(V, Vi, 1e-10);
+[u, v, ~] = ofdsolve(dim, U, b, d, alpha, beta, 1, -1);
 assertAlmostEqual(u, ui, 1e-10);
 assertAlmostEqual(v, vi, 1e-10);
 

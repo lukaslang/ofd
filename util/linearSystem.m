@@ -14,32 +14,35 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [dim, U, d, Y, b] = linearsystem(F, V, N, f1, f2, h, tol)
-%LINEARSYSTEM Generates the computationally expensive parts of the 
-%decomposition for the same basis for later use.
+function [dim, U, d, b] = linearsystem(F, V, N, f1, f2, h, tol)
+%LINEARSYSTEM Computes the linear system used in optical flow and optical
+%flow decomposition.
 %
-%   [dim, U, d, Y, b] = LINEARSYSTEM(F, V, N, f1, f2, h, tol)
-%   takes a triangulation F, V, degree N, images f1, f2 on the vertices V 
+%   [dim, U, d, b] = LINEARSYSTEM(F, V, N, f1, f2, h, tol)
+%   takes a triangulation F, V, degrees N, images f1, f2 on the vertices V 
 %   of the triangulation, and a finite-difference parameter h for the time 
 %   derivative of f1, f2 and returns the linear system needed for optical 
 %   flow computation and the decomposition. The scalar tol is a tolerance 
 %   parameter for numerical integration.
 %
-%   Note that degree must be either a scalar N > 0 or a vector of 
-%   consecutive positive integers 1...n!
+%   Note that degrees N must be a vector of consecutive positive integers!
 %
 %   The linear system returned is
 %
-%   [U+diag(d),    U;
-%    U',        U+diag(d)] * x = [b; b].
+%   (U + diag(d)) * x = b.
 %
-%   dim is a scalar so that 2*dim is the dimension of the linear system.
+%   dim is the dimension of the linear system.
 %
-%   d is a vector of length dim and contains the eigenvalues of the bases Y.
+%   d is a vector of length dim and contains the eigenvalues of the basis.
 %
 %   b is the right hand side and is of length dim.
 
-assert(N > 0);
+% Check if N is an interval of consecutive positive integers.
+assert(isvector(N));
+assert(all(N > 0));
+assert(length(N) == N(end) - N(1) + 1);
+assert(all((N == (N(1):N(end)))));
+
 assert(h > 0);
 assert(isvector(f1));
 assert(isvector(f2));
@@ -54,11 +57,8 @@ dfdt = sum(f2(F) - f1(F), 2) ./ 3;
 % Compute triangle areas to be used in integration.
 a = triangArea(F, V);
 
-% Create vector spherical harmonics up to degree N.
-[Y, d] = vspharmn(N, F, V);
-
 % Compute dimension.
-dim = 2*(N^2 + 2*N);
+dim = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
 
 % Compute surface gradient of first image.
 gradf = grad(F, V, f1);
@@ -73,14 +73,35 @@ idx = sqrt(sum(gradf.^2, 2)) > tol;
 Fc = F(idx, :);
 nc = size(Fc, 1);
 gradfc = gradf(idx, :);
-Yc = Y(idx, :, :);
 ac = a(idx);
 dfdtc = dfdt(idx);
 
+% Initialise vector of eigenvalues.
+d = zeros(dim, 1);
+
+% Compute offset for interval.
+offset = (N(1)-1)^2 + 2*(N(1)-1);
+
 % Compute inner products grad f \cdot Y.
 Z = zeros(nc, dim);
-parfor k=1:dim
-    Z(:, k) = dot(gradfc, squeeze(Yc(:, k, :)), 2);
+for k=N
+    % Create vector spherical harmonics of degree k.
+    [Y1, Y2] = vspharm(k, Fc, V);
+    % Create indices.
+    idx = k^2 - offset - 1;
+    % Run through all orders.
+    parfor l=1:2*k+1
+        Z(:, idx + l) = dot(gradfc, squeeze(Y1(:, l, :)), 2);
+    end
+    % Save eigenvalues.
+    d(idx+1:idx+2*k+1) = k*(k+1);
+    % Create indices.
+    idx = idx + dim/2;
+    parfor l=1:2*k+1
+        Z(:, idx + l) = dot(gradfc, squeeze(Y2(:, l, :)), 2);
+    end
+    % Save eigenvalues.
+    d(idx+1:idx+2*k+1) = k*(k+1);
 end
 
 % Create matrix U.

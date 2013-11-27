@@ -51,7 +51,7 @@ if(nargin == 11)
     assert(isscalar(s2));
 elseif(nargin == 9)
     s1 = 1;
-    s2 = 1;
+    s2 = -1;
 end
 
 % Compute linear system.

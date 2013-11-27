@@ -26,8 +26,8 @@ m = size(Verts, 1);
 n = size(Faces, 1);
 
 % Create random data.
-f1 = randi(1, m, 1);
-f2 = randi(1, m, 1);
+f1 = randi(255, m, 1);
+f2 = randi(255, m, 1);
 
 % Set parameters.
 h = 1;

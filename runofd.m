@@ -37,9 +37,9 @@ load(fullfile(path, 'cmapblue.mat'));
 frame = 114;
 
 % Set decomposition parameters.
-N = 5;
+N = 10;
 h = 1;
-alpha = 10;
+alpha = 1;
 beta = 100;
 
 % Prepare cell centres.

@@ -19,14 +19,13 @@ function U = of(N, F, V, f1, f2, h, alpha, s)
 %
 %   U = OF(N, F, V, f1, f2, h, alpha) takes a triangulation F, V and images
 %   f1, f2 on the vertices of the triangulation and returns the optical 
-%   U. Scalar h is a spacing parameter and alpha is the regularisation 
+%   flow U. Scalar h is a spacing parameter and alpha is the regularisation 
 %   parameter.
 %
 %   U = OF(N, F, V, f1, f2, h, alpha, s) takes an additional real scalar s 
 %   as the parameter of the Sobolev space H^{s}(S, TS).
 %
-%   U is defined on the faces F and is of size [n, 3], where 
-%   n = size(F, 1) is the number of faces.
+%   U is defined on the faces F and is of size [size(F, 1), 3].
 
 m = size(V, 1);
 assert(size(F, 2) == 3);
@@ -45,9 +44,12 @@ else
 end
 
 % Compute functions needed for solving the linear system.
-[dim, U, d, Y, b] = linearsystem(F, V, N, f1, f2, h, 1e-6);
+[dim, U, d, b] = linearsystem(F, V, 1:N, f1, f2, h, 1e-6);
 
 % Solve linear system.
-[U, ~] = ofsolve(dim, U, b, Y, d, alpha, s);
+[u, ~] = ofsolve(dim, U, b, d, alpha, s);
+
+% Recover function.
+U = vspharmsynth(1:N, F, V, u);
 
 end

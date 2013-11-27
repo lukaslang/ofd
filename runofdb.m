@@ -40,7 +40,7 @@ frame = 114;
 M = 1:5;
 N = 6:10;
 h = 1;
-alpha = 10;
+alpha = 1;
 beta = 100;
 
 % Prepare cell centres.
