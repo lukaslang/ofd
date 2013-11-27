@@ -26,7 +26,7 @@ assert(size(F, 2) == 3);
 assert(size(V, 2) == 3);
 
 % Compute cross product of sides.
-Fn = - cross(V(F(:, 2), :) - V(F(:, 1), :), V(F(:, 3), :) - V(F(:, 1), :));
+Fn = cross(V(F(:, 3), :) - V(F(:, 1), :), V(F(:, 2), :) - V(F(:, 1), :));
 
 % Normalise.
 Fn = bsxfun(@rdivide, Fn, sqrt(sum(Fn .^ 2, 2)));
