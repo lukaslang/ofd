@@ -25,6 +25,7 @@ function [Y1, Y2] = vspharm(N, F, V)
 %   Note that size(Yi) = [n, 2*N + 1, 3] for i={1, 2}, where n is the
 %   number of faces F.
 
+assert(isscalar(N));
 assert(N > 0);
 assert(size(F, 2) == 3);
 assert(size(V, 2) == 3);
@@ -32,10 +33,9 @@ assert(size(V, 2) == 3);
 n = size(F, 1);
 
 % Compute face normals.
-T = TriRep(F, V);
-Fn = T.faceNormals;
+Fn = facenormals(F, V);
 
-% Compute triangle heigts.
+% Compute triangle heights.
 H = height(F, V);
 
 % Compute spherical harmonics.
