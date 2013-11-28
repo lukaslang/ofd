@@ -22,8 +22,9 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-file = 'gen-frames-114-116-unfiltered-1-10-7.mat';
-D = load(fullfile(path, file));
+filename = 'frames-114-116-filtered-1-10-7';
+D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
+G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
 
 % Create folder for results.
 resultsPath = fullfile('./', 'results', name, 'ofd', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
@@ -41,14 +42,15 @@ rng4 = [1, 10, 100, 1000];
 % Run experiments.
 run = 1;
 runs = length(rng1)*length(rng2)*length(rng3)*length(rng4);
-[~, filename, ~] = fileparts(file);
 for s1=rng1
     for s2=rng2
         for alpha=rng3
             for beta=rng4
                 fprintf('Computing flow %d/%d: %g-%g-%g-%g-cgs\n', run, runs, s1, s2, alpha, beta);
                 ticId = tic;
-                [U, V, u, v, L] = ofdsolve(D.dim, D.U, D.b, D.Y, D.d, alpha, beta, s1, s2);
+                [u, v, L] = ofdsolve(G.dim, G.U, G.b, G.d, alpha, beta, s1, s2);
+                U = vspharmsynth(D.N, D.Faces, D.Verts, u);
+                V = vspharmsynth(D.N, D.Faces, D.Verts, v);
                 elapsedTime = toc(ticId);
                 fprintf('Elapsed time %d seconds.\n', elapsedTime);
 

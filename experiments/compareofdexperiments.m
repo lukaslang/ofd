@@ -20,17 +20,17 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-%resultsPath = fullfile('./', 'results', name, 'ofd', '2013-11-25-16-00-02');
-resultsPath = fullfile('./', 'results', name, 'ofdb', '2013-11-25-16-18-50');
+resultsPath = fullfile('./', 'results', name, 'ofd', '2013-11-28-10-10-13');
+%resultsPath = fullfile('./', 'results', name, 'ofdb', '2013-11-25-16-18-50');
 E = loadexperiments(resultsPath);
 
 % Import data.
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-%file = 'dat-frames-114-116-unfiltered-1-10-7.mat';
-file = 'dat-frames-114-116-unfiltered-1-5-6-10-7.mat';
-D = load(fullfile(path, file));
+%filename = 'frames-114-116-unfiltered-1-5-6-10-7';
+filename = 'frames-114-116-filtered-1-10-7';
+D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 
 % Load colormap for proper visualisation.
 load(fullfile('./', 'data', name, 'cmapblue.mat'));

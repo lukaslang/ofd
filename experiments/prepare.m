@@ -20,10 +20,10 @@ clc;
 
 % Define dataset.
 name = 'cxcr4aMO2_290112';
-%filename = 'frames-114-116-filtered.mat';
+filename = 'frames-114-116-filtered.mat';
 %filename = 'frames-114-116-unfiltered.mat';
 %filename = 'frames-56-58-filtered.mat';
-filename = 'frames-56-57-filtered.mat';
+%filename = 'frames-56-57-filtered.mat';
 % Set working directory.
 path = fullfile('./', 'data', name);
 
@@ -46,8 +46,8 @@ frame = 58;
 zscale = 4.2832;
 
 % Set degrees of bases.
-M = 60;
-N = 60;
+M = 1:10;
+N = 1:10;
 
 % Finite difference time parameter.
 h = 1;
@@ -102,16 +102,16 @@ path = fullfile(path, 'generated');
 mkdir(path);
 
 [~, file, ~] = fileparts(filename);
-if(isscalar(M) && isscalar(N) && M == N)
+if(all(M == N))
     disp('Compute linear system for same basis, use faster implementation.');
-    [dim, U, d, Y, b] = linearsystem(Faces, Verts, N, f{1}, f{2}, h, tol);
+    [dim, U, d, b] = linearsystem(Faces, Verts, N, f{1}, f{2}, h, tol);
     % Define output file.
-    genFile = fullfile(path, sprintf('gen-%s-%i-%i-%i.mat', file, 1, M, ref));
-    datFile = fullfile(path, sprintf('dat-%s-%i-%i-%i.mat', file, 1, M, ref));
+    genFile = fullfile(path, sprintf('gen-%s-%i-%i-%i.mat', file, N(1), N(end), ref));
+    datFile = fullfile(path, sprintf('dat-%s-%i-%i-%i.mat', file, N(1), N(end), ref));
     % Write output.
     disp('Saving generated data.');
-    save(datFile, 'Faces', 'Verts', 'f', 'M', 'N', 'ref', 'c', 'r', 'h', 'name', 'tol', '-v7.3');
-    save(genFile, 'dim', 'U', 'd', 'Y', 'b', '-v7.3');
+    save(datFile, 'Faces', 'Verts', 'f', 'N', 'ref', 'c', 'r', 'h', 'name', 'tol', '-v7.3');
+    save(genFile, 'dim', 'U', 'd', 'b', '-v7.3');
 else
     disp('Compute linear system for different basis.');
     [dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearsystemdb(Faces, Verts, M, N, f{1}, f{2}, h, tol);

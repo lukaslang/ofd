@@ -22,8 +22,9 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-file = 'gen-frames-114-116-unfiltered-1-10-7.mat';
-D = load(fullfile(path, file));
+filename = 'frames-114-116-filtered-1-10-7';
+D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
+G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
 
 % Create folder for results.
 resultsPath = fullfile('./', 'results', name, 'of', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
@@ -37,15 +38,15 @@ rng2 = [0.001, 0.01, 0.1, 1, 10, 100, 1000];
 % Run experiments.
 run = 1;
 runs = length(rng1)*length(rng2);
-[~, filename, ~] = fileparts(file);
 for s=rng1
     for alpha=rng2
         fprintf('Computing flow %d/%d: %g-%g-cgs\n', run, runs, s, alpha);
         ticId = tic;
-        [U, u, L] = ofsolve(D.dim, D.U, D.b, D.Y, D.d, alpha, s);
+        [u, L] = ofsolve(G.dim, G.U, G.b, G.d, alpha, s);
+        U = vspharmsynth(D.N, D.Faces, D.Verts, u);
         elapsedTime = toc(ticId);
         fprintf('Elapsed time %d seconds.\n', elapsedTime);
-
+        
         % Create filename.
         wsFilename = sprintf('%s-%s-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), filename, s, alpha, L.solver);
         % Save workspace.
