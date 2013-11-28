@@ -39,15 +39,15 @@ load(fullfile(path, 'thresholdedcenters.mat'));
 load(fullfile(path, 'cmapblue.mat'));
 
 % Define cell centres.
-%frame = 114;
-frame = 58;
+frame = 114;
+%frame = 58;
 
 % Scaling in z-direction.
 zscale = 4.2832;
 
 % Set degrees of bases.
-M = 1:10;
-N = 1:10;
+M = 1:100;
+N = 1:100;
 
 % Finite difference time parameter.
 h = 1;
@@ -56,8 +56,8 @@ h = 1;
 tol = 1e-6;
 
 % Spherical band parameters for data.
-%band = 40;
-band = 60;
+band = 40;
+%band = 60;
 
 % Prepare cell centres.
 X = F{frame}.X;
