@@ -22,7 +22,7 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-filename = 'frames-114-116-filtered-1-10-7';
+filename = 'frames-114-116-filtered-1-100-7';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
 
@@ -33,7 +33,7 @@ mkdir(resultsPath);
 % Set range for Sobolev parameter s.
 rng1 = [-1, 0, 1];
 % Set range for alpha.
-rng2 = [0.001, 0.01, 0.1, 1, 10, 100, 1000];
+rng2 = [0.001, 0.01, 0.1, 0, 1, 10, 100];
 
 % Run experiments.
 run = 1;
