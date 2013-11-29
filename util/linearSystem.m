@@ -71,38 +71,15 @@ idx = sqrt(sum(gradf.^2, 2)) > tol;
 
 % Constrain data.
 Fc = F(idx, :);
-nc = size(Fc, 1);
 gradfc = gradf(idx, :);
 ac = a(idx);
 dfdtc = dfdt(idx);
 
-% Initialise vector of eigenvalues.
-d = zeros(dim, 1);
-
-% Compute offset for interval.
-offset = (N(1)-1)^2 + 2*(N(1)-1);
-
 % Compute inner products grad f \cdot Y.
-Z = zeros(nc, dim);
-for k=N
-    % Create vector spherical harmonics of degree k.
-    [Y1, Y2] = vspharm(k, Fc, V);
-    % Create indices.
-    idx = k^2 - offset - 1;
-    % Run through all orders.
-    parfor l=1:2*k+1
-        Z(:, idx + l) = dot(gradfc, squeeze(Y1(:, l, :)), 2);
-    end
-    % Save eigenvalues.
-    d(idx+1:idx+2*k+1) = k*(k+1);
-    % Create indices.
-    idx = idx + dim/2;
-    parfor l=1:2*k+1
-        Z(:, idx + l) = dot(gradfc, squeeze(Y2(:, l, :)), 2);
-    end
-    % Save eigenvalues.
-    d(idx+1:idx+2*k+1) = k*(k+1);
-end
+Z = vspharmdot(gradfc, Fc, V, N);
+
+% Compute eigenvalues.
+d = vspharmeigs(N);
 
 % Create matrix U.
 U = matrixU(dim, Z, Fc, V, ac);

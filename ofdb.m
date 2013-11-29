@@ -27,14 +27,12 @@ function [U, V] = ofdb(M, N, F, V, f1, f2, h, alpha, beta, s1, s2)
 %   additional real scalars s1, s2 as the parameters of the Sobolev spaces 
 %   H^{s1}(S, TS), H^{s2}(S, TS).
 %
-%   Degrees M, N can be either scalars M, N > 0 then the bases are vector
-%   spherical harmonics of degrees 1:M and 1:N for U and V, respectively,
-%   or vectors of consecutive positive integers.
+%   Degrees M, N must be vectors of consecutive positive integers!
 %
 %   U and V are vector fields defined on the faces F and are of size 
 %   [n, 3], where n = size(F, 1) is the number of faces.
 %
-%   In case M == N and scalar, see ofd for a more efficient implementation!
+%   In case M equals N, see ofd for a more efficient implementation!
 
 m = size(V, 1);
 assert(size(F, 2) == 3);
@@ -55,10 +53,13 @@ elseif(nargin == 9)
 end
 
 % Compute linear system.
-[dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearsystemdb(F, V, M, N, f1, f2, h, 1e-6);
-
+[dim1, dim2, Um, Vm, Wm, d1, d2, b] = linearsystemdb(F, V, M, N, f1, f2, h, 1e-6);
 
 % Solve linear system.
-[U, V, ~, ~, ~] = ofdbsolve(dim1, dim2, U, V, W, d1, d2, Y1, Y2, b, alpha, beta, s1, s2);
+[u, v, ~] = ofdbsolve(dim1, dim2, Um, Vm, Wm, d1, d2, b, alpha, beta, s1, s2);
+
+% Recover functions.
+U = vspharmsynth(M, F, V, u);
+V = vspharmsynth(N, F, V, v);
 
 end

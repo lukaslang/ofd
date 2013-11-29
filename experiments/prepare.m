@@ -46,8 +46,8 @@ frame = 114;
 zscale = 4.2832;
 
 % Set degrees of bases.
-M = 1:100;
-N = 1:100;
+M = 1:5;
+N = 6:10;
 
 % Finite difference time parameter.
 h = 1;
@@ -114,12 +114,12 @@ if(all(M == N))
     save(genFile, 'dim', 'U', 'd', 'b', '-v7.3');
 else
     disp('Compute linear system for different basis.');
-    [dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearsystemdb(Faces, Verts, M, N, f{1}, f{2}, h, tol);
+    [dim1, dim2, U, V, W, d1, d2, b] = linearsystemdb(Faces, Verts, M, N, f{1}, f{2}, h, tol);
     % Define output file.
     genFile = fullfile(path, sprintf('gen-%s-%i-%i-%i-%i-%i.mat', file, M(1), M(end), N(1), N(end), ref));
     datFile = fullfile(path, sprintf('dat-%s-%i-%i-%i-%i-%i.mat', file, M(1), M(end), N(1), N(end), ref));
     % Write output.
     disp('Saving generated data.');
     save(datFile, 'Faces', 'Verts', 'f', 'M', 'N', 'ref', 'c', 'r', 'h', 'name', 'tol', '-v7.3');
-    save(genFile, 'dim1', 'dim2', 'U', 'V', 'W', 'd1', 'd2', 'Y1', 'Y2', 'b', '-v7.3');
+    save(genFile, 'dim1', 'dim2', 'U', 'V', 'W', 'd1', 'd2', 'b', '-v7.3');
 end

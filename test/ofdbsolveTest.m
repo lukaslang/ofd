@@ -23,25 +23,24 @@ function sameBasisTest
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
 m = size(Verts, 1);
-n = size(Faces, 1);
 
 % Create two images.
 f1 = randi(255, m, 1);
 f2 = randi(255, m, 1);
 
-M = 5;
-N = 5;
+M = 1:5;
+N = 1:5;
 h = 1;
 alpha = 1;
 beta = 1;
 
 % Compute linear system.
-[dim1, dim2, U2, V2, W2, d1, d2, Y1, Y2, bi] = linearsystemdb(Faces, Verts, M, N, f1, f2, h, 1e-6);
+[dim1, dim2, U2, V2, W2, d1, d2, bi] = linearsystemdb(Faces, Verts, M, N, f1, f2, h, 1e-6);
 % Solve linear system.
-[Ui, Vi, ui, vi, ~] = ofdbsolve(dim1, dim2, U2, V2, W2, d1, d2, Y1, Y2, bi, alpha, beta, 1, -1);
+[ui, vi, ~] = ofdbsolve(dim1, dim2, U2, V2, W2, d1, d2, bi, alpha, beta, 1, -1);
 
 % Compute functions for same basis.
-[dim, U, d, b] = linearsystem(Faces, Verts, 1:N, f1, f2, h, 1e-6);
+[dim, U, d, b] = linearsystem(Faces, Verts, N, f1, f2, h, 1e-6);
 assertAlmostEqual(dim, dim1);
 assertAlmostEqual(dim, dim2);
 assertAlmostEqual(U, U2);

@@ -22,8 +22,9 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-file = 'gen-frames-114-116-unfiltered-1-5-6-10-7.mat';
-D = load(fullfile(path, file));
+filename = 'frames-114-116-filtered-1-5-6-10-7';
+D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
+G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
 
 % Create folder for results.
 resultsPath = fullfile('./', 'results', name, 'ofdb', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
@@ -41,14 +42,15 @@ rng4 = [1, 10, 100, 1000];
 % Run experiments.
 run = 1;
 runs = length(rng1)*length(rng2)*length(rng3)*length(rng4);
-[~, filename, ~] = fileparts(file);
 for s1=rng1
     for s2=rng2
         for alpha=rng3
             for beta=rng4
                 fprintf('Computing flow %d/%d: %g-%g-%g-%g-cgs\n', run, runs, s1, s2, alpha, beta);
                 ticId = tic;
-                [U, V, u, v, L] = ofdbsolve(D.dim1, D.dim2, D.U, D.V, D.W, D.d1, D.d2, D.Y1, D.Y2, D.b, alpha, beta, s1, s2);
+                [u, v, L] = ofdbsolve(G.dim1, G.dim2, G.U, G.V, G.W, G.d1, G.d2, G.b, alpha, beta, s1, s2);
+                U = vspharmsynth(D.M, D.Faces, D.Verts, u);
+                V = vspharmsynth(D.N, D.Faces, D.Verts, v);
                 elapsedTime = toc(ticId);
                 fprintf('Elapsed time %d seconds.\n', elapsedTime);
 

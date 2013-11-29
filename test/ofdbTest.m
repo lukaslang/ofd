@@ -128,7 +128,6 @@ function compareToOfdTest
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
 m = size(V, 1);
-n = size(F, 1);
 
 % Create two images.
 f1 = randi(255, m, 1);
@@ -142,6 +141,41 @@ beta = 1;
 [ui, vi] = ofdb(1:5, 1:5, F, V, f1, f2, h, alpha, beta);
 assertAlmostEqual(u, ui, 1e-10);
 assertAlmostEqual(v, vi, 1e-10);
+
+end
+
+function compareRotationToOfdTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+n = size(F, 1);
+
+% Create two images.
+Ynj = spharm(5, V);
+f1 = Ynj(:, 3);
+% Create rotation matrix.
+theta = -pi/9;
+T = [   cos(theta),     sin(theta), 0;
+       -sin(theta),     cos(theta), 0;
+                 0,              0, 1];
+% Create rotated image.
+Ynj = spharm(5, V*T);
+f2 = Ynj(:, 3);
+
+N = 5;
+h = 1;
+alpha = 1;
+beta = 10;
+
+[u, v] = ofdb(1:N, 1:N, F, V, f1, f2, h, alpha, beta, 1, -1);
+assertFalse(isempty(u));
+assertFalse(isempty(v));
+assertEqual(size(u), [n, 3]);
+assertEqual(size(v), [n, 3]);
+
+[u2, v2] = ofd(N, F, V, f1, f2, h, alpha, beta, 1, -1);
+assertAlmostEqual(u, u2, 1e-10);
+assertAlmostEqual(v, v2, 1e-10);
 
 end
 
@@ -168,7 +202,7 @@ h = 1;
 alpha = 1;
 beta = 10;
 
-[u, v] = ofdb(N, N, F, V, f1, f2, h, alpha, beta, 0.5, -0.5);
+[u, v] = ofdb(1:N, N, F, V, f1, f2, h, alpha, beta, 1, -1);
 assertFalse(isempty(u));
 assertFalse(isempty(v));
 assertEqual(size(u), [n, 3]);

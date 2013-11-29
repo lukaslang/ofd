@@ -14,35 +14,45 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = linearsystemdb(F, V, M, N, f1, f2, h, tol)
+function [dim1, dim2, U, V, W, d1, d2, b] = linearsystemdb(F, V, M, N, f1, f2, h, tol)
 %LINEARSYSTEMDB Generates the computationally expensive parts of the 
 %decomposition for different bases for later use.
 %
-%   [dim1, dim2, U, V, W, d1, d2, Y1, Y2, b] = LINEARSYSTEMDB(F, V, M, N, f1, f2, h, tol)
+%   [dim1, dim2, U, V, W, d1, d2, b] = LINEARSYSTEMDB(F, V, M, N, f1, f2, h, tol)
 %   takes a triangulation F, V, degrees M and N, images f1, f2 on the 
 %   vertices V of the triangulation, and a finite-difference parameter h 
 %   for the time derivative of f1, f2 and returns the linear system needed 
 %   for optical flow computation and the decomposition. The scalar tol is a
 %   tolerance parameter for numerical integration.
 %
-%   Note that degrees must be either scalars M, N > 0 or vectors of 
-%   consecutive positive integers!
+%   Note that degrees M, N must be vectors of consecutive positive integers!
 %
 %   The linear system returned is
 %   
 %   [U+diag(d1),    V;
-%    V',        W+diag(d2)] * x = b.
+%    V',        W+diag(d2)] * [u; v] = b.
 %
-%   If M==N then all four matrices are the same and solving Ax=b can be 
-%   implemented faster in an iterative manner. Use linearsystem instead!
+%   If M and N are the same intervals then all four matrices are the same 
+%   and solving Ax=b can be implemented faster in an iterative manner. Use 
+%   linearsystem instead!
 %
 %   dim1, dim2 are scalars so that dim1 + dim2 is the dimension of the linear
 %   system.
 %
 %   d1, d2 are a vectors of length dim1 and dim2, respectively, and contain
-%   the eigenvalues of the bases Y1 and Y2.
+%   the eigenvalues of the respective bases.
 %
 %   b is the right hand side and is of length dim1 + dim2.
+
+% Check if both M and N are intervals of consecutive positive integers.
+assert(isvector(M));
+assert(all(M > 0));
+assert(length(M) == M(end) - M(1) + 1);
+assert(all((M == (M(1):M(end)))));
+assert(isvector(N));
+assert(all(N > 0));
+assert(length(N) == N(end) - N(1) + 1);
+assert(all((N == (N(1):N(end)))));
 
 assert(h > 0);
 assert(isvector(f1));
@@ -58,13 +68,9 @@ dfdt = sum(f2(F) - f1(F), 2) ./ 3;
 % Compute triangle areas to be used in integration.
 a = triangArea(F, V);
 
-% Create vector spherical harmonics.
-[Y1, d1] = vspharmn(M, F, V);
-[Y2, d2] = vspharmn(N, F, V);
-
-% Compute dimension.
-dim1 = length(d1);
-dim2 = length(d2);
+% Compute dimensions.
+dim1 = 2*(M(end)^2 + 2*M(end) - M(1)^2 + 1);
+dim2 = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
 
 % Compute surface gradient of first image.
 gradf = grad(F, V, f1);
@@ -77,22 +83,17 @@ idx = sqrt(sum(gradf.^2, 2)) > tol;
 
 % Constrain data.
 Fc = F(idx, :);
-nc = size(Fc, 1);
 gradfc = gradf(idx, :);
-Y1c = Y1(idx, :, :);
-Y2c = Y2(idx, :, :);
 ac = a(idx);
 dfdtc = dfdt(idx);
 
 % Compute inner products grad f \cdot Y.
-Z1 = zeros(nc, dim1);
-parfor k=1:dim1
-    Z1(:, k) = dot(gradfc, squeeze(Y1c(:, k, :)), 2);
-end
-Z2 = zeros(nc, dim2);
-parfor k=1:dim2
-    Z2(:, k) = dot(gradfc, squeeze(Y2c(:, k, :)), 2);
-end
+Z1 = vspharmdot(gradfc, Fc, V, M);
+Z2 = vspharmdot(gradfc, Fc, V, N);
+
+% Compute eigenvalues.
+d1 = vspharmeigs(M);
+d2 = vspharmeigs(N);
 
 % Create matrices U and V.
 U = matrixU(dim1, Z1, Fc, V, ac);
