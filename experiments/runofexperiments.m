@@ -31,9 +31,16 @@ resultsPath = fullfile('./', 'results', name, 'of', datestr(now, 'yyyy-mm-dd-HH-
 mkdir(resultsPath);
 
 % Set range for Sobolev parameter s.
-rng1 = [-1, 0, 1];
+rng1 = [-2, -1, -0.5, 0, 0.5, 1, 2];
 % Set range for alpha.
-rng2 = [0.001, 0.01, 0.1, 0, 1, 10, 100];
+rng2 = [0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000];
+
+% Create vector spherical harmonics.
+disp('Generating vector spherical harmonics.');
+ticId = tic;
+[Y, ~] = vspharmn(D.N, D.Faces, D.Verts);
+elapsedTime = toc(ticId);
+fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
 % Run experiments.
 run = 1;
@@ -43,7 +50,12 @@ for s=rng1
         fprintf('Computing flow %d/%d: %g-%g-cgs\n', run, runs, s, alpha);
         ticId = tic;
         [u, L] = ofsolve(G.dim, G.U, G.b, G.d, alpha, s);
-        U = vspharmsynth(D.N, D.Faces, D.Verts, u);
+        elapsedTime = toc(ticId);
+        fprintf('Elapsed time %d seconds.\n', elapsedTime);
+        
+        disp('Recovering vector field.');
+        ticId = tic;
+        U = synth(Y, u);
         elapsedTime = toc(ticId);
         fprintf('Elapsed time %d seconds.\n', elapsedTime);
         

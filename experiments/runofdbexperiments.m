@@ -39,6 +39,14 @@ rng3 = [0.001, 0.01, 0.1, 1];
 % Set range for beta.
 rng4 = [1, 10, 100, 1000];
 
+% Create vector spherical harmonics.
+disp('Generating vector spherical harmonics.');
+ticId = tic;
+[Yu, ~] = vspharmn(D.M, D.Faces, D.Verts);
+[Yv, ~] = vspharmn(D.N, D.Faces, D.Verts);
+elapsedTime = toc(ticId);
+fprintf('Elapsed time %d seconds.\n', elapsedTime);
+
 % Run experiments.
 run = 1;
 runs = length(rng1)*length(rng2)*length(rng3)*length(rng4);
@@ -49,11 +57,16 @@ for s1=rng1
                 fprintf('Computing flow %d/%d: %g-%g-%g-%g-cgs\n', run, runs, s1, s2, alpha, beta);
                 ticId = tic;
                 [u, v, L] = ofdbsolve(G.dim1, G.dim2, G.U, G.V, G.W, G.d1, G.d2, G.b, alpha, beta, s1, s2);
-                U = vspharmsynth(D.M, D.Faces, D.Verts, u);
-                V = vspharmsynth(D.N, D.Faces, D.Verts, v);
                 elapsedTime = toc(ticId);
                 fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
+                disp('Recovering vector field.');
+                ticId = tic;
+                U = synth(Yu, u);
+                V = synth(Yv, v);
+                elapsedTime = toc(ticId);
+                fprintf('Elapsed time %d seconds.\n', elapsedTime);
+                
                 % Create filename.
                 wsFilename = sprintf('%s-%s-%g-%g-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), filename, s1, s2, alpha, beta, L.solver);
                 % Save workspace.
