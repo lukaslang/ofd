@@ -26,12 +26,12 @@ n = size(Faces, 1);
 
 % Create vector spherical harmonics.
 N = 1:10;
-[Y, ~] = vspharmn(N, Faces, Verts);
+[Y1, Y2] = vspharmn(N, Faces, Verts);
 
 % Create coefficients.
 u = zeros(2*(N(end)^2 + 2*N(end)), 1);
 % Compute vector spherical harmonics synthesis.
-U = synth(Y, u);
+U = synth(cat(2, Y1, Y2), u);
 
 % Check results.
 assertFalse(isempty(U));

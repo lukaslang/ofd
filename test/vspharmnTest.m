@@ -26,12 +26,11 @@ n = size(F, 1);
 
 % Create vector spherical harmonics up to degree N.
 N = 5;
-[Y, d] = vspharmn(N, F, V);
-assertFalse(isempty(Y));
-assertEqual(size(Y), [n, 2*(N^2 + 2*N), 3]);
-assertFalse(isempty(d));
-assertTrue(isvector(d));
-assertEqual(size(d), [2*(N^2 + 2*N), 1]);
+[Y1, Y2] = vspharmn(1:N, F, V);
+assertFalse(isempty(Y1));
+assertFalse(isempty(Y2));
+assertEqual(size(Y1), [n, (N^2 + 2*N), 3]);
+assertEqual(size(Y2), [n, (N^2 + 2*N), 3]);
 
 end
 
@@ -75,12 +74,11 @@ n = size(F, 1);
 % Create vector spherical harmonics up to degree N.
 l = 2;
 Nu = 5;
-[Y, d] = vspharmn(l:Nu, F, V);
-assertFalse(isempty(Y));
-assertEqual(size(Y), [n, 2*(Nu^2 + 2*Nu - l^2 + 1), 3]);
-assertFalse(isempty(d));
-assertTrue(isvector(d));
-assertEqual(size(d), [2*(Nu^2 + 2*Nu - l^2 + 1), 1]);
+[Y1, Y2] = vspharmn(l:Nu, F, V);
+assertFalse(isempty(Y1));
+assertFalse(isempty(Y2));
+assertEqual(size(Y1), [n, (Nu^2 + 2*Nu - l^2 + 1), 3]);
+assertEqual(size(Y2), [n, (Nu^2 + 2*Nu - l^2 + 1), 3]);
 
 end
 
@@ -90,10 +88,13 @@ function interval2Test
 [F, V] = sphTriang(3);
 
 % Create vector spherical harmonics up to degree 5.
-[Y1, d1] = vspharmn(5, F, V);
-[Y2, d2] = vspharmn(1:5, F, V);
-assertAlmostEqual(Y1, Y2);
-assertAlmostEqual(d1, d2);
+[Y1, Y2] = vspharmn(5, F, V);
+assertEqual(size(Y1, 2), 11);
+assertEqual(size(Y2, 2), 11);
+
+[Y1, Y2] = vspharmn(1:5, F, V);
+assertEqual(size(Y1, 2), 35);
+assertEqual(size(Y2, 2), 35);
 
 end
 
@@ -103,8 +104,9 @@ function onbTest
 [F, V] = sphTriang(5);
 
 % Create vector spherical harmonics up to degree N.
-N = 5;
-[Y, ~] = vspharmn(N, F, V);
+N = 1:5;
+[Y1, Y2] = vspharmn(N, F, V);
+Y = cat(2, Y1, Y2);
 
 % Compute triangle areas.
 a = triangArea(F, V);

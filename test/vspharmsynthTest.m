@@ -66,3 +66,70 @@ assertEqual(size(U), [n, 3]);
 assertEqual(U, zeros(n, 3));
 
 end
+
+function memConstraintTest
+
+% Create triangulation of unit sphere.
+[Faces, Verts] = sphTriang(3);
+n = size(Faces, 1);
+
+N = 10;
+% Create coefficients.
+u = zeros(2*(N^2 + 2*N), 1);
+% Compute vector spherical harmonics synthesis.
+mem = 2e6;
+U = vspharmsynth(1:N, Faces, Verts, u, mem);
+
+% Check results.
+assertFalse(isempty(U));
+assertEqual(size(U), [n, 3]);
+assertEqual(U, zeros(n, 3));
+
+end
+
+function matrixTest
+
+% Create triangulation of unit sphere.
+[Faces, Verts] = sphTriang(3);
+n = size(Faces, 1);
+
+N = 10;
+% Create coefficient matrix.
+dim = 5;
+u = zeros(2*(N^2 + 2*N), dim);
+% Compute vector spherical harmonics synthesis.
+mem = 2e9;
+U = vspharmsynth(1:N, Faces, Verts, u, mem);
+
+% Check results.
+assertFalse(isempty(U));
+assertEqual(size(U), [n, 3, dim]);
+assertEqual(U, zeros(n, 3, dim));
+
+end
+
+function matrixPerformanceTest
+
+% Create triangulation of unit sphere.
+[Faces, Verts] = sphTriang(3);
+
+N = 30;
+% Create coefficient matrix.
+dim = 2;
+u = zeros(2*(N^2 + 2*N), dim);
+% Compute vector spherical harmonics synthesis.
+mem = 2e9;
+t = tic;
+vspharmsynth(1:N, Faces, Verts, u, mem);
+elapsed = toc(t);
+
+u = zeros(2*(N^2 + 2*N), 1);
+t = tic;
+for k=1:dim
+    vspharmsynth(1:N, Faces, Verts, u, mem);
+end
+elapsed2 = toc(t);
+
+assertTrue(elapsed < elapsed2);
+
+end
