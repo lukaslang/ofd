@@ -36,7 +36,7 @@ for k=1:length(E)
         title(sprintf('v, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta));
         bar(E{k}.v);
     else
-        subplot(10, 1, mod(k, 10)+1);
+        subplot(10, 1, mod(k-1, 10)+1);
         hold on;
         title(sprintf('u, s=%g, alpha=%g', E{k}.s, E{k}.alpha));
         bar(E{k}.u);
