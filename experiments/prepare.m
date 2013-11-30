@@ -20,9 +20,9 @@ clc;
 
 % Define dataset.
 name = 'cxcr4aMO2_290112';
-filename = 'frames-114-116-filtered.mat';
+%filename = 'frames-114-116-filtered.mat';
 %filename = 'frames-114-116-unfiltered.mat';
-%filename = 'frames-56-58-filtered.mat';
+filename = 'frames-56-58-filtered.mat';
 %filename = 'frames-56-57-filtered.mat';
 % Set working directory.
 path = fullfile('./', 'data', name);
@@ -39,15 +39,15 @@ load(fullfile(path, 'thresholdedcenters.mat'));
 load(fullfile(path, 'cmapblue.mat'));
 
 % Define cell centres.
-frame = 114;
-%frame = 58;
+%frame = 114;
+frame = 58;
 
 % Scaling in z-direction.
 zscale = 4.2832;
 
 % Set degrees of bases.
-M = 1:5;
-N = 6:10;
+M = 1:100;
+N = 1:100;
 
 % Finite difference time parameter.
 h = 1;
@@ -56,8 +56,8 @@ h = 1;
 tol = 1e-6;
 
 % Spherical band parameters for data.
-band = 40;
-%band = 60;
+%band = 40;
+band = 60;
 
 % Prepare cell centres.
 X = F{frame}.X;
@@ -104,14 +104,18 @@ mkdir(path);
 [~, file, ~] = fileparts(filename);
 if(all(M == N))
     disp('Compute linear system for same basis, use faster implementation.');
+    tic;
     [dim, U, d, b] = linearsystem(Faces, Verts, N, f{1}, f{2}, h, tol);
+    toc;
     % Define output file.
     genFile = fullfile(path, sprintf('gen-%s-%i-%i-%i.mat', file, N(1), N(end), ref));
     datFile = fullfile(path, sprintf('dat-%s-%i-%i-%i.mat', file, N(1), N(end), ref));
     % Write output.
     disp('Saving generated data.');
+    tic;
     save(datFile, 'Faces', 'Verts', 'f', 'N', 'ref', 'c', 'r', 'h', 'name', 'tol', '-v7.3');
     save(genFile, 'dim', 'U', 'd', 'b', '-v7.3');
+    toc;
 else
     disp('Compute linear system for different basis.');
     [dim1, dim2, U, V, W, d1, d2, b] = linearsystemdb(Faces, Verts, M, N, f{1}, f{2}, h, tol);

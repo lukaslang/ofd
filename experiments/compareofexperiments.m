@@ -21,13 +21,13 @@ clc;
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
 resultsPath = fullfile('./', 'results', name, 'of');
-load(fullfile(resultsPath, '2013-11-29-19-18-07-frames-114-116-filtered-1-10-7.mat'));
+load(fullfile(resultsPath, '2013-11-29-19-42-47-frames-114-116-filtered-1-100-7.mat'));
 
 % Import data.
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-filename = 'frames-114-116-filtered-1-10-7';
+filename = 'frames-114-116-filtered-1-100-7';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 
 % Load colormap for proper visualisation.

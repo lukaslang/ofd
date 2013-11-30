@@ -22,7 +22,7 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-filename = 'frames-114-116-filtered-1-10-7';
+filename = 'frames-114-116-filtered-1-100-7';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
 
@@ -31,7 +31,7 @@ resultsPath = fullfile('./', 'results', name, 'of');
 mkdir(resultsPath);
 
 % Specify memory to use.
-mem = 5e9;
+mem = 50e9;
 
 % Set range for Sobolev parameter s.
 rng1 = [-2, -1, -0.5, 0, 0.5, 1, 2];
