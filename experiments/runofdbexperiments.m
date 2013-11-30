@@ -27,8 +27,11 @@ D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
 
 % Create folder for results.
-resultsPath = fullfile('./', 'results', name, 'ofdb', datestr(now, 'yyyy-mm-dd-HH-MM-SS'));
+resultsPath = fullfile('./', 'results', name, 'ofdb');
 mkdir(resultsPath);
+
+% Specify memory to use.
+mem = 50e9;
 
 % Set range for Sobolev parameter s1.
 rng1 = [1];
@@ -39,17 +42,10 @@ rng3 = [0.001, 0.01, 0.1, 1];
 % Set range for beta.
 rng4 = [1, 10, 100, 1000];
 
-% Create vector spherical harmonics.
-disp('Generating vector spherical harmonics.');
-ticId = tic;
-[Yu, ~] = vspharmn(D.M, D.Faces, D.Verts);
-[Yv, ~] = vspharmn(D.N, D.Faces, D.Verts);
-elapsedTime = toc(ticId);
-fprintf('Elapsed time %d seconds.\n', elapsedTime);
-
 % Run experiments.
 run = 1;
 runs = length(rng1)*length(rng2)*length(rng3)*length(rng4);
+E = cell(runs, 1);
 for s1=rng1
     for s2=rng2
         for alpha=rng3
@@ -60,19 +56,36 @@ for s1=rng1
                 elapsedTime = toc(ticId);
                 fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
-                disp('Recovering vector field.');
-                ticId = tic;
-                U = synth(Yu, u);
-                V = synth(Yv, v);
-                elapsedTime = toc(ticId);
-                fprintf('Elapsed time %d seconds.\n', elapsedTime);
+                % Store experiment.
+                E{run}.u = u;
+                E{run}.v = v;
+                E{run}.L = L;
+                E{run}.alpha = alpha;
+                E{run}.beta = beta;
+                E{run}.s1 = s1;
+                E{run}.s2 = s2;
                 
-                % Create filename.
-                wsFilename = sprintf('%s-%s-%g-%g-%g-%g-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), filename, s1, s2, alpha, beta, L.solver);
-                % Save workspace.
-                save(fullfile(resultsPath, wsFilename), 'U', 'V', 'u', 'v', 'L', 'alpha', 'beta', 's1', 's2', '-v7.3');
                 run = run + 1;
             end
         end
     end
 end
+
+disp('Recovering vector fields.');
+ticId = tic;
+e = cell2mat(E);
+U = vspharmsynth(D.M, D.Faces, D.Verts, [e.u], mem);
+V = vspharmsynth(D.N, D.Faces, D.Verts, [e.v], mem);
+elapsedTime = toc(ticId);
+fprintf('Elapsed time %d seconds.\n', elapsedTime);
+
+% Save to experiments.
+for k=1:runs
+    E{k}.U = U(:, :, k);
+    E{k}.V = V(:, :, k);
+end
+
+% Create filename.
+wsFilename = sprintf('%s-%s.mat', datestr(now, 'yyyy-mm-dd-HH-MM-SS'), filename);
+% Save workspace.
+save(fullfile(resultsPath, wsFilename), 'E', '-v7.3');
