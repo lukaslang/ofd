@@ -14,17 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function U = vspharmsynth(N, F, V, u, mem)
+function [U1, U2] = vspharmsynth(N, F, V, u, mem)
 %VSPHARMSYNTH Computes vector spherical harmonics synthesis.
 %
-%   U = VSPHARMSYNTH(N, F, V, u) takes coefficients u for vector sphercial
-%   harmonics of degrees N and a triangulation F, V and returns a vector 
-%   field U defined on the faces F. 
+%   [U1, U2] = VSPHARMSYNTH(N, F, V, u) takes coefficients u for vector 
+%   sphercial harmonics of degrees N and a triangulation F, V and returns a
+%   vector field U1+U2 defined on the faces F.
+%
+%   Note that U1 and U2 form a Helmholtz decomposition.
 %
 %   Note that u can be a matrix of size [size(F, 1), n] where columns are 
 %   the coefficients.
 %
-%   U = VSPHARMSYNTH(N, F, V, u, mem) additionally takes a memory
+%   [U1, U2] = VSPHARMSYNTH(N, F, V, u, mem) additionally takes a memory
 %   constraint in bytes and allows VSPHARMSYNTH to use up to mem bytes.
 %
 %   Note that if mem is specified, VSPHARMSYNTH then creates several 
@@ -32,10 +34,10 @@ function U = vspharmsynth(N, F, V, u, mem)
 %   at least one degree is generated possibly exceeding the specified
 %   memory!
 %
-%   If u is a vector, then U is of size [size(F, 1), 3]. If u is a matrix 
-%   of size [size(F, 1), m] then U is of size [size(F, 1), 3, m].
+%   If u is a vector, then U1, U2 are of size [size(F, 1), 3]. If u is a 
+%   matrix of size [size(F, 1), m] then U1, U2 are of size [size(F, 1), 3, m].
 %
-%   Note that N is a vector of positive consecutive integers!
+%   Note that N must be a vector of positive consecutive integers!
 
 % Compute and check dimension.
 dim = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
@@ -71,7 +73,8 @@ else
 end
     
 % Create several degrees at once.
-U = zeros(n, 3, m);
+U1 = zeros(n, 3, m);
+U2 = zeros(n, 3, m);
 % Note that for the memory constraints this loop must not run in parallel
 % since it would otherwise use more resources! However, the inner loop
 % might be subject to parallelisation.
@@ -88,8 +91,8 @@ for k=1:length(I)
         u1 = u(idx(1):idx(2), c);
         u2 = u(idx(1)+dim/2:idx(2)+dim/2, c);
         % Compute vectors.
-        U(:, :, c) = U(:, :, c) + cat(2, sum(bsxfun(@times, squeeze(Y1(:, :, 1)), u1'), 2), sum(bsxfun(@times, squeeze(Y1(:, :, 2)), u1'), 2), sum(bsxfun(@times, squeeze(Y1(:, :, 3)), u1'), 2));
-        U(:, :, c) = U(:, :, c) + cat(2, sum(bsxfun(@times, squeeze(Y2(:, :, 1)), u2'), 2), sum(bsxfun(@times, squeeze(Y2(:, :, 2)), u2'), 2), sum(bsxfun(@times, squeeze(Y2(:, :, 3)), u2'), 2));
+        U1(:, :, c) = U1(:, :, c) + cat(2, sum(bsxfun(@times, squeeze(Y1(:, :, 1)), u1'), 2), sum(bsxfun(@times, squeeze(Y1(:, :, 2)), u1'), 2), sum(bsxfun(@times, squeeze(Y1(:, :, 3)), u1'), 2));
+        U2(:, :, c) = U2(:, :, c) + cat(2, sum(bsxfun(@times, squeeze(Y2(:, :, 1)), u2'), 2), sum(bsxfun(@times, squeeze(Y2(:, :, 2)), u2'), 2), sum(bsxfun(@times, squeeze(Y2(:, :, 3)), u2'), 2));
     end
     % Explicitly free memory.
     Y1 = [];
