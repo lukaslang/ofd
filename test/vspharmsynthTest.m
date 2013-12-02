@@ -28,12 +28,15 @@ N = 10;
 % Create coefficients.
 u = zeros(2*(N^2 + 2*N), 1);
 % Compute vector spherical harmonics synthesis.
-U = vspharmsynth(1:N, Faces, Verts, u);
+[U1, U2] = vspharmsynth(1:N, Faces, Verts, u);
 
 % Check results.
-assertFalse(isempty(U));
-assertEqual(size(U), [n, 3]);
-assertEqual(U, zeros(n, 3));
+assertFalse(isempty(U1));
+assertFalse(isempty(U2));
+assertEqual(size(U1), [n, 3]);
+assertEqual(size(U2), [n, 3]);
+assertEqual(U1, zeros(n, 3));
+assertEqual(U2, zeros(n, 3));
 
 end
 
@@ -47,23 +50,29 @@ N = 3:10;
 % Create coefficients.
 u = zeros(2*(N(end)^2 + 2*N(end) - N(1)^2 + 1), 1);
 % Compute vector spherical harmonics synthesis.
-U = vspharmsynth(N, Faces, Verts, u);
+[U1, U2] = vspharmsynth(N, Faces, Verts, u);
 
 % Check results.
-assertFalse(isempty(U));
-assertEqual(size(U), [n, 3]);
-assertEqual(U, zeros(n, 3));
+assertFalse(isempty(U1));
+assertFalse(isempty(U2));
+assertEqual(size(U1), [n, 3]);
+assertEqual(size(U2), [n, 3]);
+assertEqual(U1, zeros(n, 3));
+assertEqual(U2, zeros(n, 3));
 
 N = 1:10;
 % Create coefficients.
 u = zeros(2*(N(end)^2 + 2*N(end) - N(1)^2 + 1), 1);
 % Compute vector spherical harmonics synthesis.
-U = vspharmsynth(N, Faces, Verts, u);
+[U1, U2] = vspharmsynth(N, Faces, Verts, u);
 
 % Check results.
-assertFalse(isempty(U));
-assertEqual(size(U), [n, 3]);
-assertEqual(U, zeros(n, 3));
+assertFalse(isempty(U1));
+assertFalse(isempty(U2));
+assertEqual(size(U1), [n, 3]);
+assertEqual(size(U2), [n, 3]);
+assertEqual(U1, zeros(n, 3));
+assertEqual(U2, zeros(n, 3));
 
 end
 
@@ -78,12 +87,15 @@ N = 10;
 u = zeros(2*(N^2 + 2*N), 1);
 % Compute vector spherical harmonics synthesis.
 mem = 2e6;
-U = vspharmsynth(1:N, Faces, Verts, u, mem);
+[U1, U2] = vspharmsynth(1:N, Faces, Verts, u, mem);
 
 % Check results.
-assertFalse(isempty(U));
-assertEqual(size(U), [n, 3]);
-assertEqual(U, zeros(n, 3));
+assertFalse(isempty(U1));
+assertFalse(isempty(U2));
+assertEqual(size(U1), [n, 3]);
+assertEqual(size(U2), [n, 3]);
+assertEqual(U1, zeros(n, 3));
+assertEqual(U2, zeros(n, 3));
 
 end
 
@@ -99,12 +111,15 @@ dim = 5;
 u = zeros(2*(N^2 + 2*N), dim);
 % Compute vector spherical harmonics synthesis.
 mem = 2e9;
-U = vspharmsynth(1:N, Faces, Verts, u, mem);
+[U1, U2] = vspharmsynth(1:N, Faces, Verts, u, mem);
 
 % Check results.
-assertFalse(isempty(U));
-assertEqual(size(U), [n, 3, dim]);
-assertEqual(U, zeros(n, 3, dim));
+assertFalse(isempty(U1));
+assertFalse(isempty(U2));
+assertEqual(size(U1), [n, 3, dim]);
+assertEqual(size(U2), [n, 3, dim]);
+assertEqual(U1, zeros(n, 3, dim));
+assertEqual(U2, zeros(n, 3, dim));
 
 end
 
@@ -122,6 +137,7 @@ mem = 2e9;
 t = tic;
 vspharmsynth(1:N, Faces, Verts, u, mem);
 elapsed = toc(t);
+disp(elapsed);
 
 u = zeros(2*(N^2 + 2*N), 1);
 t = tic;
@@ -129,6 +145,7 @@ for k=1:dim
     vspharmsynth(1:N, Faces, Verts, u, mem);
 end
 elapsed2 = toc(t);
+disp(elapsed2);
 
 assertTrue(elapsed < elapsed2);
 

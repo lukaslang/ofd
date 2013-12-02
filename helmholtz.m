@@ -14,18 +14,21 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function U = of(N, F, V, f1, f2, h, alpha, s)
-%OF Computes the optical flow on the sphere.
+function [U, V] = helmholtz(N, F, V, f1, f2, h, alpha, s)
+%HELMHOLTZ Computes a Helmholtz decomposition of the optical flow on the
+%sphere.
 %
-%   U = OF(N, F, V, f1, f2, h, alpha) takes a triangulation F, V and images
-%   f1, f2 on the vertices of the triangulation and returns the optical 
-%   flow U. Scalar h is a spacing parameter and alpha is the regularisation 
-%   parameter.
+%   [U, V] = HELMHOLTZ(N, F, V, f1, f2, h, alpha) takes a triangulation F, 
+%   V and images f1, f2 on the vertices of the triangulation and returns 
+%   the Helmholtz decomposition U, V of the optical flow. Scalar h is a 
+%   spacing parameter and alpha is the regularisation parameter.
 %
-%   U = OF(N, F, V, f1, f2, h, alpha, s) takes an additional real scalar s 
-%   as the parameter of the Sobolev space H^{s}(S, TS).
+%   [U, V] = OF(N, F, V, f1, f2, h, alpha, s) takes an additional real 
+%   scalar s as the parameter of the Sobolev space H^{s}(S, TS).
 %
-%   U is defined on the faces F and is of size [size(F, 1), 3].
+%   U and V are defined on the faces F and is of size [size(F, 1), 3].
+%
+%   Note that U + V gives the optical flow.
 
 m = size(V, 1);
 assert(size(F, 2) == 3);
@@ -50,9 +53,6 @@ end
 [u, ~] = ofsolve(dim, U, b, d, alpha, s);
 
 % Recover function.
-[U1, U2] = vspharmsynth(1:N, F, V, u);
-
-% Add up vector fields of both types.
-U = U1 + U2;
+[U, V] = vspharmsynth(1:N, F, V, u);
 
 end

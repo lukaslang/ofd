@@ -74,13 +74,21 @@ end
 disp('Recovering vector fields.');
 ticId = tic;
 e = cell2mat(E);
-U = vspharmsynth(D.M, D.Faces, D.Verts, [e.u], mem);
-V = vspharmsynth(D.N, D.Faces, D.Verts, [e.v], mem);
+% Compute vector spherical harmonics synthesis.
+[U1, U2] = vspharmsynth(D.M, D.Faces, D.Verts, [e.u], mem);
+[V1, V2] = vspharmsynth(D.N, D.Faces, D.Verts, [e.v], mem);
+% Add up vector fields of both types.
+U = U1 + U2;
+V = V1 + V2;
 elapsedTime = toc(ticId);
 fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
 % Save to experiments.
 for k=1:runs
+    E{k}.U1 = U1(:, :, k);
+    E{k}.U2 = U2(:, :, k);
+    E{k}.V1 = V1(:, :, k);
+    E{k}.V2 = V2(:, :, k);
     E{k}.U = U(:, :, k);
     E{k}.V = V(:, :, k);
 end

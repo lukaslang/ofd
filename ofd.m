@@ -54,7 +54,11 @@ end
 [u, v, ~] = ofdsolve(dim, U, b, d, alpha, beta, s1, s2);
 
 % Recover functions.
-U = vspharmsynth(1:N, F, V, u);
-V = vspharmsynth(1:N, F, V, v);
+[U1, U2] = vspharmsynth(1:N, F, V, u);
+[V1, V2] = vspharmsynth(1:N, F, V, v);
+
+% Add up vector fields of both types.
+U = U1 + U2;
+V = V1 + V2;
 
 end
