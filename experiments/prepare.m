@@ -21,8 +21,8 @@ clc;
 % Define dataset.
 name = 'cxcr4aMO2_290112';
 %filename = 'frames-114-116-filtered.mat';
-%filename = 'frames-114-116-unfiltered.mat';
-filename = 'frames-56-58-filtered.mat';
+filename = 'frames-114-116-unfiltered.mat';
+%filename = 'frames-56-58-filtered.mat';
 %filename = 'frames-56-57-filtered.mat';
 % Set working directory.
 path = fullfile('./', 'data', name);
@@ -39,8 +39,8 @@ load(fullfile(path, 'thresholdedcenters.mat'));
 load(fullfile(path, 'cmapblue.mat'));
 
 % Define cell centres.
-%frame = 114;
-frame = 58;
+frame = 114;
+%frame = 58;
 
 % Scaling in z-direction.
 zscale = 4.2832;
@@ -56,8 +56,8 @@ h = 1;
 tol = 1e-6;
 
 % Spherical band parameters for data.
-%band = 40;
-band = 60;
+band = 40;
+%band = 60;
 
 % Prepare cell centres.
 X = F{frame}.X;
