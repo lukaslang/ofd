@@ -65,8 +65,6 @@ ticId = tic;
 e = cell2mat(E);
 % Compute vector spherical harmonics synthesis.
 [U1, U2] = vspharmsynth(D.N, D.Faces, D.Verts, [e.u], mem);
-% Add up vector fields of both types.
-U = U1 + U2;
 elapsedTime = toc(ticId);
 fprintf('Elapsed time %d seconds.\n', elapsedTime);
 
@@ -74,7 +72,6 @@ fprintf('Elapsed time %d seconds.\n', elapsedTime);
 for k=1:runs
     E{k}.U1 = U1(:, :, k);
     E{k}.U2 = U2(:, :, k);
-    E{k}.U = U(:, :, k);
 end
 
 % Create filename.
