@@ -38,9 +38,9 @@ rng1 = [1, 2];
 % Set range for Sobolev parameter s2.
 rng2 = [-2, -1];
 % Set range for alpha.
-rng3 = [0.00001, 0.001, 0.1, 1];
+rng3 = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1];
 % Set range for beta.
-rng4 = [1, 10, 1000, 100000];
+rng4 = [1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7];
 
 % Run experiments.
 run = 1;
