@@ -14,16 +14,16 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function plotcolourflow(E, D, cmap, decomp)
-%PLOTCOLOURFLOW Plots the flow of experiments.
+function plothelmholtz(E, D, cmap, decomp)
+%PLOTHELMHOLTZ Plots the Helmholtz decomposition of experiments.
 %
-%   PLOTCOLOURFLOW(E, D, cmap, decomp) takes a cell array E, data D, a colourmap
-%   cmap. If decomp == true then five columns are created, else only three.
+%   PLOTHELMHOLTZ(E, D, cmap, decomp) takes a cell array E, data D, a colourmap
+%   cmap. If decomp == true then nine columns are created, else only five.
 
 if(decomp)
-    cols = 5;
+    cols = 9;
 else
-    cols = 3;
+    cols = 5;
 end
 
 for k=1:length(E)
@@ -38,36 +38,66 @@ for k=1:length(E)
         daspect([1, 1, 1]);
         view(2);
     end
-    fprintf('Plotting flow %d/%d\n', k, length(E));
+    fprintf('Plotting Helmholtz decomposition %d/%d\n', k, length(E));
     if(decomp)
         % Recover vector field.
-        U = projecttoplane(E{k}.U1 + E{k}.U2);
-        V = projecttoplane(E{k}.V1 + E{k}.V2);
+        U1 = projecttoplane(E{k}.U1);
+        U2 = projecttoplane(E{k}.U2);
+        V1 = projecttoplane(E{k}.V1);
+        V2 = projecttoplane(E{k}.V2);
+        U = U1 + U2;
+        V = V1 + V2;
         W = U + V;
         
         % Compute colour space scaling.
         nmax = max(sqrt(sum(W.^2, 2)));
 
         subplot(1, cols, 3);
+        titlestr = sprintf('U1, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta);
+        plot(U1/nmax, D.Faces, D.Verts, titlestr);
+        
+        subplot(1, cols, 4);
+        titlestr = sprintf('U2, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta);
+        plot(U2/nmax, D.Faces, D.Verts, titlestr);
+        
+        subplot(1, cols, 5);
         titlestr = sprintf('U, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta);
         plot(U/nmax, D.Faces, D.Verts, titlestr);
         
-        subplot(1, cols, 4);
+        subplot(1, cols, 6);
+        titlestr = sprintf('V1, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta);
+        plot(V1/nmax, D.Faces, D.Verts, titlestr);
+        
+        subplot(1, cols, 7);
+        titlestr = sprintf('V2, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta);
+        plot(V2/nmax, D.Faces, D.Verts, titlestr);
+        
+        subplot(1, cols, 8);
         titlestr = sprintf('V, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta);
         plot(V/nmax, D.Faces, D.Verts, titlestr);
         
-        subplot(1, cols, 5);
+        subplot(1, cols, 9);
         titlestr = sprintf('U+V, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta);
         plot(W/nmax, D.Faces, D.Verts, titlestr);
     else
         % Recover vector field.
-        U = projecttoplane(E{k}.U1 + E{k}.U2);
+        U1 = projecttoplane(E{k}.U1);
+        U2 = projecttoplane(E{k}.U2);
+        U = U1 + U2;
         
         % Compute colour space scaling.
-        nmax = max(sqrt(sum(U.^2, 2)));
+        nmax = max(sqrt(sum(U .^2, 2)));
 
         subplot(1, cols, 3);
-        titlestr = sprintf('s=%g, alpha=%g', E{k}.s, E{k}.alpha);
+        titlestr = sprintf('U1, s=%g, alpha=%g', E{k}.s, E{k}.alpha);
+        plot(U1/nmax, D.Faces, D.Verts, titlestr);
+        
+        subplot(1, cols, 4);
+        titlestr = sprintf('U2, s=%g, alpha=%g', E{k}.s, E{k}.alpha);
+        plot(U2/nmax, D.Faces, D.Verts, titlestr);
+        
+        subplot(1, cols, 5);
+        titlestr = sprintf('U1+U2, s=%g, alpha=%g', E{k}.s, E{k}.alpha);
         plot(U/nmax, D.Faces, D.Verts, titlestr);
     end
 end

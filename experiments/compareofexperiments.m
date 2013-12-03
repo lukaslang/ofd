@@ -42,6 +42,9 @@ plotcoefficients(E, false);
 % Plot data and flows.
 plotcolourflow(E, D, cmap, false);
 
+% Plot Helmholtz decomposition.
+plothelmholtz(E, D, cmap, false);
+
 % Plot colourwheel.
 figure;
 cw = colourWheel;
