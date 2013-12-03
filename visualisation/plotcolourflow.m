@@ -40,12 +40,15 @@ for k=1:length(E)
     end
     fprintf('Plotting flow %d/%d\n', k, length(E));
     if(decomp)
+        % Recover vector field.
+        U = E{k}.U1 + E{k}.U2;
+        V = E{k}.V1 + E{k}.V2;
         % Compute colour space scaling.
-        nmax = max(sqrt(sum((E{k}.U + E{k}.V).^2, 2)));
+        nmax = max(sqrt(sum((U + V).^2, 2)));
 
         subplot(1, cols, 3);
         hold on;
-        c = double(squeeze(computeColour(E{k}.U(:, 1)/nmax, E{k}.U(:, 2)/nmax))) ./ 255;
+        c = double(squeeze(computeColour(U(:, 1)/nmax, U(:, 2)/nmax))) ./ 255;
         axis([-1, 1, -1, 1, 0, 1]);
         title(sprintf('U, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta));
         trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
@@ -54,7 +57,7 @@ for k=1:length(E)
 
         subplot(1, cols, 4);
         hold on;
-        c = double(squeeze(computeColour(E{k}.V(:, 1)/nmax, E{k}.V(:, 2)/nmax))) ./ 255;
+        c = double(squeeze(computeColour(V(:, 1)/nmax, V(:, 2)/nmax))) ./ 255;
         axis([-1, 1, -1, 1, 0, 1]);
         title(sprintf('V, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta));
         trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
@@ -63,19 +66,21 @@ for k=1:length(E)
 
         subplot(1, cols, 5);
         hold on;
-        c = double(squeeze(computeColour((E{k}.U(:, 1) + E{k}.V(:, 1))/nmax, (E{k}.U(:, 2) + E{k}.V(:, 2))/nmax))) ./ 255;
+        c = double(squeeze(computeColour((U(:, 1) + V(:, 1))/nmax, (U(:, 2) + V(:, 2))/nmax))) ./ 255;
         axis([-1, 1, -1, 1, 0, 1]);
         title(sprintf('U+V, s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta));
         trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
         daspect([1, 1, 1]);
         view(2);
     else
+        % Recover vector field.
+        U = E{k}.U1 + E{k}.U2;
         % Compute colour space scaling.
-        nmax = max(sqrt(sum(E{k}.U .^2, 2)));
+        nmax = max(sqrt(sum(U .^2, 2)));
 
         subplot(1, cols, 3);
         hold on;
-        c = double(squeeze(computeColour(E{k}.U(:, 1)/nmax, E{k}.U(:, 2)/nmax))) ./ 255;
+        c = double(squeeze(computeColour(U(:, 1)/nmax, U(:, 2)/nmax))) ./ 255;
         axis([-1, 1, -1, 1, 0, 1]);
         title(sprintf('s=%g, alpha=%g', E{k}.s, E{k}.alpha));
         trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
