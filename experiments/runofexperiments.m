@@ -47,7 +47,7 @@ runs = length(rng1)*length(rng2);
 E = cell(runs, 1);
 for s=rng1
     for alpha=rng2
-        fprintf('Computing flow %d/%d: %g-%g-cgs\n', run, runs, s, alpha);
+        fprintf('Computing flow %d/%d: s=%g, alpha=%g\n', run, runs, s, alpha);
         ticId = tic;
         [u, L] = ofsolve(G.dim, G.U, G.b, G.d, alpha, s, maxit);
         elapsedTime = toc(ticId);

@@ -53,7 +53,7 @@ for s1=rng1
     for s2=rng2
         for alpha=rng3
             for beta=rng4
-                fprintf('Computing flow %d/%d: %g-%g-%g-%g-cgs\n', run, runs, s1, s2, alpha, beta);
+                fprintf('Computing flow %d/%d: s1=%g, s2=%g, alpha=%g, beta=%g\n', run, runs, s1, s2, alpha, beta);
                 ticId = tic;
                 [u, v, L] = ofdsolve(G.dim, G.U, G.b, G.d, alpha, beta, s1, s2, maxit);
                 elapsedTime = toc(ticId);
