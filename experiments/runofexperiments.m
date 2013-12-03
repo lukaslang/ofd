@@ -39,7 +39,7 @@ maxit = 100;
 % Set range for Sobolev parameter s.
 rng1 = [-2, -1, -0.5, 0, 0.5, 1, 2];
 % Set range for alpha.
-rng2 = [0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000];
+rng2 = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 0, 1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7];
 
 % Run experiments.
 run = 1;
