@@ -37,7 +37,7 @@ beta = 1;
 % Compute linear system.
 [dim1, dim2, U2, V2, W2, d1, d2, bi] = linearsystemdb(Faces, Verts, M, N, f1, f2, h, 1e-6);
 % Solve linear system.
-[ui, vi, ~] = ofdbsolve(dim1, dim2, U2, V2, W2, d1, d2, bi, alpha, beta, 1, -1);
+[ui, vi, ~] = ofdbsolve(dim1, dim2, U2, V2, W2, d1, d2, bi, alpha, beta, 1, -1, 30);
 
 % Compute functions for same basis.
 [dim, U, d, b] = linearsystem(Faces, Verts, N, f1, f2, h, 1e-6);
@@ -51,7 +51,7 @@ assertAlmostEqual(d, d2);
 assertAlmostEqual([b; b], bi);
 
 % Solve linear system.
-[u, v, ~] = ofdsolve(dim, U, b, d, alpha, beta, 1, -1);
+[u, v, ~] = ofdsolve(dim, U, b, d, alpha, beta, 1, -1, 30);
 assertAlmostEqual(u, ui, 1e-10);
 assertAlmostEqual(v, vi, 1e-10);
 

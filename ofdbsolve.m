@@ -14,13 +14,14 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [u, v, L] = ofdbsolve(dim1, dim2, U, V, W, d1, d2, b, alpha, beta, s1, s2)
+function [u, v, L] = ofdbsolve(dim1, dim2, U, V, W, d1, d2, b, alpha, beta, s1, s2, maxit)
 %OFDBSOLVE Solves the linear system and returns coefficients for vector
 %spherical harmonics where U and V are in different bases.
 %
 %   [u, v, L] = OFDBSOLVE(dim1, dim2, U, V, W, d1, d2, b, alpha, beta, s1, s2)
 %   takes precomputed functions and solves the actual linear system for 
-%   optical flow decomposition.
+%   optical flow decomposition. maxit is the maximum number of iterations 
+%   during the linear system solve.
 %
 %   u and v are vectors of coefficients of vector spherical harmonics.
 %
@@ -42,6 +43,8 @@ assert(size(W, 1) == dim1);
 assert(size(W, 2) == dim2);
 assert(isscalar(s1));
 assert(isscalar(s2));
+assert(isscalar(maxit));
+assert(maxit > 0);
 
 % Compute coefficients of norms.
 ds = [alpha * (d1 .^ s1); beta * (d2 .^ s2)];
@@ -58,7 +61,7 @@ L.rhs = norm(b, 2);
 
 % Solve linear system.
 ticId = tic;
-[z, flag, relres, iter, resvec] = gmres(@fun, b, [], 1e-6, 30);
+[z, flag, relres, iter, resvec] = gmres(@fun, b, [], 1e-6, maxit);
 
 % Store solver information.
 L.time = toc(ticId);
@@ -67,7 +70,7 @@ L.relres = relres;
 L.iter = iter;
 L.resvec = resvec;
 L.tol = 1e-6;
-L.maxit = 30;
+L.maxit = maxit;
 L.solver = 'gmres';
 L.restart = 0;
 

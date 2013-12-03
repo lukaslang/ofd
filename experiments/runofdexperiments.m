@@ -31,7 +31,10 @@ resultsPath = fullfile('./', 'results', name, 'ofd');
 mkdir(resultsPath);
 
 % Specify memory to use.
-mem = 45e9;
+mem = 50e9;
+
+% Set maximum number of iterations.
+maxit = 100;
 
 % Set range for Sobolev parameter s1.
 rng1 = [1, 2];
@@ -52,7 +55,7 @@ for s1=rng1
             for beta=rng4
                 fprintf('Computing flow %d/%d: %g-%g-%g-%g-cgs\n', run, runs, s1, s2, alpha, beta);
                 ticId = tic;
-                [u, v, L] = ofdsolve(G.dim, G.U, G.b, G.d, alpha, beta, s1, s2);
+                [u, v, L] = ofdsolve(G.dim, G.U, G.b, G.d, alpha, beta, s1, s2, maxit);
                 elapsedTime = toc(ticId);
                 fprintf('Elapsed time %d seconds.\n', elapsedTime);
 

@@ -51,7 +51,7 @@ end
 [dim, U, d, b] = linearsystem(F, V, 1:N, f1, f2, h, 1e-6);
 
 % Solve linear system.
-[u, v, ~] = ofdsolve(dim, U, b, d, alpha, beta, s1, s2);
+[u, v, ~] = ofdsolve(dim, U, b, d, alpha, beta, s1, s2, 30);
 
 % Recover functions.
 [U1, U2] = vspharmsynth(1:N, F, V, u);

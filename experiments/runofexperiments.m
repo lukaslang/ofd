@@ -33,6 +33,9 @@ mkdir(resultsPath);
 % Specify memory to use.
 mem = 50e9;
 
+% Set maximum number of iterations.
+maxit = 100;
+
 % Set range for Sobolev parameter s.
 rng1 = [-2, -1, -0.5, 0, 0.5, 1, 2];
 % Set range for alpha.
@@ -46,7 +49,7 @@ for s=rng1
     for alpha=rng2
         fprintf('Computing flow %d/%d: %g-%g-cgs\n', run, runs, s, alpha);
         ticId = tic;
-        [u, L] = ofsolve(G.dim, G.U, G.b, G.d, alpha, s);
+        [u, L] = ofsolve(G.dim, G.U, G.b, G.d, alpha, s, maxit);
         elapsedTime = toc(ticId);
         fprintf('Elapsed time %d seconds.\n', elapsedTime);
 

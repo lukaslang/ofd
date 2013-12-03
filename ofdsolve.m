@@ -14,13 +14,16 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function [u, v, L] = ofdsolve(dim, U, b, d, alpha, beta, s1, s2)
+function [u, v, L] = ofdsolve(dim, U, b, d, alpha, beta, s1, s2, maxit)
 %OFDSOLVE Solves the linear system.
 %
 %   [u, v, L] = OFDSOLVE(dim, U, b, d, alpha, beta, s1, s2) takes precomputed 
 %   functions and solves the linear system
 %
 %   [U + diag(d), U; U', U + diag(d)]*[u; v] = [b; b].
+%
+%   maxit is the maximum number of iterations during the linear system 
+%   solve.
 %
 %   u and v are vectors of coefficients of vector spherical harmonics basis.
 %
@@ -34,6 +37,8 @@ assert(length(d) == dim);
 assert(all(size(U) == [dim, dim]));
 assert(isscalar(s1));
 assert(isscalar(s2));
+assert(isscalar(maxit));
+assert(maxit > 0);
 
 % Compute coefficients of norms.
 ds = [alpha * (d .^ s1); beta * (d .^ s2)];
@@ -50,7 +55,7 @@ L.rhs = norm(rhs, 2);
 
 % Solve linear system.
 ticId = tic;
-[z, flag, relres, iter, resvec] = gmres(@fun, rhs, [], 1e-6, 30);
+[z, flag, relres, iter, resvec] = gmres(@fun, rhs, [], 1e-6, maxit);
 
 % Store solver information.
 L.time = toc(ticId);
@@ -59,7 +64,7 @@ L.relres = relres;
 L.iter = iter;
 L.resvec = resvec;
 L.tol = 1e-6;
-L.maxit = 30;
+L.maxit = maxit;
 L.solver = 'gmres';
 L.restart = 0;
 
