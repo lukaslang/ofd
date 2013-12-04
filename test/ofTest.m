@@ -92,9 +92,7 @@ assertFalse(isempty(u));
 assertEqual(size(u), [n, 3]);
 
 % Compute residual.
-gradf = grad(F, V, f1);
-dfdt = sum(f2(F) - f1(F), 2) ./ 3;
-res = triangIntegral(F, V, (dot(gradf, u, 2) + dfdt) .^2);
+[res, ~] = residual(u, F, V, f1, f2, 1e-6);
 fprintf('Residual: %f.\n', res);
 
 TR = TriRep(F, V);
@@ -151,9 +149,7 @@ assertFalse(isempty(u));
 assertEqual(size(u), [n, 3]);
 
 % Compute residual.
-gradf = grad(F, V, f1);
-dfdt = sum(f2(F) - f1(F), 2) ./ 3;
-res = triangIntegral(F, V, (dot(gradf, u, 2) + dfdt) .^2);
+[res, ~] = residual(u, F, V, f1, f2, 1e-6);
 fprintf('Residual: %f.\n', res);
 
 TR = TriRep(F, V);

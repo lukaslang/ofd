@@ -39,9 +39,11 @@ assertFalse(isempty(u));
 assertEqual(size(u), [n, 3]);
 assertEqual(u, zeros(n, 3));
 
-res = residual(u, F, V, f1, f2);
+[res, min] = residual(u, F, V, f1, f2, 1e-6);
 assertFalse(isempty(res));
+assertFalse(isempty(min));
 assertAlmostEqual(res, 0);
+assertAlmostEqual(min, 0);
 
 end
 
@@ -72,8 +74,9 @@ assertFalse(isempty(u));
 assertEqual(size(u), [n, 3]);
 
 tic;
-res = residual(u, F, V, f1, f2);
+[res, min] = residual(u, F, V, f1, f2, 1e-6);
 toc;
 assertTrue(res > 0);
+assertAlmostEqual(min, 0);
 
 end
