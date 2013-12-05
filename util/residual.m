@@ -14,16 +14,17 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function res = residual(v, F, V, f1, f2)
-%RESIDUAL Computes the optical flow residual on a triangulation for a given 
-%velocity field.
+function [res, min] = residual(v, F, V, f1, f2, tol)
+%RESIDUAL Computes the optical flow residual and the minimum residual on a 
+%triangulation for a given velocity field.
 %
-%   res = residual(v, F, V, f1, f2) takes a vector field v, a 
-%   triangulation F, V, and a images f1, f2 defined on the vertices V and 
-%   returns the residual res of the optical flow equation.
+%   [res, min] = residual(v, F, V, f1, f2, tol) takes a vector field v, a 
+%   triangulation F, V, and images f1, f2 defined on the vertices V and 
+%   returns the residual res of the optical flow equation and the minimum 
+%   residual. tol is a tolerance parameter for numerical integration.
 %
 %   Note that f must be of size [n, 3], where n = size(F, 1) is the number
-%   of faces. Note that res is a scalar.
+%   of faces. Note that res and min are scalars.
 
 assert(all(size(v) == [size(F, 1), 3]));
 assert(isvector(f1));
@@ -37,7 +38,22 @@ dfdt = sum(f2(F) - f1(F), 2) ./ 3;
 % Compute surface gradient of first image.
 gradf = grad(F, V, f1);
 
+% Find indices where grad f is greater than epsilon. In areas where the
+% length of the image gradient is almost zero inner products and thus
+% surface integrals will be alomost zeros and thus can be excluded from
+% numerical integration.
+idx = sqrt(sum(gradf.^2, 2)) > tol;
+
+% Compute triangle areas.
+a = triangArea(F, V);
+
+% Compute (grad f \cdot v + dfdt).^2 for each face..
+f = (dot(gradf(idx, :), v(idx, :), 2) + dfdt(idx)) .^2;
+
 % Compute surface integral.
-res = triangIntegral(F, V, (dot(gradf, v, 2) + dfdt) .^2);
+res = triangIntegral(F(idx, :), V, f, a(idx));
+
+% Compute minimal residual.
+min = triangIntegral(F(~idx), V, dfdt(~idx).^2, a(~idx));
 
 end

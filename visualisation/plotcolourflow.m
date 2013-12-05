@@ -74,14 +74,6 @@ end
 
 end
 
-function p = projecttoplane(v)
-    p = v;
-    p(:, 3) = 0;
-    lenv = sqrt(sum(v .^2, 2));
-    lenp = sqrt(sum(p .^2, 2));
-    p = bsxfun(@times, p, lenv./ lenp);
-end
-
 function plot(v, Faces, Verts, titlestr)
     hold on;
     c = double(squeeze(computeColour(v(:, 1), v(:, 2)))) ./ 255;
