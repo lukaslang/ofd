@@ -22,7 +22,8 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-filename = 'frames-114-116-filtered-1-100-7';
+%filename = 'frames-114-116-filtered-1-100-7';
+filename = 'frames-114-116-unfiltered-1-100-7';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
 
@@ -31,7 +32,7 @@ resultsPath = fullfile('./', 'results', name, 'of');
 mkdir(resultsPath);
 
 % Specify memory to use.
-mem = 50e9;
+mem = 100e9;
 
 % Set maximum number of iterations.
 maxit = 100;
