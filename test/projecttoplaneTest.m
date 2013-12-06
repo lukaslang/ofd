@@ -14,27 +14,16 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function p = projecttoplane(v)
-%PROJECTTOPLANE Projects a vector field to the plane and rescales it to the
-%original length.
-%
-%   p = PROJECTTOPLANE(v) takes a vector field v in R^3 and projects it to
-%   R^2. In addition, it is rescaled to the original length.
-%
-%   v must be of size [n, 3], where n is the number of vectors. p is of
-%   equal size.
+function test_suite = projecttoplaneTest
+    initTestSuite;
+end
 
-assert(size(v, 2) == 3);
+function resultTest
 
-% Project to R^2.
-p = v;
-p(:, 3) = 0;
-
-% Compute vector lengths.
-lenv = sqrt(sum(v .^2, 2));
-lenp = sqrt(sum(p .^2, 2));
-
-% Rescale projected vector.
-p = bsxfun(@times, p, lenv./ lenp);
+v = [pi, -pi, pi/2];
+p = projecttoplane(v);
+assertFalse(isempty(p));
+assertEqual(p(:, 3), 0);
+assertAlmostEqual(sqrt(sum(p.^2, 2)), 3*pi/2);
 
 end

@@ -16,6 +16,9 @@
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
 function savefigure(h, file)
 %SAVEFIGURE Saves a figure.
+%
+%   SAVEFIGURE(h, file) takes a figure handle h and a file and saves the
+%   figure.
 
 export_fig(file, '-png', '-r300', '-zbuffer', '-transparent', h);
 
