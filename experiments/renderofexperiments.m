@@ -51,6 +51,11 @@ mkdir(fullfile(renderPath, 'helmu3'));
 mkdir(fullfile(renderPath, 'helmv2'));
 mkdir(fullfile(renderPath, 'helmv3'));
 
+% Restriction allows to search among the results.
+%e = cell2mat(E);
+%idx = find([e.s] == 1);
+%E = E(idx);
+
 for k=1:length(E)
 
 % Plot residual vector.

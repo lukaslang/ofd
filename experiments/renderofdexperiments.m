@@ -50,6 +50,11 @@ mkdir(fullfile(renderPath, 'flowu3'));
 mkdir(fullfile(renderPath, 'flowv2'));
 mkdir(fullfile(renderPath, 'flowv3'));
 
+% Restriction allows to search among the results.
+%e = cell2mat(E);
+%idx = find([e.s1] == 1 & [e.s2] == -1);
+%E = E(idx);
+
 for k=1:length(E)
 
 % Plot residual vector.
