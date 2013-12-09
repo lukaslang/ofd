@@ -39,6 +39,7 @@ assert(size(f2, 1) == m);
 assert(alpha >= 0);
 assert(beta >= 0);
 assert(h > 0);
+assert(N > 0);
 if(nargin == 10)
     assert(isscalar(s1));
     assert(isscalar(s2));
