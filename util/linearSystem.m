@@ -52,7 +52,7 @@ assert(~isempty(f1));
 assert(~isempty(f2));
 
 % Compute approximate time derivative for each face.
-dfdt = sum(f2(F) - f1(F), 2) ./ 3;
+dfdt = sum(f2(F) - f1(F), 2) ./ (3*h);
 
 % Compute triangle areas to be used in integration.
 a = triangArea(F, V);

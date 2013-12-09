@@ -20,7 +20,7 @@ function U = matrixU(dim, Z, Fc, V, ac)
 %   U = MATRIXU(dim, Z, Fc, V, ac) returns a symmetric full matrix U
 %   with surface integrals u_{pq} = int_S Z_p*Z_q.
 %
-%   Note that size(At) = [dim, dim].
+%   Note that size(U) = [dim, dim].
 %
 %   Note that U is symmetric and thus contains at most dim*(dim+1)/2
 %   unique entries. However, using a sparse matrix representation with
