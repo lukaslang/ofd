@@ -14,16 +14,16 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function lh = streamlines3(P, v, S, h, maxit, cmap)
+function lh = streamlines3(P, v, S, h, maxit, cmap, lw)
 %STREAMLINES3 Computes integral curves of a static velocity field given on 
 %a hemisphere. The curves are coloured according to cmap (optional).
 %
-%   lh = STREAMLINES3(P, v, S, h, maxit) takes points P and a vector 
+%   lh = STREAMLINES3(P, v, S, h, maxit, lw) takes points P and a vector 
 %   field v on a hemisphere and plots colored integral curves for an 
 %   artificial time. The number of steps is given by maxit. The a cell 
 %   array lh contains handles to the line segments lh{t} for each time t.
 %   S are starting points of the integral curves in R^2. cmap is used to
-%   interpolate colors.
+%   interpolate colors. lw is the line width used for plotting.
 %
 %   Note that line segments are plotted with increasing time so that they
 %   may overlap previously drawn segments.
@@ -33,6 +33,7 @@ assert(size(v, 2) == 3);
 assert(size(P, 1) == size(v, 1));
 assert(h > 0);
 assert(maxit > 0);
+assert(lw > 0);
 
 % Pull back vector field to plane.
 w = pullback(P, v);
@@ -62,7 +63,7 @@ for l=1:maxit-1
     if(isempty(X) || isempty(Y))
         break;
     end
-    lh{l} = line(X', Y', Z', 'color', cm(:, l), 'LineWidth', 1);
+    lh{l} = line(X', Y', Z', 'color', cm(:, l), 'LineWidth', lw);
 end
 
 end
