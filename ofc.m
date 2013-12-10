@@ -44,7 +44,7 @@ else
 end
 
 % Compute linear system based on the continuity equation.
-[dim, U, d, b] = linearsystemc(F, V, 1:N, f1, f2, h);
+[dim, U, d, b] = linearsystemc(F, V, 1:N, f1, f2, h, 1e-6);
 
 % Solve linear system.
 [u, ~] = ofsolve(dim, U, b, d, alpha, s, 30);

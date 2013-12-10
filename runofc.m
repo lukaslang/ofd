@@ -93,7 +93,7 @@ clear Z;
 clear fb;
 
 % Compute decomposition.
-disp('Computing optical flow with continuity assumption...');
+disp('Computing optical flow with continuity equation...');
 tic;
 u = ofc(N, F, V, f{1}, f{2}, h, alpha, s);
 toc;

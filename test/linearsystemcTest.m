@@ -33,7 +33,7 @@ h = 1;
 
 % Create linear system.
 N = 10;
-[dim, U, d, b] = linearsystemc(Faces, Verts, 1:N, f1, f2, h);
+[dim, U, d, b] = linearsystemc(Faces, Verts, 1:N, f1, f2, h, 1e-6);
 
 % Check results.
 assertEqual(dim, 2*(N^2 + 2*N));
@@ -66,7 +66,7 @@ h = 1;
 
 % Create linear system.
 N = 3:10;
-[dim, U, d, b] = linearsystemc(Faces, Verts, N, f1, f2, h);
+[dim, U, d, b] = linearsystemc(Faces, Verts, N, f1, f2, h, 1e-6);
 
 % Check results.
 expDim = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
