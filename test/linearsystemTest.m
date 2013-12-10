@@ -47,7 +47,7 @@ assertFalse(isempty(b));
 assertTrue(isvector(b));
 assertEqual(size(b), [2*(N^2 + 2*N), 1]);
 
-% Check if matrices are equal.
+% Check if matrix is symmetric.
 assertAlmostEqual(U, U');
 
 end
@@ -82,7 +82,7 @@ assertFalse(isempty(b));
 assertTrue(isvector(b));
 assertEqual(size(b), [expDim, 1]);
 
-% Check if matrices are equal.
+% Check if matrix is symmetric.
 assertAlmostEqual(U, U');
 
 end

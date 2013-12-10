@@ -43,7 +43,7 @@ else
     s = 1;
 end
 
-% Compute functions needed for solving the linear system.
+% Compute linear system for optical flow.
 [dim, U, d, b] = linearsystem(F, V, 1:N, f1, f2, h, 1e-6);
 
 % Solve linear system.
