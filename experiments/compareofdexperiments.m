@@ -24,14 +24,16 @@ resultsPath = fullfile('./', 'results', name, 'ofd');
 %resultsPath = fullfile('./', 'results', name, 'ofdb');
 %load(fullfile(resultsPath, '2013-11-30-12-15-28-frames-114-116-filtered-1-100-7.mat'));
 %load(fullfile(resultsPath, '2013-12-03-14-40-38-frames-114-116-filtered-1-100-7.mat'));
-load(fullfile(resultsPath, '2013-12-04-20-58-37-frames-114-116-unfiltered-1-100-7.mat'));
+%load(fullfile(resultsPath, '2013-12-04-20-58-37-frames-114-116-unfiltered-1-100-7.mat'));
+load(fullfile(resultsPath, '2013-12-02-19-48-47-frames-114-116-filtered-1-10-7.mat'));
 
 % Import data.
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
 %filename = 'frames-114-116-filtered-1-100-7';
-filename = 'frames-114-116-unfiltered-1-100-7';
+%filename = 'frames-114-116-unfiltered-1-100-7';
+filename = 'frames-114-116-filtered-1-10-7';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 
 % Load colormap for proper visualisation.
@@ -39,6 +41,9 @@ load(fullfile('./', 'data', name, 'cmapblue.mat'));
 
 % Plot residual vector.
 plotresiduals(E, true);
+
+% Plot terms.
+plotterms(E, D, true);
 
 % Plot coefficients.
 plotcoefficients(E, true);

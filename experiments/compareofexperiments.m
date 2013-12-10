@@ -41,6 +41,9 @@ load(fullfile('./', 'data', name, 'cmapblue.mat'));
 % Plot residual vector.
 plotresiduals(E, false);
 
+% Plot terms.
+plotterms(E, D, false);
+
 % Plot coefficients.
 plotcoefficients(E, false);
 
