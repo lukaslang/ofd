@@ -25,7 +25,8 @@ path = fullfile('./', 'data', name);
 
 % Import data.
 disp('Loading image data.');
-load(fullfile(path, 'frames-114-116-filtered.mat'));
+%load(fullfile(path, 'frames-114-116-filtered.mat'));
+load(fullfile(path, 'frames-114-116-unfiltered.mat'));
 %load(fullfile(path, 'frames-56-58-filtered.mat'));
 
 % Import cell centres.
