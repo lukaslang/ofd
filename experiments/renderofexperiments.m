@@ -22,7 +22,8 @@ clc;
 name = 'cxcr4aMO2_290112';
 resultsPath = fullfile('./', 'results', name, 'of');
 %resultsname = '2013-12-03-19-32-46-frames-114-116-filtered-1-10-7';
-resultsname = '2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7';
+%resultsname = '2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7';
+resultsname = '2013-12-10-17-02-33-frames-114-116-unfiltered-1-10-7-cont';
 load(fullfile(resultsPath, sprintf('%s.mat', resultsname)));
 
 % Import data.

@@ -46,8 +46,11 @@ frame = 114;
 zscale = 4.2832;
 
 % Set degrees of bases.
-M = 1:100;
-N = 1:100;
+M = 1:10;
+N = 1:10;
+
+% Set data term {'ofc', 'cont'} (supported for M not equal N only).
+eq = 'cont';
 
 % Finite difference time parameter.
 h = 1;
@@ -103,13 +106,26 @@ mkdir(path);
 
 [~, file, ~] = fileparts(filename);
 if(all(M == N))
-    disp('Compute linear system for same basis, use faster implementation.');
-    tic;
-    [dim, U, d, b] = linearsystem(Faces, Verts, N, f{1}, f{2}, h, tol);
-    toc;
-    % Define output file.
-    genFile = fullfile(path, sprintf('gen-%s-%i-%i-%i.mat', file, N(1), N(end), ref));
-    datFile = fullfile(path, sprintf('dat-%s-%i-%i-%i.mat', file, N(1), N(end), ref));
+    if(strcmp(eq, 'ofc'))
+        disp('Compute linear system for same basis, use faster implementation.');
+        tic;
+        [dim, U, d, b] = linearsystem(Faces, Verts, N, f{1}, f{2}, h, tol);
+        toc;
+        % Define output file.
+        genFile = fullfile(path, sprintf('gen-%s-%i-%i-%i.mat', file, N(1), N(end), ref));
+        datFile = fullfile(path, sprintf('dat-%s-%i-%i-%i.mat', file, N(1), N(end), ref));
+    elseif(strcmp(eq, 'cont'))
+        disp('Compute linear system for continuity equation for same basis, use faster implementation.');
+        tic;
+        [dim, U, d, b] = linearsystemc(Faces, Verts, N, f{1}, f{2}, h, tol);
+        toc;
+        % Define output file.
+        genFile = fullfile(path, sprintf('gen-%s-%i-%i-%i-cont.mat', file, N(1), N(end), ref));
+        datFile = fullfile(path, sprintf('dat-%s-%i-%i-%i-cont.mat', file, N(1), N(end), ref));
+    else
+        error('eq must be set to one of {''ofc'', ''cont''} if M equals N!');
+    end
+    
     % Write output.
     disp('Saving generated data.');
     tic;
