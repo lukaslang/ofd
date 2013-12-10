@@ -15,7 +15,7 @@
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
 function [Y1, Y2] = vspharmn(N, F, V)
-%VSPHARMN Creates vector spherical harmonics up to a certain degree.
+%VSPHARMN Creates vector spherical harmonics of certain degrees.
 %
 %   [Y1, Y2] = VSPHARMN(N, F, V) takes an interval N > 0 of degrees 
 %   represented as a vector and a triangulation F, V and computes vector 
