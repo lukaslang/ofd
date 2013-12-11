@@ -34,11 +34,11 @@ for k=1:length(E)
     m(k) = min;
     % Compute regularisation terms.
     if(decomp)
-        n(k) = E{k}.alpha * hnorm(E{k}.s1, vspharmeigs(D.N), E{k}.u);
-        o(k) = E{k}.beta * hnorm(E{k}.s2, vspharmeigs(D.N), E{k}.v);
+        n(k) = hnorm(E{k}.s1, vspharmeigs(D.N), E{k}.u);
+        o(k) = hnorm(E{k}.s2, vspharmeigs(D.N), E{k}.v);
         labels{k} = sprintf('s1=%g, s2=%g, alpha=%g, beta=%g', E{k}.s1, E{k}.s2, E{k}.alpha, E{k}.beta);
     else
-        n(k) = E{k}.alpha * hnorm(E{k}.s, vspharmeigs(D.N), E{k}.u);
+        n(k) = hnorm(E{k}.s, vspharmeigs(D.N), E{k}.u);
         labels{k} = sprintf('s=%g, alpha=%g', E{k}.s, E{k}.alpha);
     end
 end
