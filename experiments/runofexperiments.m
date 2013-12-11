@@ -23,8 +23,8 @@ disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
 %filename = 'frames-114-116-filtered-1-100-7';
-filename = 'frames-114-116-unfiltered-1-100-7';
-%filename = 'frames-114-116-unfiltered-1-10-7-cont';
+%filename = 'frames-114-116-unfiltered-1-100-7';
+filename = 'frames-114-116-unfiltered-1-100-7-cont';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
 
@@ -39,7 +39,7 @@ mem = 100e9;
 maxit = 100;
 
 % Set range for Sobolev parameter s.
-rng1 = [-2, -1, -0.5, 0, 0.5, 1, 2];
+rng1 = [-1, -0.5, 0, 0.5, 1];
 % Set range for alpha.
 rng2 = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 0, 1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7];
 

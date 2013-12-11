@@ -46,8 +46,8 @@ frame = 114;
 zscale = 4.2832;
 
 % Set degrees of bases.
-M = 1:10;
-N = 1:10;
+M = 1:100;
+N = 1:100;
 
 % Set data term {'ofc', 'cont'} (supported for M not equal N only).
 eq = 'cont';
