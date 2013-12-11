@@ -56,8 +56,9 @@ mkdir(fullfile(renderPath, 'flowv3'));
 %e = cell2mat(E);
 %idx = find([e.s1] == 1 & [e.s2] == -1);
 %E = E(idx);
+idx = [101:103, 109:112, 180:184, 189:192, 197:200, 205:208];
 
-for k=1:length(E)
+for k=idx
 
 % Plot residual vector.
 R = createFigure;
