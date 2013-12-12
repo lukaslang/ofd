@@ -30,7 +30,7 @@ addpath(genpath(fullfile(libraryPath, 'visualization\export_fig\')));
 % Add all subfolders.
 y = dir('.');
 y = y([y.isdir]);
-y = y(~cellfun(@(x) strcmp(x, '.git') || strcmp(x, '.') || strcmp(x, '..') || strcmp(x, 'results'), {y.name}));
+y = y(~cellfun(@(x) strcmp(x, '.git') || strcmp(x, '.') || strcmp(x, '..') || strcmp(x, 'results') || strcmp(x, 'renderings'), {y.name}));
 % Add to path.
 cellfun(@(x) addpath(genpath(fullfile(pwd, x))), {y.name});
 

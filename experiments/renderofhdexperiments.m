@@ -20,24 +20,22 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-%resultsPath = fullfile('./', 'results', name, 'of');
-resultsname = '2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7';
-%resultsname = '2013-12-10-17-02-33-frames-114-116-unfiltered-1-10-7-cont';
+resultsPath = fullfile('./', 'results', name, 'ofhd');
+%resultsname = '2013-12-11-21-53-46-frames-114-116-unfiltered-1-100-7';
+resultsname = '2013-12-11-22-33-34-frames-114-116-unfiltered-1-100-7';
 load(fullfile(resultsPath, sprintf('%s.mat', resultsname)));
 
 % Import data.
 disp('Loading precomputed data.');
-name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
 filename = 'frames-114-116-unfiltered-1-100-7';
-%filename = 'frames-114-116-unfiltered-1-100-7-cont';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 
 % Load colormap for proper visualisation.
 load(fullfile('./', 'data', name, 'cmapblue.mat'));
 
 % Define renderings path.
-renderPath = fullfile('./', 'renderings', name, 'of', resultsname);
+renderPath = fullfile('./', 'renderings', name, 'ofhd', resultsname);
 mkdir(renderPath);
 mkdir(fullfile(renderPath, 'residual'));
 mkdir(fullfile(renderPath, 'coefficients'));
@@ -56,14 +54,26 @@ mkdir(fullfile(renderPath, 'streamu3'));
 mkdir(fullfile(renderPath, 'streamv2'));
 mkdir(fullfile(renderPath, 'streamv3'));
 
-% Restriction allows to search among the results.
-%e = cell2mat(E);
-%idx = find([e.s] == 1);
-% Select results to render.
-
-%2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7
-%idx = [30:32, 74:76, 89:91];
+% Use all results.
 idx = 1:length(E);
+
+% Compute normalisation factor.
+nmax = zeros(length(idx), 1);
+nmaxtang = zeros(length(idx), 1);
+for k=idx
+    % Plot data and flows.
+    % Recover vector field.
+    U1 = projecttoplane(E{k}.U1);
+    U2 = projecttoplane(E{k}.U2);
+    U = U1 + U2;
+
+    % Get maximum vector length.
+    nmax(idx) = max(sqrt(sum(U.^2, 2)));
+    % Get maximum tangential vector length.
+    nmaxtang(idx) = max(sqrt(sum((E{k}.U1 + E{k}.U2).^2, 2)));
+end
+nmax = max(nmax);
+nmaxtang = max(nmaxtang);
 
 for k=idx
 
@@ -114,9 +124,6 @@ end
 U1 = projecttoplane(E{k}.U1);
 U2 = projecttoplane(E{k}.U2);
 U = U1 + U2;
-
-% Compute colour space scaling.
-nmax = max(sqrt(sum(U.^2, 2)));
 
 V = createFigure3(cmap);
 c = double(squeeze(computeColour(U(:, 1)/nmax, U(:, 2)/nmax))) ./ 255;
@@ -178,8 +185,7 @@ idx = find(X.^2 + Y.^2 <= 1);
 S = [X(idx), Y(idx)];
 
 % Set parameters.
-nmax = max(sqrt(sum((E{k}.U1 + E{k}.U2).^2, 2)));
-h = 0.1/nmax;
+h = 0.1/nmaxtang;
 maxit = 50;
 lw = 1;
 
