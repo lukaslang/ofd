@@ -38,11 +38,13 @@ mem = 100e9;
 maxit = 100;
 
 % Set parameters for hierarchical decomposition.
-alpha = 1000*pow2(-(0:15));
+%alpha = 1000*pow2(-(0:15));
+alpha = 10*ones(5, 1);
 % Get number of steps.
 nd = length(alpha);
 % Set Sobolev space parameter.
-s = ones(nd, 1);
+%s = ones(nd, 1);
+s = [1, 0.5, 0, -0.5, -1];
 
 % Initialise experiments.
 E = cell(nd, 1);
@@ -53,7 +55,7 @@ ud = zeros(G.dim, nd);
 % Decompose into components.
 b = G.b;
 for k=1:nd
-    fprintf('Computing flow %d/%d: s=%g, alpha=%g\n.', k, nd, s(k), alpha(k));
+    fprintf('Computing flow %d/%d: s=%g, alpha=%g.\n', k, nd, s(k), alpha(k));
     ticId = tic;
     % Solve linear system.
     [u, L] = ofsolve(G.dim, G.U, b, G.d, alpha(k), s(k), maxit);

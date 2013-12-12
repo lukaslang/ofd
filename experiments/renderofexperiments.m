@@ -20,9 +20,11 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-resultsPath = fullfile('./', 'results', name, 'of');
-%resultsname = '2013-12-03-19-32-46-frames-114-116-filtered-1-10-7';
-resultsname = '2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7';
+%resultsPath = fullfile('./', 'results', name, 'of');
+resultsPath = fullfile('./', 'results', name, 'ofhd');
+%resultsname = '2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7';
+%resultsname = '2013-12-11-21-53-46-frames-114-116-unfiltered-1-100-7';
+resultsname = '2013-12-11-22-33-34-frames-114-116-unfiltered-1-100-7';
 %resultsname = '2013-12-10-17-02-33-frames-114-116-unfiltered-1-10-7-cont';
 load(fullfile(resultsPath, sprintf('%s.mat', resultsname)));
 
@@ -62,7 +64,10 @@ mkdir(fullfile(renderPath, 'streamv3'));
 %e = cell2mat(E);
 %idx = find([e.s] == 1);
 % Select results to render.
-idx = [30:32, 74:76, 89:91];
+
+%2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7
+%idx = [30:32, 74:76, 89:91];
+idx = 1:length(E);
 
 for k=idx
 
