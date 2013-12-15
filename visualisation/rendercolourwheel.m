@@ -27,20 +27,34 @@ cw = colourWheel;
 [m, n, ~] = size(cw);
 
 % Create and normalise coordiantes.
-[X, Y] = meshgrid(1:m, 1:n);
+[X, Y, Z] = meshgrid(1:m, 1:n, 0);
 X = 2*X / m - 1;
 Y = 2*Y / m - 1;
 
+% Get indices.
+idx = sqrt(X.^2 + Y.^2) >= 0.96;
+[r, c] = ind2sub([m, n], idx);
+cwr = cw(:, :, 1);
+cwg = cw(:, :, 2);
+cwb = cw(:, :, 3);
+cwr(idx) = 0;
+cwg(idx) = 0;
+cwb(idx) = 0;
+cw = cat(3, cwr, cwg, cwb);
+
 % Render 3D colour wheel.
 F = createFigure3;
-surf(X, Y, zeros(m, n), cw, 'FaceColor','texturemap', 'EdgeColor', 'none');
+set(F, 'Renderer', 'opengl');
+surf(X, Y, Z, cw, 'FaceColor', 'texturemap', 'EdgeColor', 'none', 'AlphaData', double(~idx), 'AlphaDataMapping', 'none', 'FaceAlpha', 'texturemap');
 view(3);
 set(gca, 'XLim', [-1, 1]);
 set(gca, 'YLim', [-1, 1]);
-set(gca, 'ZLim', [0, 1]);
+set(gca, 'ZLim', [0, 1e-3]);
 adjustFigure3;
-savefigure(F, fullfile('./', 'renderings', 'colourwheel', 'colourwheel3.png'));
+file = fullfile('./', 'renderings', 'colourwheel', 'colourwheel3.png');
+export_fig(file, '-png', '-r300', '-transparent', F);
 
 % Save 2D colour wheel.
 view(2);
-savefigure(F, fullfile('./', 'renderings', 'colourwheel', 'colourwheel2.png'));
+file = fullfile('./', 'renderings', 'colourwheel', 'colourwheel2.png');
+export_fig(file, '-png', '-r300', '-transparent', F);
