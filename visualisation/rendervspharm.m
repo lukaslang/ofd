@@ -33,7 +33,7 @@ T = TriRep(F, V);
 P = T.incenters;
 
 % Set interval of degrees.
-N = 1:3;
+N = 2;
 
 % Run through all degrees and all orders.
 for k=N
@@ -53,7 +53,16 @@ for k=N
         quiver3(P(:, 1), P(:, 2), P(:, 3), Y2(:, l, 1), Y2(:, l, 2), Y2(:, l, 3), 1, 'b');
         adjustFigure3;
         set(gca, 'ZTick', -1:0.5:1);
+        set(gca, 'CLim', [-1, 1]);
         % Save image.
         savefigure(H, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i.png', k, l)));
     end
 end
+% Save last figure with colorbar.
+colorbar;
+adjustFigure3;
+set(gca, 'ZTick', -1:0.5:1);
+cbar = findobj(H, 'tag', 'Colorbar');
+set(cbar, 'YTick', -1:0.25:1);
+set(cbar, 'TickLength', [.02 .02], 'YColor', [.3 .3 .3]);
+savefigure(H, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar.png', k, l)));

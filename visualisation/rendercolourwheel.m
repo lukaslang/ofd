@@ -51,6 +51,7 @@ set(gca, 'XLim', [-1, 1]);
 set(gca, 'YLim', [-1, 1]);
 set(gca, 'ZLim', [0, 1e-3]);
 adjustFigure3;
+axis off;
 file = fullfile('./', 'renderings', 'colourwheel', 'colourwheel3.png');
 export_fig(file, '-png', '-r300', '-transparent', F);
 
