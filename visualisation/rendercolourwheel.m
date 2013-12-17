@@ -20,7 +20,9 @@ clear;
 close all;
 clc;
 
-mkdir(fullfile('./', 'renderings', 'colourwheel'));
+% Create render path.
+renderPath = fullfile('./', 'renderings', 'colourwheel');
+mkdir(renderPath);
 
 % Create colour wheel.
 cw = colourWheel;
@@ -52,10 +54,10 @@ set(gca, 'YLim', [-1, 1]);
 set(gca, 'ZLim', [0, 1e-3]);
 adjustFigure3;
 axis off;
-file = fullfile('./', 'renderings', 'colourwheel', 'colourwheel3.png');
+file = fullfile(renderPath, 'colourwheel3.png');
 export_fig(file, '-png', '-r300', '-transparent', F);
 
 % Save 2D colour wheel.
 view(2);
-file = fullfile('./', 'renderings', 'colourwheel', 'colourwheel2.png');
+file = fullfile(renderPath, 'colourwheel2.png');
 export_fig(file, '-png', '-r300', '-transparent', F);
