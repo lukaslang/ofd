@@ -21,15 +21,13 @@ clc;
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
 resultsPath = fullfile('./', 'results', name, 'ofd');
-%resultsname = '2013-12-02-19-48-47-frames-114-116-filtered-1-10-7';
+%resultsname = '2013-12-03-14-40-38-frames-114-116-filtered-1-100-7';
 resultsname = '2013-12-04-20-58-37-frames-114-116-unfiltered-1-100-7';
 load(fullfile(resultsPath, sprintf('%s.mat', resultsname)));
 
 % Import data.
 disp('Loading precomputed data.');
-name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-%filename = 'frames-114-116-filtered-1-10-7';
 %filename = 'frames-114-116-filtered-1-100-7';
 filename = 'frames-114-116-unfiltered-1-100-7';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
