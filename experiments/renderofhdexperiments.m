@@ -22,7 +22,7 @@ clc;
 name = 'cxcr4aMO2_290112';
 resultsPath = fullfile('./', 'results', name, 'ofhd');
 %resultsname = '2013-12-11-21-53-46-frames-114-116-unfiltered-1-100-7';
-resultsname = '2013-12-11-22-33-34-frames-114-116-unfiltered-1-100-7';
+resultsname = '2013-12-15-14-55-13-frames-114-116-unfiltered-1-100-7';
 load(fullfile(resultsPath, sprintf('%s.mat', resultsname)));
 
 % Import data.
@@ -55,7 +55,11 @@ mkdir(fullfile(renderPath, 'streamv2'));
 mkdir(fullfile(renderPath, 'streamv3'));
 
 % Use all results.
-idx = 1:length(E);
+%idx = 2:7;
+idx = 8:16;
+
+% Use all results.
+%idx = 1:length(E);
 
 % Compute normalisation factor.
 nmax = zeros(length(idx), 1);

@@ -21,17 +21,21 @@ clc;
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
 resultsPath = fullfile('./', 'results', name, 'of');
-%resultsPath = fullfile('./', 'results', name, 'ofhd');
-%load(fullfile(resultsPath, '2013-11-30-10-00-52-frames-114-116-filtered-1-100-7.mat'));
+% Optical flow.
 %load(fullfile(resultsPath, '2013-12-03-22-47-45-frames-114-116-filtered-1-100-7.mat'));
 load(fullfile(resultsPath, '2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7.mat'));
+
+% Optical flow with continuity equation.
 %load(fullfile(resultsPath, '2013-12-10-23-40-35-frames-114-116-unfiltered-1-100-7-cont.mat'));
+
+% Optical flow hierarchical decomposition.
+%resultsPath = fullfile('./', 'results', name, 'ofhd');
+%load(fullfile(resultsPath, '2013-12-11-21-53-46-frames-114-116-unfiltered-1-100-7.mat'));
+%load(fullfile(resultsPath, '2013-12-15-14-55-13-frames-114-116-unfiltered-1-100-7.mat'));
 
 % Import data.
 disp('Loading precomputed data.');
-name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-%filename = 'frames-114-116-filtered-1-10-7';
 %filename = 'frames-114-116-filtered-1-100-7';
 filename = 'frames-114-116-unfiltered-1-100-7';
 %filename = 'frames-114-116-unfiltered-1-100-7-cont';

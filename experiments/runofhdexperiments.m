@@ -22,7 +22,6 @@ clc;
 disp('Loading precomputed data.');
 name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
-%filename = 'frames-114-116-filtered-1-100-7';
 filename = 'frames-114-116-unfiltered-1-100-7';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
 G = load(fullfile(path, sprintf('gen-%s.mat', filename)));
@@ -35,16 +34,18 @@ mkdir(resultsPath);
 mem = 100e9;
 
 % Set maximum number of iterations.
-maxit = 100;
+maxit = 1000;
 
 % Set parameters for hierarchical decomposition.
 %alpha = 1000*pow2(-(0:15));
-alpha = 10*ones(5, 1);
+alpha = 1*ones(9, 1);
+
 % Get number of steps.
 nd = length(alpha);
+
 % Set Sobolev space parameter.
 %s = ones(nd, 1);
-s = [1, 0.5, 0, -0.5, -1];
+s = [2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25, 0];
 
 % Initialise experiments.
 E = cell(nd, 1);

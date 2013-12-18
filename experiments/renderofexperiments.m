@@ -20,15 +20,15 @@ clc;
 
 % Define dataset and get result files.
 name = 'cxcr4aMO2_290112';
-%resultsPath = fullfile('./', 'results', name, 'of');
+resultsPath = fullfile('./', 'results', name, 'of');
 resultsname = '2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7';
 %resultsname = '2013-12-10-17-02-33-frames-114-116-unfiltered-1-10-7-cont';
 load(fullfile(resultsPath, sprintf('%s.mat', resultsname)));
 
 % Import data.
 disp('Loading precomputed data.');
-name = 'cxcr4aMO2_290112';
 path = fullfile('./', 'data', name, 'generated');
+%filename = 'frames-114-116-filtered-1-100-7';
 filename = 'frames-114-116-unfiltered-1-100-7';
 %filename = 'frames-114-116-unfiltered-1-100-7-cont';
 D = load(fullfile(path, sprintf('dat-%s.mat', filename)));
@@ -59,11 +59,9 @@ mkdir(fullfile(renderPath, 'streamv3'));
 % Restriction allows to search among the results.
 %e = cell2mat(E);
 %idx = find([e.s] == 1);
-% Select results to render.
 
-%2013-12-05-12-08-20-frames-114-116-unfiltered-1-100-7
-%idx = [30:32, 74:76, 89:91];
-idx = 1:length(E);
+% Select results to render.
+idx = [30:32, 74:76, 89:91];
 
 for k=idx
 
