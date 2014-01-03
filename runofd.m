@@ -25,7 +25,7 @@ path = fullfile('./', 'data', name);
 
 % Import data.
 disp('Loading image data.');
-load(fullfile(path, 'frames-114-116-filtered.mat'));
+load(fullfile(path, 'frames-114-116-unfiltered.mat'));
 
 % Import cell centres.
 disp('Loading cell centres.');
@@ -49,10 +49,9 @@ Z = -4.2832 * F{frame}.Z;
 shift = -min(Z);
 
 % Fit sphere.
-[c, r] = sphereFit([X(:), Y(:), Z(:) + shift]);
-
-% Create triangulation of fitted sphere.
-%[F, V] = sphTriang(7);
+sc = mean([X(:), Y(:), Z(:) + shift]);
+sr = 300;
+[c, r] = spherefit([X(:), Y(:), Z(:) + shift], sc, sr);
 
 % Create triangulation of northern hemisphere of the fitted sphere.
 [F, V] = halfsphTriang(7);

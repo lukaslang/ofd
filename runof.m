@@ -39,7 +39,7 @@ load(fullfile(path, 'cmapblue.mat'));
 frame = 114;
 %frame = 56;
 
-% Set decomposition parameters.
+% Set parameters.
 N = 10;
 h = 1;
 alpha = 1;
@@ -52,10 +52,9 @@ Z = -4.2832 * F{frame}.Z;
 shift = -min(Z);
 
 % Fit sphere.
-[c, r] = sphereFit([X(:), Y(:), Z(:) + shift]);
-
-% Create triangulation of fitted sphere.
-%[F, V] = sphTriang(7);
+sc = mean([X(:), Y(:), Z(:) + shift]);
+sr = 300;
+[c, r] = spherefit([X(:), Y(:), Z(:) + shift], sc, sr);
 
 % Create triangulation of northern hemisphere of the fitted sphere.
 [F, V] = halfsphTriang(7);
@@ -71,7 +70,7 @@ for k=1:2
     [X, Y, Z] = ndgrid(1:um, 1:un, 1:uo);
 
     % Compute radial maximum intensity projection.
-    rs = linspace(r-60, r+60, 120);
+    rs = linspace(r-40, r+40, 80);
     VB = kron(rs', V);
     fb = dataFromCube(c(1)+VB(:, 1), c(2)+VB(:, 2), c(3)+VB(:, 3), X, Y, 4.2832 * Z, u);
     f{k} = max(reshape(fb, size(V, 1), length(rs)), [], 2);

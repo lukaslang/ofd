@@ -14,24 +14,28 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
+function [c, r] = spherefit(X, c, r)
+%SPHEREFIT Fits a sphere to data.
+%
+%   [c, r] = SPHEREFIT(X) takes an n-by-3 matrix X and fits a sphere with 
+%   center c and radius r. In addition, the function takes c and r as 
+%   initial values.
+%
+%   Note that c is a 1-by-3 vector and r is a scalar.
 
-% This script sets up the paths of the libraries and adds all subfolders.
+assert(size(X, 2) == 3);
+assert(size(c, 1) == 1);
+assert(size(c, 2) == 3);
+assert(isscalar(r));
 
-% Set library path.
-libraryPath = 'Z:\libraries\';
+% Define objective.
+fun = @(x) sum(((X(:, 1) - x(1)).^2 + (X(:, 2) - x(2)).^2 + (X(:, 3) - x(3)).^2 - x(4).^2).^2);
 
-% xUnit is required for testing.
-addpath(genpath(fullfile(libraryPath, 'matlab_xunit\')));
-% Export Figure is required for saving figures.
-addpath(genpath(fullfile(libraryPath, 'visualization\export_fig\')));
+% Find minimum.
+x = fminsearch(fun, [c, r]);
 
-% Add all subfolders.
-y = dir('.');
-y = y([y.isdir]);
-y = y(~cellfun(@(x) strcmp(x, '.git') || strcmp(x, '.') || strcmp(x, '..') || strcmp(x, 'results') || strcmp(x, 'renderings'), {y.name}));
-% Add to path.
-cellfun(@(x) addpath(genpath(fullfile(pwd, x))), {y.name});
+% Recover solution.
+c = x(1:3);
+r = x(4);
 
-% Clean up.
-clear y;
-clear libraryPath;
+end

@@ -14,24 +14,33 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
+function test_suite = spherefitTest
+    initTestSuite;
+end
 
-% This script sets up the paths of the libraries and adds all subfolders.
+function resultTest
 
-% Set library path.
-libraryPath = 'Z:\libraries\';
+% Generate icosahedron.
+[F, V] = sphTriang(3);
+assertFalse(isempty(F));
+assertFalse(isempty(V));
 
-% xUnit is required for testing.
-addpath(genpath(fullfile(libraryPath, 'matlab_xunit\')));
-% Export Figure is required for saving figures.
-addpath(genpath(fullfile(libraryPath, 'visualization\export_fig\')));
+m = size(V, 1);
 
-% Add all subfolders.
-y = dir('.');
-y = y([y.isdir]);
-y = y(~cellfun(@(x) strcmp(x, '.git') || strcmp(x, '.') || strcmp(x, '..') || strcmp(x, 'results') || strcmp(x, 'renderings'), {y.name}));
-% Add to path.
-cellfun(@(x) addpath(genpath(fullfile(pwd, x))), {y.name});
+% Add noise to data.
+V = V + 0.1 * randn(m, 3);
 
-% Clean up.
-clear y;
-clear libraryPath;
+% Fit sphere.
+[c, r] = spherefit(V, [0, 0, 0], 1);
+fprintf('Fitted sphere is c=[%.4f, %.4f, %.4f], r=%.4f\n', c, r);
+
+% Visualise fitted sphere.
+figure;
+hold on;
+[X, Y, Z] = sphere(20);
+surf(c(1) + r*X, c(2) + r*Y, c(3) + r*Z, 'FaceColor', 'b', 'FaceAlpha', 0.4);
+daspect([1, 1, 1]);
+scatter3(V(:, 1), V(:, 2), V(:, 3), 'r*');
+view(3);
+
+end
