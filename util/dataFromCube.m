@@ -22,7 +22,7 @@ function f = dataFromCube(x, y, z, X, Y, Z, u)
 %   [X, Y, Z] if exists and zero otherwise. X, Y, and Z usually arise from
 %   calling ndgrid.
 %
-%   Note taht f is a vector of same length as x, y, and z.
+%   Note that f is a vector of same length as x, y, and z.
 
 assert(isvector(x));
 assert(isequal(size(x), size(y), size(z)));
