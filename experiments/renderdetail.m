@@ -37,11 +37,6 @@ renderPath = fullfile('./', 'renderings', name, 'ofd', resultsname);
 mkdir(renderPath);
 mkdir(fullfile(renderPath, 'detail2'));
 
-% Plot streamlines.
-n = size(D.Faces, 1);
-T = TriRep(D.Faces, D.Verts);
-P = T.incenters;
-
 % Select experiments.
 idx = 208;
 
@@ -49,11 +44,18 @@ idx = 208;
 lim = [-0.2348, -0.1382, 0.1212, 0.2178];
 
 % Vector length scaling.
-scale = 0;
+scale = 1;
 % Line width.
 lw = 1;
 % Face alpha.
 fa = 0.25;
+
+% Restrict triangulation.
+trlim = [-0.25, -0.13, 0.1, 0.23, 0, 1];
+[Faces, Verts, Fidx, Vidx] = triangsection(D.Faces, D.Verts, trlim);
+n = size(Faces, 1);
+T = TriRep(Faces, Verts);
+P = T.incenters;
 
 for k=idx
 
@@ -61,53 +63,69 @@ for k=idx
 U = E{k}.U1 + E{k}.U2;
 V = E{k}.V1 + E{k}.V2;
 W = U + V;
-nmax = max(sqrt(sum(W.^2, 2)));
 
 G = figure;
-axis square;
+axis off;
 daspect([1, 1, 1]);
 hold on;
 colormap(cmap);
 set(G, 'renderer', 'opengl');
-
-trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), D.f{1}, 'EdgeColor', 'none', 'FaceAlpha', fa);
+trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), D.f{1}(Vidx), 'EdgeColor', 'none', 'FaceAlpha', fa);
 shading interp;
-quiver3(P(:, 1), P(:, 2), P(:, 3), W(:, 1), W(:, 2), W(:, 3), scale, 'm', 'LineWidth', lw);
+quiver3(P(:, 1), P(:, 2), P(:, 3), W(Fidx, 1), W(Fidx, 2), W(Fidx, 3), scale, 'k', 'LineWidth', lw);
 view(2);
 axis(lim);
 adjustFigure3;
 
 H = figure;
-axis square;
+axis off;
 daspect([1, 1, 1]);
 hold on;
 colormap(cmap);
 set(H, 'renderer', 'opengl');
-
-trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), D.f{1}, 'EdgeColor', 'none', 'FaceAlpha', fa);
+trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), D.f{1}(Vidx), 'EdgeColor', 'none', 'FaceAlpha', fa);
 shading interp;
-quiver3(P(:, 1), P(:, 2), P(:, 3), U(:, 1), U(:, 2), U(:, 3), scale, 'r', 'LineWidth', lw);
-quiver3(P(:, 1), P(:, 2), P(:, 3), V(:, 1), V(:, 2), V(:, 3), scale, 'k', 'LineWidth', lw);
+quiver3(P(:, 1), P(:, 2), P(:, 3), U(Fidx, 1), U(Fidx, 2), U(Fidx, 3), scale, 'k', 'LineWidth', lw);
 view(2);
 axis(lim);
 adjustFigure3;
 
 I = figure;
-axis square;
+axis off;
 daspect([1, 1, 1]);
 hold on;
 colormap(cmap);
 set(I, 'renderer', 'opengl');
+trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), D.f{1}(Vidx), 'EdgeColor', 'none', 'FaceAlpha', fa);
+shading interp;
+quiver3(P(:, 1), P(:, 2), P(:, 3), V(Fidx, 1), V(Fidx, 2), V(Fidx, 3), scale, 'k', 'LineWidth', lw);
+view(2);
+axis(lim);
+adjustFigure3;
 
-trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), D.f{2}, 'EdgeColor', 'none', 'FaceAlpha', fa);
+J = figure;
+axis off;
+daspect([1, 1, 1]);
+hold on;
+colormap(cmap);
+set(J, 'renderer', 'opengl');
+trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), D.f{2}(Vidx), 'EdgeColor', 'none', 'FaceAlpha', fa);
 shading interp;
 view(2);
 axis(lim);
 adjustFigure3;
 
 % Save figures.
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1.png', filename, k)), '-png', '-r300', '-transparent', G);
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2.png', filename, k)), '-png', '-r300', '-transparent', H);
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3.png', filename, k)), '-png', '-r300', '-transparent', I);
+export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1-600dpi.png', filename, k)), '-png', '-r600', '-transparent', G);
+export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1-1200dpi.png', filename, k)), '-png', '-r1200', '-transparent', G);
+
+export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2-600dpi.png', filename, k)), '-png', '-r600', '-transparent', H);
+export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2-1200dpi.png', filename, k)), '-png', '-r1200', '-transparent', H);
+
+export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3-600dpi.png', filename, k)), '-png', '-r600', '-transparent', I);
+export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3-1200dpi.png', filename, k)), '-png', '-r1200', '-transparent', I);
+
+export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-4-600dpi.png', filename, k)), '-png', '-r600', '-transparent', J);
+export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-4-1200dpi.png', filename, k)), '-png', '-r1200', '-transparent', J);
 
 end
