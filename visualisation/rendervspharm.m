@@ -25,11 +25,11 @@ mkdir(fullfile('./', 'renderings', 'vspharm'));
 
 % Create triangulation of unit sphere.
 ref = 3;
-[F, V] = sphTriang(ref);
-n = size(F, 1);
+[Faces, Verts] = sphTriang(ref);
+n = size(Faces, 1);
 
 % Get triangle incenters.
-T = TriRep(F, V);
+T = TriRep(Faces, Verts);
 P = T.incenters;
 
 % Set interval of degrees.
@@ -38,14 +38,14 @@ N = 2;
 % Run through all degrees and all orders.
 for k=N
     % Create spherical harmonics.
-    [Y1, Y2] = vspharm(k, F, V);
+    [Y1, Y2] = vspharm(k, Faces, Verts);
     % Create scalar spherical harmonics for visualisation.
-    Ynj = spharm(k, V);
-    H = createFigure3;
+    Ynj = spharm(k, Verts);
+    F = createFigure3;
     for l=1:2*k+1
         cla;
         f = Ynj(:, l);
-        trisurf(F, V(:, 1), V(:, 2), V(:, 3), f);
+        trisurf(Faces, Verts(:, 1), Verts(:, 2), Verts(:, 3), f);
         shading interp;
         view(3);
         % Plot vector field.
@@ -55,14 +55,20 @@ for k=N
         set(gca, 'ZTick', -1:0.5:1);
         set(gca, 'CLim', [-1, 1]);
         % Save image.
-        savefigure(H, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i.png', k, l)));
+        savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-600dpi.png', k, l)), '-png', '-r600');
+        savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-1200dpi.png', k, l)), '-png', '-r1200');
+        savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-600dpi.jpg', k, l)), '-jpg', '-r600', '-q100');
+        savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-1200dpi.jpg', k, l)), '-jpg', '-r1200', '-q100');
     end
 end
 % Save last figure with colorbar.
 colorbar;
 adjustFigure3;
 set(gca, 'ZTick', -1:0.5:1);
-cbar = findobj(H, 'tag', 'Colorbar');
+cbar = findobj(F, 'tag', 'Colorbar');
 set(cbar, 'YTick', -1:0.25:1);
 set(cbar, 'TickLength', [.02 .02], 'YColor', [.3 .3 .3]);
-savefigure(H, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar.png', k, l)));
+savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar-600dpi.png', k, l)), '-png', '-r600');
+savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar-1200dpi.png', k, l)), '-png', '-r1200');
+savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar-600dpi.jpg', k, l)), '-jpg', '-r600', '-q100');
+savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar-1200dpi.jpg', k, l)), '-jpg', '-r1200', '-q100');

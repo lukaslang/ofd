@@ -14,12 +14,16 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function savefigure(h, file)
+function savefigure(h, file, format, density, quality)
 %SAVEFIGURE Saves a figure.
 %
 %   SAVEFIGURE(h, file) takes a figure handle h and a file and saves the
 %   figure.
 
-export_fig(file, '-png', '-r300', '-zbuffer', '-transparent', h);
-
+if(nargin == 2)
+    export_fig(file, '-png', '-r300', '-zbuffer', '-transparent', h);    
+elseif(nargin == 4)
+    export_fig(file, format, density, '-zbuffer', '-transparent', h);
+else
+    export_fig(file, format, quality, density, '-zbuffer', '-transparent', h);
 end

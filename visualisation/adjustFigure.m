@@ -17,5 +17,5 @@
 function adjustFigure
 %ADJUSTFIGURE Adjusts a figure for print.
     set(gca, 'FontName', 'Helvetica' );
-    set(gca, 'FontSize', 12);
+    set(gca, 'FontSize', 14);
 end

@@ -27,7 +27,7 @@ function f = createFigure(cmap, xmin, xmax, ymin, ymax)
 % Note that CREATEFIGURE uses zbuffer as renderer!
 f = figure('Renderer', 'zbuffer');
 axis square;
-axis off;
+daspect([1, 1, 1]);
 hold on;
 % Set colormap.
 if(nargin > 0)

@@ -60,7 +60,7 @@ idx = [111, 208];
 for k=idx
 
 % Plot residual vector.
-R = createFigure;
+F = createFigure;
 plot(0:length(E{k}.L.resvec)-1, E{k}.L.resvec/E{k}.L.rhs, 'b-');
 if(isempty(E{k}.L.restart))
     pos = E{k}.L.iter(2);
@@ -71,32 +71,48 @@ plot(pos, E{k}.L.relres, 'rx');
 text(pos, E{k}.L.relres,  sprintf('%0.5f', E{k}.L.relres), 'horizontal', 'right', 'vertical', 'bottom');
 axis on;
 adjustFigure;
-savefigure(R, fullfile(renderPath, 'residual', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'residual', sprintf('%s-%i.png', filename, k)));
 
 % Plot coefficients.
-C = createFigure;
+F = createFigure;
 bar(E{k}.u);
 axis on;
 adjustFigure;
-savefigure(C, fullfile(renderPath, 'coefficientsu', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'coefficientsu', sprintf('%s-%i.png', filename, k)));
 cla;
 bar(E{k}.v);
 axis on;
 adjustFigure;
-savefigure(C, fullfile(renderPath, 'coefficientsv', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'coefficientsv', sprintf('%s-%i.png', filename, k)));
 
 % Plot data.
 for l=1:2
-    F = createFigure3(cmap, [-1, 1, -1, 1, 0, 1]);
+    F = createFigure3(cmap);
     trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), D.f{l}, 'EdgeColor', 'none');
     shading interp;
     view(3);
+    set(gca, 'ZLim', [0, 1]);
+    set(gca, 'XLim', [-1, 1]);
+    set(gca, 'YLim', [-1, 1]);
     adjustFigure3;
-    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i.png', filename, k, l)));
+    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i-600dpi.png', filename, k, l)), '-png', '-r600');
+    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i-1200dpi.png', filename, k, l)), '-png', '-r1200');
+    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
+    
+    % Rotate by pi.
+    [az, el] = view;
+    view(az + 180, el);
+    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i-rotated-600dpi.png', filename, k, l)), '-png', '-r600');
+    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i-rotated-1200dpi.png', filename, k, l)), '-png', '-r1200');
+    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i-rotated-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+    savefigure(F, fullfile(renderPath, 'data3', sprintf('%s-%i-%i-rotated-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
     
     view(2);
-    adjustFigure3;
-    savefigure(F, fullfile(renderPath, 'data2', sprintf('%s-%i-%i.png', filename, k, l)));
+    savefigure(F, fullfile(renderPath, 'data2', sprintf('%s-%i-%i-600dpi.png', filename, k, l)), '-png', '-r600');
+    savefigure(F, fullfile(renderPath, 'data2', sprintf('%s-%i-%i-1200dpi.png', filename, k, l)), '-png', '-r1200');
+    savefigure(F, fullfile(renderPath, 'data2', sprintf('%s-%i-%i-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+    savefigure(F, fullfile(renderPath, 'data2', sprintf('%s-%i-%i-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
 end
 
 % Plot data and flows.
@@ -108,36 +124,53 @@ W = U + V;
 % Compute colour space scaling.
 nmax = max(sqrt(sum(W.^2, 2)));
 
-Z = createFigure3(cmap, [-1, 1, -1, 1, 0, 1]);
+F = createFigure3(cmap, [-1, 1, -1, 1, 0, 1]);
 c = double(squeeze(computeColour(W(:, 1)/nmax, W(:, 2)/nmax))) ./ 255;
 trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
 view(3);
 adjustFigure3;
-savefigure(Z, fullfile(renderPath, 'flow3', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'flow3', sprintf('%s-%i-%i-600dpi.png', filename, k, l)), '-png', '-r600');
+savefigure(F, fullfile(renderPath, 'flow3', sprintf('%s-%i-%i-1200dpi.png', filename, k, l)), '-png', '-r1200');
+savefigure(F, fullfile(renderPath, 'flow3', sprintf('%s-%i-%i-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+savefigure(F, fullfile(renderPath, 'flow3', sprintf('%s-%i-%i-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
 view(2);
-adjustFigure3;
-savefigure(Z, fullfile(renderPath, 'flow2', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'flow2', sprintf('%s-%i-%i-600dpi.png', filename, k, l)), '-png', '-r600');
+savefigure(F, fullfile(renderPath, 'flow2', sprintf('%s-%i-%i-1200dpi.png', filename, k, l)), '-png', '-r1200');
+savefigure(F, fullfile(renderPath, 'flow2', sprintf('%s-%i-%i-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+savefigure(F, fullfile(renderPath, 'flow2', sprintf('%s-%i-%i-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
 
 % Plot decomposition.
-Z = createFigure3(cmap, [-1, 1, -1, 1, 0, 1]);
+F = createFigure3(cmap, [-1, 1, -1, 1, 0, 1]);
 c = double(squeeze(computeColour(U(:, 1)/nmax, U(:, 2)/nmax))) ./ 255;
 trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
 view(3);
 adjustFigure3;
-savefigure(Z, fullfile(renderPath, 'flowu3', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'flowu3', sprintf('%s-%i-%i-600dpi.png', filename, k, l)), '-png', '-r600');
+savefigure(F, fullfile(renderPath, 'flowu3', sprintf('%s-%i-%i-1200dpi.png', filename, k, l)), '-png', '-r1200');
+savefigure(F, fullfile(renderPath, 'flowu3', sprintf('%s-%i-%i-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+savefigure(F, fullfile(renderPath, 'flowu3', sprintf('%s-%i-%i-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
 view(2);
 adjustFigure3;
-savefigure(Z, fullfile(renderPath, 'flowu2', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'flowu2', sprintf('%s-%i-%i-600dpi.png', filename, k, l)), '-png', '-r600');
+savefigure(F, fullfile(renderPath, 'flowu2', sprintf('%s-%i-%i-1200dpi.png', filename, k, l)), '-png', '-r1200');
+savefigure(F, fullfile(renderPath, 'flowu2', sprintf('%s-%i-%i-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+savefigure(F, fullfile(renderPath, 'flowu2', sprintf('%s-%i-%i-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
 
-Z = createFigure3(cmap, [-1, 1, -1, 1, 0, 1]);
+F = createFigure3(cmap, [-1, 1, -1, 1, 0, 1]);
 c = double(squeeze(computeColour(V(:, 1)/nmax, V(:, 2)/nmax))) ./ 255;
 trisurf(D.Faces, D.Verts(:, 1), D.Verts(:, 2), D.Verts(:, 3), 'FaceColor', 'flat', 'FaceVertexCData', c, 'EdgeColor', 'none');
 view(3);
 adjustFigure3;
-savefigure(Z, fullfile(renderPath, 'flowv3', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'flowv3', sprintf('%s-%i-%i-600dpi.png', filename, k, l)), '-png', '-r600');
+savefigure(F, fullfile(renderPath, 'flowv3', sprintf('%s-%i-%i-1200dpi.png', filename, k, l)), '-png', '-r1200');
+savefigure(F, fullfile(renderPath, 'flowv3', sprintf('%s-%i-%i-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+savefigure(F, fullfile(renderPath, 'flowv3', sprintf('%s-%i-%i-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
 view(2);
 adjustFigure3;
-savefigure(Z, fullfile(renderPath, 'flowv2', sprintf('%s-%i.png', filename, k)));
+savefigure(F, fullfile(renderPath, 'flowv2', sprintf('%s-%i-%i-600dpi.png', filename, k, l)), '-png', '-r600');
+savefigure(F, fullfile(renderPath, 'flowv2', sprintf('%s-%i-%i-1200dpi.png', filename, k, l)), '-png', '-r1200');
+savefigure(F, fullfile(renderPath, 'flowv2', sprintf('%s-%i-%i-600dpi.jpg', filename, k, l)), '-jpg', '-r600', '-q100');
+savefigure(F, fullfile(renderPath, 'flowv2', sprintf('%s-%i-%i-1200dpi.jpg', filename, k, l)), '-jpg', '-r1200', '-q100');
 
 close all;
 end

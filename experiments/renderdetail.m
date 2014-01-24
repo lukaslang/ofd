@@ -116,16 +116,24 @@ axis(lim);
 adjustFigure3;
 
 % Save figures.
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1-600dpi.png', filename, k)), '-png', '-r600', '-transparent', G);
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1-1200dpi.png', filename, k)), '-png', '-r1200', '-transparent', G);
+savefigure(G, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1-600dpi.png', filename, k)), '-png', '-r600');
+savefigure(G, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1-1200dpi.png', filename, k)), '-png', '-r1200');
+savefigure(G, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1-600dpi.jpg', filename, k)), '-jpg', '-r600', '-q100');
+savefigure(G, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-1-1200dpi.jpg', filename, k)), '-jpg', '-r1200', '-q100');
 
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2-600dpi.png', filename, k)), '-png', '-r600', '-transparent', H);
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2-1200dpi.png', filename, k)), '-png', '-r1200', '-transparent', H);
+savefigure(H, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2-600dpi.png', filename, k)), '-png', '-r600');
+savefigure(H, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2-1200dpi.png', filename, k)), '-png', '-r1200');
+savefigure(H, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2-600dpi.jpg', filename, k)), '-jpg', '-r600', '-q100');
+savefigure(H, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-2-1200dpi.jpg', filename, k)), '-jpg', '-r1200', '-q100');
 
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3-600dpi.png', filename, k)), '-png', '-r600', '-transparent', I);
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3-1200dpi.png', filename, k)), '-png', '-r1200', '-transparent', I);
+savefigure(I, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3-600dpi.png', filename, k)), '-png', '-r600');
+savefigure(I, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3-1200dpi.png', filename, k)), '-png', '-r1200');
+savefigure(I, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3-600dpi.jpg', filename, k)), '-jpg', '-r600', '-q100');
+savefigure(I, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-3-1200dpi.jpg', filename, k)), '-jpg', '-r1200', '-q100');
 
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-4-600dpi.png', filename, k)), '-png', '-r600', '-transparent', J);
-export_fig(fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-4-1200dpi.png', filename, k)), '-png', '-r1200', '-transparent', J);
+savefigure(J, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-4-600dpi.png', filename, k)), '-png', '-r600');
+savefigure(J, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-4-1200dpi.png', filename, k)), '-png', '-r1200');
+savefigure(J, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-4-600dpi.jpg', filename, k)), '-jpg', '-r600', '-q100');
+savefigure(J, fullfile(renderPath, 'detail2', sprintf('%s-%i-detail-4-1200dpi.jpg', filename, k)), '-jpg', '-r1200', '-q100');
 
 end

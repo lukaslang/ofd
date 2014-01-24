@@ -54,10 +54,22 @@ set(gca, 'YLim', [-1, 1]);
 set(gca, 'ZLim', [0, 1e-3]);
 adjustFigure3;
 axis off;
-file = fullfile(renderPath, 'colourwheel3.png');
-export_fig(file, '-png', '-r300', '-transparent', F);
+file = fullfile(renderPath, 'colourwheel3-600dpi.png');
+savefigure(F, file, '-png', '-r600');
+file = fullfile(renderPath, 'colourwheel3-1200dpi.png');
+savefigure(F, file, '-png', '-r1200');
+file = fullfile(renderPath, 'colourwheel3-600dpi.jpg');
+savefigure(F, file, '-jpg', '-r600', '-q100');
+file = fullfile(renderPath, 'colourwheel3-1200dpi.jpg');
+savefigure(F, file, '-jpg', '-r1200', '-q100');
 
 % Save 2D colour wheel.
 view(2);
-file = fullfile(renderPath, 'colourwheel2.png');
-export_fig(file, '-png', '-r300', '-transparent', F);
+file = fullfile(renderPath, 'colourwheel2-600dpi.png');
+savefigure(F, file, '-png', '-r600');
+file = fullfile(renderPath, 'colourwheel2-1200dpi.png');
+savefigure(F, file, '-png', '-r1200');
+file = fullfile(renderPath, 'colourwheel2-600dpi.jpg');
+savefigure(F, file, '-jpg', '-r600', '-q100');
+file = fullfile(renderPath, 'colourwheel2-1200dpi.jpg');
+savefigure(F, file, '-jpg', '-r1200', '-q100');
