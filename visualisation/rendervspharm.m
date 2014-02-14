@@ -67,7 +67,7 @@ adjustFigure3;
 set(gca, 'ZTick', -1:0.5:1);
 cbar = findobj(F, 'tag', 'Colorbar');
 set(cbar, 'YTick', -1:0.25:1);
-set(cbar, 'TickLength', [.02 .02], 'YColor', [.3 .3 .3]);
+set(cbar, 'TickLength', [.02 .02], 'YColor', [0 0 0]);
 savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar-600dpi.png', k, l)), '-png', '-r600');
 savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar-1200dpi.png', k, l)), '-png', '-r1200');
 savefigure(F, fullfile('./', 'renderings', 'vspharm', sprintf('vspharm-deg-%i-ord-%i-colourbar-600dpi.jpg', k, l)), '-jpg', '-r600', '-q100');
