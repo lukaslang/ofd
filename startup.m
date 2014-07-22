@@ -24,6 +24,8 @@ libraryPath = 'Z:\libraries\';
 addpath(genpath(fullfile(libraryPath, 'matlab_xunit\')));
 % Export Figure is required for saving figures.
 addpath(genpath(fullfile(libraryPath, 'visualization\export_fig\')));
+% Lebedev cubature is required for numerical integration on the sphere.
+addpath(genpath(fullfile(libraryPath, 'lebedev\')));
 
 % Add all subfolders.
 y = dir('.');

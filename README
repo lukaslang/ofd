@@ -46,6 +46,9 @@ URL: http://www.mathworks.com/matlabcentral/fileexchange/23629-exportfig
 sphereFit: used for fitting a sphere to data.
 http://www.mathworks.com/matlabcentral/fileexchange/34129-sphere-fit-least-squared
 
+Lebedev cubature: used for numerical integration on the sphere.
+http://www.mathworks.com/matlabcentral/fileexchange/27097-getlebedevsphere
+
 4. Usage
 
 For easier use we provide a startup script (startup.m), which sets up the Matlab search path. It includes required libraries and adds required subdirectories. Make sure to download the required packages and to set the library paths properly. Then simply run the startup script.
