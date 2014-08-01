@@ -15,7 +15,7 @@
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
 function U = matrixU(dim, Z, Fc, V, ac)
-%MATRIXAT Creates the matrix U.
+%MATRIXU Creates the matrix U.
 %
 %   U = MATRIXU(dim, Z, Fc, V, ac) returns a symmetric full matrix U
 %   with surface integrals u_{pq} = int_S Z_p*Z_q.
