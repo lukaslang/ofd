@@ -1,0 +1,282 @@
+% Copyright 2013 Clemens Kirisits and Lukas Lang
+%
+% This file is part of OFD.
+%
+%    OFD is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    OFD is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
+function test_suite = vgradTest
+    initTestSuite;
+end
+
+function vgradZeroVectorFieldTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+m = size(F, 1);
+n = size(V, 1);
+
+% Create a zero piecewise constant vector field on the unit sphere.
+Y = zeros(n, 3);
+
+% Compute vectorial gradient of Y.
+G = vgrad(F, V, Y, ones(m, 3));
+assertAlmostEqual(G, zeros(m, 3), 1e-12);
+
+end
+
+function vgradHeightTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+m = size(F, 1);
+n = size(V, 1);
+
+% Create a zero piecewise constant vector field on the unit sphere.
+Y = zeros(n, 3);
+
+H = height(F, V);
+
+% Compute vectorial gradient of Y.
+G = vgrad(F, V, Y, ones(m, 3), H);
+assertAlmostEqual(G, zeros(m, 3), 1e-12);
+
+end
+
+function vgradlenHTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+m = size(F, 1);
+n = size(V, 1);
+
+% Create a zero piecewise constant vector field on the unit sphere.
+Y = zeros(n, 3);
+
+H = height(F, V);
+lenH = sum(H(:, 2:3, :).^2, 3);
+
+% Compute vectorial gradient of Y.
+G = vgrad(F, V, Y, ones(m, 3), H, lenH);
+assertAlmostEqual(G, zeros(m, 3), 1e-12);
+
+end
+
+function vgradFaceNormalsTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+m = size(F, 1);
+n = size(V, 1);
+
+% Create a zero piecewise constant vector field on the unit sphere.
+Y = zeros(n, 3);
+
+H = height(F, V);
+lenH = sum(H(:, 2:3, :).^2, 3);
+T = TriRep(F, V);
+FN = -T.faceNormals;
+
+% Compute vectorial gradient of Y.
+G = vgrad(F, V, Y, ones(m, 3), H, lenH, FN);
+assertAlmostEqual(G, zeros(m, 3), 1e-12);
+
+end
+
+function vgradSphereVisualisationTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+
+% Create piecewise constant vector field on the unit sphere.
+deg = 2;
+[Y1, ~] = vspharm(deg, F, V);
+
+% Compute triangulation of incenters.
+T = TriRep(F, V);
+DV = T.incenters;
+% Compute triangles spanned by incenters of neighboring faces.
+DF = T.neighbors;
+
+% Set parameters for unit sphere.
+Ns = 0;
+Y = spharm(Ns, [0, 0, 1]);
+c = 1 / Y;
+% Compute tangential basis at incenters.
+[Z, IC] = surftangentialbasis(Ns, c, F, V);
+Z1 = squeeze(Z(:, 1, :));
+Z2 = squeeze(Z(:, 2, :));
+% Compute orthonormal basis.
+[~, Z1, Z2] = orthonormalise(Z1, Z2);
+
+% Create spherical harmonics for visualisation.
+Ynj = spharm(deg, V);
+
+for k=1:2*deg+1
+    % Visualise type 2 vector spherical harmonics.
+    Y = squeeze(Y1(:, k, :));
+    % Compute gradient of Y.
+    G = vgrad(DF, DV, Y, Z1);
+    f = Ynj(:, k);
+    figure;
+    subplot(1, 2, 1);
+    axis([-1, 1, -1, 1, -1, 1]);
+    hold on;
+    trisurf(F, V(:, 1), V(:, 2), V(:, 3), f);
+    shading interp;
+    daspect([1, 1, 1]);
+    view(3);
+    % Plot vector field.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Y(:, 1), Y(:, 2), Y(:, 3), 1, 'r');
+    % Plot second vector field.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z1(:, 1), Z1(:, 2), Z1(:, 3), 1, 'y');
+    % Plot gradient.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), G(:, 1), G(:, 2), G(:, 3), 1, 'b');
+    subplot(1, 2, 2);
+    % Compute squared norm of gradient.
+    f = sum(G .^2, 2);
+    axis([-1, 1, -1, 1, -1, 1]);
+    hold on;
+    trisurf(F, V(:, 1), V(:, 2), V(:, 3), f);
+    daspect([1, 1, 1]);
+    view(3);
+end
+
+for k=1:2*deg+1
+    % Visualise type 2 vector spherical harmonics.
+    Y = squeeze(Y1(:, k, :));
+    % Compute gradient of Y.
+    G = vgrad(DF, DV, Y, Z2);
+    f = Ynj(:, k);
+    figure;
+    subplot(1, 2, 1);
+    axis([-1, 1, -1, 1, -1, 1]);
+    hold on;
+    trisurf(F, V(:, 1), V(:, 2), V(:, 3), f);
+    shading interp;
+    daspect([1, 1, 1]);
+    view(3);
+    % Plot vector field.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Y(:, 1), Y(:, 2), Y(:, 3), 1, 'r');
+    % Plot second vector field.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z2(:, 1), Z2(:, 2), Z2(:, 3), 1, 'y');
+    % Plot gradient.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), G(:, 1), G(:, 2), G(:, 3), 1, 'b');
+    subplot(1, 2, 2);
+    % Compute squared norm of gradient.
+    f = sum(G .^2, 2);
+    axis([-1, 1, -1, 1, -1, 1]);
+    hold on;
+    trisurf(F, V(:, 1), V(:, 2), V(:, 3), f);
+    daspect([1, 1, 1]);
+    view(3);
+end
+
+end
+
+function perturbedSphereVisualisationTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+
+% Create piecewise constant vector field on the unit sphere.
+deg = 2;
+[Y1, ~] = vspharm(deg, F, V);
+
+% Set parameters for perturbed sphere.
+Ns = 0:2;
+Y = spharm(0, [0, 0, 1]);
+c = [1 / Y, 0, 0, 0, 0, 0, 0, 0.5, 0]';
+
+% Compute synthesis.
+S = surfsynth(Ns, V, c);
+
+% Compute triangulation of incenters.
+T = TriRep(F, S);
+DV = T.incenters;
+% Compute triangles spanned by incenters of neighboring faces.
+DF = T.neighbors;
+% Compute incenters.
+DT = TriRep(DF, DV);
+IC = DT.incenters;
+
+% Compute tangential basis at incenters.
+[Z, ~] = surftangentialbasis(Ns, c, F, V);
+Z1 = squeeze(Z(:, 1, :));
+Z2 = squeeze(Z(:, 2, :));
+% Compute orthonormal basis.
+[~, E1, E2] = orthonormalise(Z1, Z2);
+
+% Create spherical harmonics for visualisation.
+Ynj = spharm(deg, V);
+
+for k=1:2*deg+1
+    % Visualise type 2 vector spherical harmonics.
+    Y = squeeze(Y1(:, k, :));
+    % Compute gradient of Y.
+    G = vgrad(DF, DV, Y, E1);
+    f = Ynj(:, k);
+    figure;
+    subplot(1, 2, 1);
+    axis([-1, 1, -1, 1, -1, 1]);
+    hold on;
+    trisurf(F, S(:, 1), S(:, 2), S(:, 3), f);
+    shading interp;
+    daspect([1, 1, 1]);
+    view(3);
+    % Plot vector field.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Y(:, 1), Y(:, 2), Y(:, 3), 1, 'r');
+    % Plot second vector field.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), E1(:, 1), E1(:, 2), E1(:, 3), 1, 'y');
+    % Plot gradient.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), G(:, 1), G(:, 2), G(:, 3), 1, 'b');
+    subplot(1, 2, 2);
+    % Compute squared norm of gradient.
+    f = sum(G .^2, 2);
+    axis([-1, 1, -1, 1, -1, 1]);
+    hold on;
+    trisurf(F, S(:, 1), S(:, 2), S(:, 3), f);
+    daspect([1, 1, 1]);
+    view(3);
+end
+
+for k=1:2*deg+1
+    % Visualise type 2 vector spherical harmonics.
+    Y = squeeze(Y1(:, k, :));
+    % Compute gradient of Y.
+    G = vgrad(DF, DV, Y, E2);
+    f = Ynj(:, k);
+    figure;
+    subplot(1, 2, 1);
+    axis([-1, 1, -1, 1, -1, 1]);
+    hold on;
+    trisurf(F, S(:, 1), S(:, 2), S(:, 3), f);
+    shading interp;
+    daspect([1, 1, 1]);
+    view(3);
+    % Plot vector field.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Y(:, 1), Y(:, 2), Y(:, 3), 1, 'r');
+    % Plot second vector field.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), E2(:, 1), E2(:, 2), E2(:, 3), 1, 'y');
+    % Plot gradient.
+    quiver3(IC(:, 1), IC(:, 2), IC(:, 3), G(:, 1), G(:, 2), G(:, 3), 1, 'b');
+    subplot(1, 2, 2);
+    % Compute squared norm of gradient.
+    f = sum(G .^2, 2);
+    axis([-1, 1, -1, 1, -1, 1]);
+    hold on;
+    trisurf(F, S(:, 1), S(:, 2), S(:, 3), f);
+    daspect([1, 1, 1]);
+    view(3);
+end
+
+end
