@@ -92,6 +92,52 @@ assertAlmostEqual(G, zeros(m, 3), 1e-12);
 
 end
 
+% TODO: Write testcase for tangent vgrad!
+function vgradTangentTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(4);
+m = size(F, 1);
+
+% Compute triangulation of incenters.
+T = TriRep(F, V);
+DV = T.incenters;
+% Compute triangles spanned by incenters of neighboring faces.
+DF = T.neighbors;
+
+% Set parameters for unit sphere.
+Ns = 0;
+Y = spharm(Ns, [0, 0, 1]);
+c = 1 / Y;
+% Compute tangential basis at incenters.
+[Z, ~] = surftangentialbasis(Ns, c, F, V);
+Z = squeeze(Z(:, 1, :));
+
+% Project to tangent space.
+FN = -T.faceNormals;
+Z = Z - bsxfun(@times, FN, dot(Z, FN, 2));
+assertAlmostEqual(dot(Z, FN, 2), zeros(m, 1));
+
+% Create piecewise constant vector field on the unit sphere.
+deg = 2;
+k = 1;
+[Y, ~] = vspharm(deg, F, V);
+Y = squeeze(Y(:, k, :));
+
+% Compute covariant derivative.
+G = vgrad(DF, DV, Y, Z);
+
+% Check if tangential to given triangulation (DF, DV).
+DT = TriRep(DF, DV);
+FN = -DT.faceNormals;
+assertAlmostEqual(dot(G, FN, 2), zeros(m, 1));
+
+% Check if tangential to original triangulation (F, V).
+FN = -T.faceNormals;
+assertAlmostEqual(dot(G, FN, 2), zeros(m, 1), 7e-3);
+
+end
+
 function vgradSphereVisualisationTest
 
 % Create triangulation of unit sphere.
@@ -186,7 +232,8 @@ end
 function perturbedSphereVisualisationTest
 
 % Create triangulation of unit sphere.
-[F, V] = sphTriang(4);
+[F, V] = sphTriang(5);
+m = size(F, 1);
 
 % Create piecewise constant vector field on the unit sphere.
 deg = 2;
@@ -198,23 +245,30 @@ Y = spharm(0, [0, 0, 1]);
 c = [1 / Y, 0, 0, 0, 0, 0, 0, 0.5, 0]';
 
 % Compute synthesis.
-S = surfsynth(Ns, V, c);
+Vs = surfsynth(Ns, V, c);
 
 % Compute triangulation of incenters.
-T = TriRep(F, S);
+T = TriRep(F, Vs);
+FN = -T.faceNormals;
 DV = T.incenters;
 % Compute triangles spanned by incenters of neighboring faces.
 DF = T.neighbors;
-% Compute incenters.
-DT = TriRep(DF, DV);
-IC = DT.incenters;
 
 % Compute tangential basis at incenters.
-[Z, ~] = surftangentialbasis(Ns, c, F, V);
+[Z, IC] = surftangentialbasis(Ns, c, F, V);
 Z1 = squeeze(Z(:, 1, :));
 Z2 = squeeze(Z(:, 2, :));
+assertAlmostEqual(dot(Z1, FN, 2), zeros(m, 1), 7e-3);
+assertAlmostEqual(dot(Z2, FN, 2), zeros(m, 1), 7e-3);
+
 % Compute orthonormal basis.
 [~, E1, E2] = orthonormalise(Z1, Z2);
+assertAlmostEqual(dot(E1, FN, 2), zeros(m, 1), 7e-3);
+assertAlmostEqual(dot(E2, FN, 2), zeros(m, 1), 7e-3);
+
+% Check if orthogonal.
+ip = sum(E1 .* E2, 2);
+assertAlmostEqual(zeros(m, 1), ip, 1e-12);
 
 % Create spherical harmonics for visualisation.
 Ynj = spharm(deg, V);
@@ -223,13 +277,13 @@ for k=1:2*deg+1
     % Visualise type 2 vector spherical harmonics.
     Y = squeeze(Y1(:, k, :));
     % Compute gradient of Y.
-    G = vgrad(DF, DV, Y, E1);
+    G = vgrad(DF, DV, Y, E1);    
     f = Ynj(:, k);
     figure;
     subplot(1, 2, 1);
     axis([-1, 1, -1, 1, -1, 1]);
     hold on;
-    trisurf(F, S(:, 1), S(:, 2), S(:, 3), f);
+    trisurf(F, Vs(:, 1), Vs(:, 2), Vs(:, 3), f);
     shading interp;
     daspect([1, 1, 1]);
     view(3);
@@ -244,7 +298,7 @@ for k=1:2*deg+1
     f = sum(G .^2, 2);
     axis([-1, 1, -1, 1, -1, 1]);
     hold on;
-    trisurf(F, S(:, 1), S(:, 2), S(:, 3), f);
+    trisurf(F, Vs(:, 1), Vs(:, 2), Vs(:, 3), f);
     daspect([1, 1, 1]);
     view(3);
 end
@@ -259,7 +313,7 @@ for k=1:2*deg+1
     subplot(1, 2, 1);
     axis([-1, 1, -1, 1, -1, 1]);
     hold on;
-    trisurf(F, S(:, 1), S(:, 2), S(:, 3), f);
+    trisurf(F, Vs(:, 1), Vs(:, 2), Vs(:, 3), f);
     shading interp;
     daspect([1, 1, 1]);
     view(3);
@@ -274,7 +328,7 @@ for k=1:2*deg+1
     f = sum(G .^2, 2);
     axis([-1, 1, -1, 1, -1, 1]);
     hold on;
-    trisurf(F, S(:, 1), S(:, 2), S(:, 3), f);
+    trisurf(F, Vs(:, 1), Vs(:, 2), Vs(:, 3), f);
     daspect([1, 1, 1]);
     view(3);
 end

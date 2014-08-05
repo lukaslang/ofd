@@ -77,6 +77,6 @@ end
 ip = dot(G, FN, 2);
 
 % Project onto tangent space.
-G = G - bsxfun(@times, G, ip);
+G = G - bsxfun(@times, FN, ip);
 
 end
