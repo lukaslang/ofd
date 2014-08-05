@@ -31,13 +31,13 @@ Y = spharm(N, [0, 0, 1]);
 c = 1 / Y;
 
 % Compute synthesis.
-[S, rho] = surfsynth(N, V, c);
+[Vs, rho] = surfsynth(N, V, c);
 
 % Check if surface is unit sphere.
-len = sqrt(sum(S .^ 2, 2));
+len = sqrt(sum(Vs .^ 2, 2));
 assertAlmostEqual(len, ones(n, 1), 1e-12);
 
-% Check if function rho ise identically one.
+% Check if function rho is identically one.
 assertAlmostEqual(rho, ones(n, 1), 1e-12);
 
 % Compute tangential basis at incenters.
@@ -57,12 +57,81 @@ assertAlmostEqual(sqrt(sum(Z2.^2, 2)), ones(m, 1), 1e-12);
 figure;
 axis([-1, 1, -1, 1, -1, 1]);
 hold on;
-trisurf(F, S(:, 1), S(:, 2), S(:, 3), ip);
+trisurf(F, Vs(:, 1), Vs(:, 2), Vs(:, 3), ip);
 daspect([1, 1, 1]);
 colorbar;
 view(3);
 quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z1(:, 1), Z1(:, 2), Z1(:, 3), 1, 'r');
 quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z2(:, 1), Z2(:, 2), Z2(:, 3), 1, 'b');
+end
+
+function identityMapIncentersTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(5);
+
+% Set parameters for unit sphere.
+N = 0;
+Y = spharm(N, [0, 0, 1]);
+c = 1 / Y;
+
+% Compute tangential basis at incenters.
+[~, IC] = surftangentialbasis(N, c, F, V);
+
+% Check if orthogonal to surface normal.
+T = TriRep(F, V);
+len = sqrt(sum(T.incenters .^2, 2));
+assertAlmostEqual(bsxfun(@rdivide, T.incenters, len), IC, 1e-12);
+
+end
+
+function identityMapTangentialTest
+
+% Create triangulation of unit sphere.
+[F, V] = sphTriang(5);
+m = size(F, 1);
+
+% Compute face normals.
+T = TriRep(F, V);
+FN = -T.faceNormals;
+
+% Set parameters for unit sphere.
+Ns = 0;
+Y = spharm(Ns, [0, 0, 1]);
+c = 1 / Y;
+
+% Compute tangential basis at incenters.
+[Z, IC] = surftangentialbasis(Ns, c, F, V);
+Z1 = squeeze(Z(:, 1, :));
+Z2 = squeeze(Z(:, 2, :));
+
+% Plot tangential basis and dot product with face normals.
+figure;
+subplot(1, 2, 1);
+axis([-1, 1, -1, 1, -1, 1]);
+hold on;
+trisurf(F, V(:, 1), V(:, 2), V(:, 3), dot(Z1, FN, 2));
+daspect([1, 1, 1]);
+colorbar;
+view(3);
+quiver3(IC(:, 1), IC(:, 2), IC(:, 3), FN(:, 1), FN(:, 2), FN(:, 3), 1, 'r');
+quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z1(:, 1), Z1(:, 2), Z1(:, 3), 1, 'b');
+
+subplot(1, 2, 2);
+axis([-1, 1, -1, 1, -1, 1]);
+hold on;
+trisurf(F, V(:, 1), V(:, 2), V(:, 3), dot(Z2, FN, 2));
+daspect([1, 1, 1]);
+colorbar;
+view(3);
+quiver3(IC(:, 1), IC(:, 2), IC(:, 3), FN(:, 1), FN(:, 2), FN(:, 3), 1, 'r');
+quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z2(:, 1), Z2(:, 2), Z2(:, 3), 1, 'b');
+
+% Check if orthogonal to surface normal.
+warning('Note that surftangentialbasis does not return vectors tangent to face normals!');
+assertAlmostEqual(dot(Z1, FN, 2), zeros(m, 1), 4e-3);
+assertAlmostEqual(dot(Z2, FN, 2), zeros(m, 1), 4e-3);
+
 end
 
 function scaledSphereTest
@@ -73,22 +142,22 @@ n = size(V, 1);
 m = size(F, 1);
 
 % Set parameters for unit sphere.
-N = 0;
-Y = spharm(N, [0, 0, 1]);
+Ns = 0;
+Y = spharm(Ns, [0, 0, 1]);
 c = 2 / Y;
 
 % Compute synthesis.
-[S, rho] = surfsynth(N, V, c);
+[Vs, rho] = surfsynth(Ns, V, c);
 
 % Check if surface is sphere of radius two.
-len = sqrt(sum(S .^ 2, 2));
+len = sqrt(sum(Vs .^ 2, 2));
 assertAlmostEqual(len, 2 * ones(n, 1), 1e-12);
 
 % Check if function rho ise identically two.
 assertAlmostEqual(rho, 2 * ones(n, 1), 1e-12);
 
 % Compute tangential basis at incenters.
-[Z, IC] = surftangentialbasis(N, c, F, V);
+[Z, IC] = surftangentialbasis(Ns, c, F, V);
 Z1 = squeeze(Z(:, 1, :));
 Z2 = squeeze(Z(:, 2, :));
 
@@ -100,7 +169,7 @@ assertAlmostEqual(zeros(m, 1), ip, 1e-12);
 figure;
 axis([-2, 2, -2, 2, -2, 2]);
 hold on;
-trisurf(F, S(:, 1), S(:, 2), S(:, 3), ip);
+trisurf(F, Vs(:, 1), Vs(:, 2), Vs(:, 3), ip);
 daspect([1, 1, 1]);
 colorbar;
 view(3);
@@ -112,17 +181,22 @@ function perturbedSphereVisualisationTest
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
+m = size(F, 1);
 
 % Set parameters for unit sphere.
-N = 0:2;
+Ns = 0:2;
 Y = spharm(0, [0, 0, 1]);
 c = [1 / Y, 0, 0, 0, 0, 0, 0, 0.5, 0]';
 
 % Compute synthesis.
-S = surfsynth(N, V, c);
+Vs = surfsynth(Ns, V, c);
+
+% Compute face normals.
+T = TriRep(F, Vs);
+FN = -T.faceNormals;
 
 % Compute tangential basis at incenters.
-[Z, IC] = surftangentialbasis(N, c, F, V);
+[Z, IC] = surftangentialbasis(Ns, c, F, V);
 Z1 = squeeze(Z(:, 1, :));
 Z2 = squeeze(Z(:, 2, :));
 
@@ -133,10 +207,16 @@ ip = sum(Z1 .* Z2, 2);
 figure;
 axis([-2, 2, -2, 2, -2, 2]);
 hold on;
-trisurf(F, S(:, 1), S(:, 2), S(:, 3), ip);
+trisurf(F, Vs(:, 1), Vs(:, 2), Vs(:, 3), ip);
 daspect([1, 1, 1]);
 colorbar;
 view(3);
 quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z1(:, 1), Z1(:, 2), Z1(:, 3), 1, 'r');
 quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z2(:, 1), Z2(:, 2), Z2(:, 3), 1, 'b');
+
+% Check if orthogonal to surface normal.
+warning('Note that surftangentialbasis does not return vectors tangent to face normals!');
+assertAlmostEqual(dot(Z1, FN, 2), zeros(m, 1), 7e-3);
+assertAlmostEqual(dot(Z2, FN, 2), zeros(m, 1), 7e-3);
+
 end

@@ -14,34 +14,36 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function Z = surfpushforward(N, c, F, V, Y)
+function [Z, ICs] = surfpushforward(Ns, c, F, V, Y)
 %SURFPUSHFORWARD Computes the pushforward of tangent vector fields on the 
 %unit sphere to a sphere-like surface.
 %
-%   Z = SURFPUSHFORWARD(N, c, F, V, Y) takes coefficients c for scalar 
-%   sphercial harmonics of degrees N defining a sphere-like surface, a 
+%   [Z, ICs] = SURFPUSHFORWARD(Ns, c, F, V, Y) takes coefficients c for scalar 
+%   sphercial harmonics of degrees Ns defining a sphere-like surface, a 
 %   triangulation F, V of the unit sphere, and a piecewise constant vector 
-%   field Y defined on the faces F and returns the pushforward Z of Y.
+%   field Y defined on the faces F and returns the pushforward Z of Y. In
+%   addition, the pushforward ICs of the incenters to the surface are 
+%   returned.
 %
 %   Note that the Y lives at the incenters of the faces F! Thus, also Z
 %   lives on the incenters of the faces pushed to the surface.
 %
-%   Note that N must be a vector of non-negative consecutive integers. 
+%   Note that Ns must be a vector of non-negative consecutive integers. 
 %   c is a vector of size dim, where dim is the number of scalar spherical 
-%   harmonics of degrees specified by N. Y is an m-by-k-by-3 matrix 
+%   harmonics of degrees specified by Ns. Y is an m-by-k-by-3 matrix 
 %   defining vectors. F is an m-by-3 matrix and and V is an n-by-3 matrix 
 %   of vertices on the unit sphere.
 %
-%   Z is a matrix of size m-by-k-by-3.
+%   Z is a matrix of size m-by-k-by-3. ICs is an m-by-3 matrix.
 
 % Check if N is an interval of consecutive positive integers.
-assert(isvector(N));
-assert(all(N >= 0));
-assert(length(N) == N(end) - N(1) + 1);
-assert(all((N == (N(1):N(end)))));
+assert(isvector(Ns));
+assert(all(Ns >= 0));
+assert(length(Ns) == Ns(end) - Ns(1) + 1);
+assert(all((Ns == (Ns(1):Ns(end)))));
 
 % Compute and check dimension.
-dim = N(end)^2 + 2*N(end) - N(1)^2 + 1;
+dim = Ns(end)^2 + 2*Ns(end) - Ns(1)^2 + 1;
 assert(isvector(c));
 assert(length(c) == dim);
 
@@ -55,24 +57,14 @@ IC = TR.incenters;
 len = sqrt(sum(IC .^ 2, 2));
 IC = bsxfun(@rdivide, IC, len);
 
-% Evaluate scalar spherical harmonics at incenters.
-YIC = spharmn(N, IC);
+% Compute surface coordinates of incenters.
+[ICs, rhoic] = surfsynth(Ns, IC, c);
 
-% Evaluate scalar spherical harmonics at vertices.
-YV = spharmn(N, V);
-
-% Recover surface function at incenters.
-rhoic = YIC * c;
-
-% Recover surface function at vertices.
-rhov = YV * c;
+% Compute surface coordinates of vertices.
+[~, rhov] = surfsynth(Ns, V, c);
 
 % Compute gradient of rho on triangulation.
 g = grad(F, V, rhov);
 
-% Compute pushforward for each vector field.
-Z = zeros(size(Y));
-for k=1:size(Y, 2)
-    Yk = squeeze(Y(:, k, :));
-    Z(:, k, :) = bsxfun(@times, Yk, rhoic) + bsxfun(@times, IC, sum(g .* Yk, 2));
-end
+% Compute pushforward.
+Z = pushforward(Y, IC, rhoic, g);

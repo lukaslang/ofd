@@ -53,20 +53,19 @@ end
 function perturbedSphereTest
 
 % Create triangulation of unit sphere.
-[F, V] = sphTriang(5);
-n = size(V, 1);
+[F, V] = sphTriang(3);
 m = size(F, 1);
 
 % Set parameters for unit sphere.
-N = 0:2;
+Ns = 0:2;
 Y = spharm(0, [0, 0, 1]);
 c = [1 / Y, 0, 0, 0, 0, 0, 0, 0.5, 0]';
 
 % Compute synthesis.
-S = surfsynth(N, V, c);
+S = surfsynth(Ns, V, c);
 
 % Compute tangential basis at incenters.
-[Z, IC] = surftangentialbasis(N, c, F, V);
+[Z, IC] = surftangentialbasis(Ns, c, F, V);
 Z1 = squeeze(Z(:, 1, :));
 Z2 = squeeze(Z(:, 2, :));
 
