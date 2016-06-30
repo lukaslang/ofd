@@ -28,7 +28,7 @@ assert(isvector(x));
 assert(isequal(size(x), size(y), size(z)));
 
 % Interpolate.
-F = griddedInterpolant(X, Y, Z, u);
+F = griddedInterpolant(X, Y, Z, u, 'linear', 'none');
 f = F(x, y, z);
 f(isnan(f)) = 0;
 
