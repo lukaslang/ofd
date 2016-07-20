@@ -40,6 +40,6 @@ P = P .* [repmat(sqrt(2), m*n, 1), repmat(2, m*n, N)] ./ sqrt(4*pi);
 % Reorder so that order is -n,...,n.
 y = repmat(-N:N, m*n, 1) .* repmat(phi(:), 1, 2*N + 1);
 y = [cos(y(:, 1:N + 1)), sin(y(:, N + 2:2*N + 1))];
-Y = y .* [flipdim(P, 2), P(:, 2:end)];
+Y = y .* [flip(P, 2), P(:, 2:end)];
 
 end
