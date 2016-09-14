@@ -34,7 +34,11 @@ p(:, 3) = 0;
 lenv = sqrt(sum(v .^2, 2));
 lenp = sqrt(sum(p .^2, 2));
 
+% Find indices of vectors to be rescaled.
+idx = lenv > 0 & lenp > 0;
+p(~idx, :) = 0;
+
 % Rescale projected vector.
-p = bsxfun(@times, p, lenv./ lenp);
+p(idx, :) = bsxfun(@times, p(idx, :), lenv(idx, :) ./ lenp(idx, :));
 
 end

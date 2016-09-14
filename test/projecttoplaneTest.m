@@ -27,3 +27,12 @@ assertEqual(p(:, 3), 0);
 assertAlmostEqual(sqrt(sum(p.^2, 2)), 3*pi/2);
 
 end
+
+function zeroTest
+
+v = [0, 0, 0];
+p = projecttoplane(v);
+assertFalse(isempty(p));
+assertEqual(p, [0, 0, 0]);
+
+end
