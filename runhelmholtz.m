@@ -37,7 +37,7 @@ load(fullfile(path, 'cmapblue.mat'));
 frame = 114;
 
 % Set decomposition parameters.
-N = 20;
+N = 10;
 h = 1;
 alpha = 1;
 s = 1;
@@ -49,7 +49,9 @@ Z = -4.2832 * F{frame}.Z;
 shift = -min(Z);
 
 % Fit sphere.
-[c, r] = sphereFit([X(:), Y(:), Z(:) + shift]);
+sc = mean([X(:), Y(:), Z(:) + shift]);
+sr = 300;
+[c, r] = spherefit([X(:), Y(:), Z(:) + shift], sc, sr);
 
 % Create triangulation of fitted sphere.
 %[F, V] = sphTriang(7);

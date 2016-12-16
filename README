@@ -7,33 +7,69 @@ Computational Science Center, University of Vienna, Austria. http://www.csc.univ
 
 1. Introduction
 
-This is a MATLAB implementation of Decomposition of Optical Flow on the Sphere (OFD) as described in:
+This is a MATLAB implementation of Decomposition of Optical Flow on the 
+Sphere (OFD) as described in:
 
-TODO: Add paper.
+C. Kirisits, L. F. Lang and O. Scherzer. Decomposition of optical flow on 
+the sphere, GEM. Int. J. Geomath., 5(1):117-141, April, 2014
+
+Available at http://dx.doi.org/10.1007/s13137-013-0055-8
+Preprint available at https://arxiv.org/abs/1312.4354
 
 If you use this software in your work you must cite the abovementioned paper in any resulting publication!
 
 BibTeX:
 
-TODO: Add BibTeX
+@article{KirLanSch14,
+  author     = {Kirisits, C. and Lang, L.~F. and Scherzer, O.},
+  title      = {Decomposition of optical flow on the sphere},
+  doi        = {10.1007/s13137-013-0055-8},
+  issn       = {1869-2672},
+  journal    = {GEM. Int. J. Geomath.},
+  fjournal   = {GEM - International Journal on Geomathematics},
+  keywords   = {Optical flow; Vector spherical harmonics; Biomedical imaging; Computer vision; Variational methods; Vector field decomposition; 92C55; 92C37; 92C17; 35A15; 68U10; 33C55},
+  language   = {English},
+  month      = apr,
+  number     = {1},
+  pages      = {117--141},
+  publisher  = {Springer Berlin Heidelberg},
+  url        = {http://dx.doi.org/10.1007/s13137-013-0055-8},
+  volume     = {5},
+  year       = {2014}
+}
 
 2. License & Disclaimer
 
 Copyright 2013 Clemens Kirisits and Lukas Lang.
 
-This file is part of OFD. OFD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This file is part of OFD. OFD is free software: you can redistribute it 
+and/or modify it under the terms of the GNU General Public License as 
+published by the Free Software Foundation, either version 3 of the License,
+ or (at your option) any later version.
 
-OFD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+OFD is distributed in the hope that it will be useful, but WITHOUT ANY 
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with OFD.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along 
+with OFD.  If not, see <http://www.gnu.org/licenses/>.
 
 For the full license statement see the file COPYING.
 
-Moreover, this work incorporates source code from the color wheel by Deqing Sun, Department of Computer Science, Brown University. The license statement can be found in the respective files.
+Moreover, this work incorporates source code from the color wheel by 
+Deqing Sun, Department of Computer Science, Brown University. The license 
+statement can be found in the respective files.
 
 3. Requirements
 
-This software was written for and tested with Matlab R2012b. Note that this software uses the TriRep class which since R2013a is marked as 'will be removed in a future release' (see http://www.mathworks.de/de/help/matlab/release-notes.html for further details).
+This software was originally written for and tested with Matlab R2012b.
+It has been recently modified to also run with R2015a.
+
+Note that this software uses the TriRep class which since R2013a is marked 
+as 'will be removed in a future release'. It also used flipdim, which will 
+be removed at some point in the future.
+
+See http://www.mathworks.de/de/help/matlab/release-notes.html
 
 The following libraries are required for parts of this sofware:
 
@@ -43,15 +79,12 @@ URL: http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test
 export_fig: used for producing high quality figures from the results.
 URL: http://www.mathworks.com/matlabcentral/fileexchange/23629-exportfig
 
-sphereFit: used for fitting a sphere to data.
-http://www.mathworks.com/matlabcentral/fileexchange/34129-sphere-fit-least-squared
-
-Lebedev cubature: used for numerical integration on the sphere.
-http://www.mathworks.com/matlabcentral/fileexchange/27097-getlebedevsphere
-
 4. Usage
 
-For easier use we provide a startup script (startup.m), which sets up the Matlab search path. It includes required libraries and adds required subdirectories. Make sure to download the required packages and to set the library paths properly. Then simply run the startup script.
+For easier use we provide a startup script (startup.m), which sets up the 
+Matlab search path. It includes required libraries and adds required 
+subdirectories. Make sure to download the required packages and to set the 
+library paths properly. Then simply run the startup script.
 
 To run the test cases execute
 
@@ -63,10 +96,34 @@ or
 
 to get more information (see xUnit for more information).
 
-% TODO: document ofd usage.
+The following run scripts are included:
+
+- runof.m (computes optical flow on sphere)
+- runofd.m (computes a u+v decomposition)
+- runodb.m (used different bases for u and v)
+- runofhd.m (computes a hierarchical decomposition)
+- runhelmholtz.m (computes a Helmholtz decomposition)
+
+The following scripts also exist but were not included in the paper:
+
+- runsurffit.m (fitting a sphere-like surface)
+- runofs.m (optical flow on sphere-like surfaces)
+- runofc.m (continuity equation-based velocity estimation)
+
+If you want to reproduce the experiments from the paper run
+
+- experiments/prepare.m (creates and stores linear system)
+- experiments/runofexperiments.m (computes optical flow and Helmholtz decompositions)
+- experiments/runofdexperiments.m (computes u+v decompositions)
+- experiments/runofhdexperiments.m (computes hierarchical decompositions)
+
+and the appropriate experiments/render{of, ofd, ofhd}experiments.m script 
+to create and store all the figures.
 
 5. Acknowledgements
 
-This implementation includes parts of the color wheel source code by Deqing Sun, Department of Computer Science, Brown University. The original is available at http://vision.middlebury.edu/flow/.
+This package includes the color wheel from http://vision.middlebury.edu/flow/
+By courtesy of Deqing Sun, Department of Computer Science, Brown University.
 
-We thank Pia Aanstad from the University of Innsbruck for sharing her biological insight and for kindly providing the microscopy data. This work has been supported by the Vienna Graduate School in Computational Science (IK I059-N) funded by the University of Vienna. In addition, we acknowledge the support by the Austrian Science Fund (FWF) within the national research networks "Photoacoustic Imaging in Biology and Medicine" (project S10505-N20, Reconstruction Algorithms for PAI) and "Geometry + Simulation" (project S11704, Variational Methods for Imaging on Manifolds).
+We thank Pia Aanstad from the University of Innsbruck for kindly providing 
+the microscopy data.
