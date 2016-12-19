@@ -14,35 +14,43 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = triangsectionTest
-    initTestSuite;
+function tests = triangsectionTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Generate icosahedron.
 [F, V] = halfsphTriang;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [8, 3]);
-assertEqual(size(V), [8, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [8, 3]);
+verifyEqual(testCase, size(V), [8, 3]);
 assert(all(V(:, 3) >= 0));
 
 [Fs, Vs] = triangsection(F, V, [-1, 1, -1, 1, 0, 1]);
 
-assertEqual(Fs, F);
-assertEqual(Vs, V);
+verifyEqual(testCase, Fs, F);
+verifyEqual(testCase, Vs, V);
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Generate icosahedron.
 tic;
 [F, V] = halfsphTriang(4);
 toc;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
 assert(all(V(:, 3) >= 0));
 
 [Fs, Vs] = triangsection(F, V, [-1, 0, 0, 1, 0, 1]);

@@ -14,49 +14,57 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = vspharmeigsTest
-    initTestSuite;
+function tests = vspharmeigsTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 N = 1:3;
 dim = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
 
 % Compute eigenvalues.
 d = vspharmeigs(N);
-assertTrue(isvector(d));
-assertEqual(length(d), dim);
+verifyTrue(testCase, isvector(d));
+verifyEqual(testCase, length(d), dim);
 
-assertEqual(d(1:3), 2*ones(3, 1));
-assertEqual(d(4:8), 6*ones(5, 1));
-assertEqual(d(9:15), 12*ones(7, 1));
+verifyEqual(testCase, d(1:3), 2*ones(3, 1));
+verifyEqual(testCase, d(4:8), 6*ones(5, 1));
+verifyEqual(testCase, d(9:15), 12*ones(7, 1));
 
-assertEqual(d(1+dim/2:3+dim/2), 2*ones(3, 1));
-assertEqual(d(4+dim/2:8+dim/2), 6*ones(5, 1));
-assertEqual(d(9+dim/2:15+dim/2), 12*ones(7, 1));
+verifyEqual(testCase, d(1+dim/2:3+dim/2), 2*ones(3, 1));
+verifyEqual(testCase, d(4+dim/2:8+dim/2), 6*ones(5, 1));
+verifyEqual(testCase, d(9+dim/2:15+dim/2), 12*ones(7, 1));
 
 end
 
-function intervalTest
+function intervalTest(testCase)
 
 N = 2:3;
 dim = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
 
 % Compute eigenvalues.
 d = vspharmeigs(N);
-assertTrue(isvector(d));
-assertEqual(length(d), dim);
+verifyTrue(testCase, isvector(d));
+verifyEqual(testCase, length(d), dim);
 
-assertEqual(d(1:5), 6*ones(5, 1));
-assertEqual(d(6:12), 12*ones(7, 1));
+verifyEqual(testCase, d(1:5), 6*ones(5, 1));
+verifyEqual(testCase, d(6:12), 12*ones(7, 1));
 
-assertEqual(d(1+dim/2:5+dim/2), 6*ones(5, 1));
-assertEqual(d(6+dim/2:12+dim/2), 12*ones(7, 1));
+verifyEqual(testCase, d(1+dim/2:5+dim/2), 6*ones(5, 1));
+verifyEqual(testCase, d(6+dim/2:12+dim/2), 12*ones(7, 1));
 
 end
 
-function performanceTest
+function performanceTest(testCase)
 
 N = 1:100;
 dim = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
@@ -65,7 +73,7 @@ dim = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
 tic;
 d = vspharmeigs(N);
 toc;
-assertTrue(isvector(d));
-assertEqual(length(d), dim);
+verifyTrue(testCase, isvector(d));
+verifyEqual(testCase, length(d), dim);
 
 end

@@ -14,25 +14,33 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = projecttoplaneTest
-    initTestSuite;
+function tests = projecttoplaneTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 v = [pi, -pi, pi/2];
 p = projecttoplane(v);
-assertFalse(isempty(p));
-assertEqual(p(:, 3), 0);
-assertAlmostEqual(sqrt(sum(p.^2, 2)), 3*pi/2);
+verifyFalse(testCase, isempty(p));
+verifyEqual(testCase, p(:, 3), 0);
+verifyEqual(testCase, sqrt(sum(p.^2, 2)), 3*pi/2, 'AbsTol', 1e-15);
 
 end
 
-function zeroTest
+function zeroTest(testCase)
 
 v = [0, 0, 0];
 p = projecttoplane(v);
-assertFalse(isempty(p));
-assertEqual(p, [0, 0, 0]);
+verifyFalse(testCase, isempty(p));
+verifyEqual(testCase, p, [0, 0, 0]);
 
 end

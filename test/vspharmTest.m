@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = vspharmTest
-    initTestSuite;
+function tests = vspharmTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -27,14 +35,14 @@ n = size(F, 1);
 % Create spherical harmonics.
 N = 5;
 [Y1, Y2] = vspharm(N, F, V);
-assertFalse(isempty(Y1));
-assertEqual(size(Y1), [n, 2*N + 1, 3]);
-assertFalse(isempty(Y2));
-assertEqual(size(Y2), [n, 2*N + 1, 3]);
+verifyFalse(testCase, isempty(Y1));
+verifyEqual(testCase, size(Y1), [n, 2*N + 1, 3]);
+verifyFalse(testCase, isempty(Y2));
+verifyEqual(testCase, size(Y2), [n, 2*N + 1, 3]);
 
 end
 
-function orthogonalityTest
+function orthogonalityTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -46,11 +54,11 @@ N = 5;
 
 % Compute R3 inner product.
 ip = dot(Y1, Y2, 3);
-assertAlmostEqual(ip, zeros(n, 2*N + 1));
+verifyEqual(testCase, ip, zeros(n, 2*N + 1), 'AbsTol', 1e-16);
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -62,10 +70,10 @@ P = T.incenters;
 % Create spherical harmonics.
 N = 3;
 [Y1, Y2] = vspharm(N, F, V);
-assertFalse(isempty(Y1));
-assertEqual(size(Y1), [n, 2*N + 1, 3]);
-assertFalse(isempty(Y2));
-assertEqual(size(Y2), [n, 2*N + 1, 3]);
+verifyFalse(testCase, isempty(Y1));
+verifyEqual(testCase, size(Y1), [n, 2*N + 1, 3]);
+verifyFalse(testCase, isempty(Y2));
+verifyEqual(testCase, size(Y2), [n, 2*N + 1, 3]);
 
 % Create spherical harmonics for visualisation.
 Ynj = spharm(N, V);

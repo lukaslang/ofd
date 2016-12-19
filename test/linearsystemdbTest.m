@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = linearsystemdbTest
-    initTestSuite;
+function tests = linearsystemdbTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -39,43 +47,43 @@ N = 5;
 [dim1, dim2, U, V, W, d1, d2, b] = linearsystemdb(Faces, Verts, 1:M, 1:N, f1, f2, h, tol);
 
 % Check results.
-assertEqual(dim1 + dim2, 4*(N^2 + 2*N));
-assertFalse(isempty(U));
-assertEqual(size(U), [2*(N^2 + 2*N), 2*(N^2 + 2*N)]);
-assertFalse(isempty(V));
-assertEqual(size(V), [2*(N^2 + 2*N), 2*(N^2 + 2*N)]);
-assertFalse(isempty(W));
-assertEqual(size(W), [2*(N^2 + 2*N), 2*(N^2 + 2*N)]);
-assertFalse(isempty(d1));
-assertTrue(isvector(d1));
-assertEqual(size(d1), [2*(N^2 + 2*N), 1]);
-assertFalse(isempty(d2));
-assertTrue(isvector(d2));
-assertEqual(size(d2), [2*(N^2 + 2*N), 1]);
-assertFalse(isempty(b));
-assertTrue(isvector(b));
-assertEqual(size(b), [4*(N^2 + 2*N), 1]);
+verifyEqual(testCase, dim1 + dim2, 4*(N^2 + 2*N));
+verifyFalse(testCase, isempty(U));
+verifyEqual(testCase, size(U), [2*(N^2 + 2*N), 2*(N^2 + 2*N)]);
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(V), [2*(N^2 + 2*N), 2*(N^2 + 2*N)]);
+verifyFalse(testCase, isempty(W));
+verifyEqual(testCase, size(W), [2*(N^2 + 2*N), 2*(N^2 + 2*N)]);
+verifyFalse(testCase, isempty(d1));
+verifyTrue(testCase, isvector(d1));
+verifyEqual(testCase, size(d1), [2*(N^2 + 2*N), 1]);
+verifyFalse(testCase, isempty(d2));
+verifyTrue(testCase, isvector(d2));
+verifyEqual(testCase, size(d2), [2*(N^2 + 2*N), 1]);
+verifyFalse(testCase, isempty(b));
+verifyTrue(testCase, isvector(b));
+verifyEqual(testCase, size(b), [4*(N^2 + 2*N), 1]);
 
 % Check if matrices are equal.
-assertAlmostEqual(U, V);
-assertAlmostEqual(U, W);
+verifyEqual(testCase, U, V, 'AbsTol', 1e-15);
+verifyEqual(testCase, U, W);
 
 % Try with intervals.
 M = 1:5;
 N = 1:5;
 [dim1i, dim2i, Ui, Vi, Wi, d1i, d2i, bi] = linearsystemdb(Faces, Verts, M, N, f1, f2, h, tol);
-assertAlmostEqual(dim1, dim1i);
-assertAlmostEqual(dim2, dim2i);
-assertAlmostEqual(Ui, U);
-assertAlmostEqual(Vi, V);
-assertAlmostEqual(Wi, W);
-assertAlmostEqual(d1i, d1);
-assertAlmostEqual(d2i, d2);
-assertAlmostEqual(bi, b);
+verifyEqual(testCase, dim1, dim1i, 'AbsTol', 1e-15);
+verifyEqual(testCase, dim2, dim2i, 'AbsTol', 1e-15);
+verifyEqual(testCase, Ui, U, 'AbsTol', 1e-15);
+verifyEqual(testCase, Vi, V, 'AbsTol', 1e-15);
+verifyEqual(testCase, Wi, W, 'AbsTol', 1e-15);
+verifyEqual(testCase, d1i, d1, 'AbsTol', 1e-15);
+verifyEqual(testCase, d2i, d2, 'AbsTol', 1e-15);
+verifyEqual(testCase, bi, b, 'AbsTol', 1e-15);
 
 end
 
-function differentIntervalsTest
+function differentIntervalsTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -96,26 +104,26 @@ N = 4:5;
 [dim1, dim2, U, V, W, d1, d2, b] = linearsystemdb(F, V, M, N, f1, f2, h, tol);
 
 % Check results.
-assertEqual(dim1, 2*(M(end)^2 + 2*M(end) - M(1)^2 + 1));
-assertEqual(dim2, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1));
-assertFalse(isempty(U));
-assertEqual(size(U), [dim1, dim1]);
-assertFalse(isempty(V));
-assertEqual(size(V), [dim2, dim2]);
-assertFalse(isempty(W));
-assertEqual(size(W), [dim1, dim2]);
-assertFalse(isempty(d1));
-assertTrue(isvector(d1));
-assertEqual(size(d1), [dim1, 1]);
-assertFalse(isempty(d2));
-assertTrue(isvector(d2));
-assertEqual(size(d2), [dim2, 1]);
-assertFalse(isempty(b));
-assertTrue(isvector(b));
-assertEqual(size(b), [dim1 + dim2, 1]);
+verifyEqual(testCase, dim1, 2*(M(end)^2 + 2*M(end) - M(1)^2 + 1));
+verifyEqual(testCase, dim2, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1));
+verifyFalse(testCase, isempty(U));
+verifyEqual(testCase, size(U), [dim1, dim1]);
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(V), [dim2, dim2]);
+verifyFalse(testCase, isempty(W));
+verifyEqual(testCase, size(W), [dim1, dim2]);
+verifyFalse(testCase, isempty(d1));
+verifyTrue(testCase, isvector(d1));
+verifyEqual(testCase, size(d1), [dim1, 1]);
+verifyFalse(testCase, isempty(d2));
+verifyTrue(testCase, isvector(d2));
+verifyEqual(testCase, size(d2), [dim2, 1]);
+verifyFalse(testCase, isempty(b));
+verifyTrue(testCase, isvector(b));
+verifyEqual(testCase, size(b), [dim1 + dim2, 1]);
 
 % Check if matrices are symmetric.
-assertAlmostEqual(U', U);
-assertAlmostEqual(V', V);
+verifyEqual(testCase, U', U, 'AbsTol', 1e-15);
+verifyEqual(testCase, V', V, 'AbsTol', 1e-15);
 
 end

@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = ofdbsolveTest
-    initTestSuite;
+function tests = ofdbsolveTest
+    tests = functiontests(localfunctions);
 end
 
-function sameBasisTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function sameBasisTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -41,18 +49,18 @@ beta = 1;
 
 % Compute functions for same basis.
 [dim, U, d, b] = linearsystem(Faces, Verts, N, f1, f2, h, 1e-6);
-assertAlmostEqual(dim, dim1);
-assertAlmostEqual(dim, dim2);
-assertAlmostEqual(U, U2);
-assertAlmostEqual(U, V2);
-assertAlmostEqual(U, W2);
-assertAlmostEqual(d, d1);
-assertAlmostEqual(d, d2);
-assertAlmostEqual([b; b], bi);
+verifyEqual(testCase, dim, dim1, 'AbsTol', 1e-15);
+verifyEqual(testCase, dim, dim2, 'AbsTol', 1e-15);
+verifyEqual(testCase, U, U2, 'AbsTol', 1e-15);
+verifyEqual(testCase, U, V2, 'AbsTol', 1e-15);
+verifyEqual(testCase, U, W2, 'AbsTol', 1e-15);
+verifyEqual(testCase, d, d1, 'AbsTol', 1e-15);
+verifyEqual(testCase, d, d2, 'AbsTol', 1e-15);
+verifyEqual(testCase, [b; b], bi, 'AbsTol', 1e-15);
 
 % Solve linear system.
 [u, v, ~] = ofdsolve(dim, U, b, d, alpha, beta, 1, -1, 30);
-assertAlmostEqual(u, ui, 1e-10);
-assertAlmostEqual(v, vi, 1e-10);
+verifyEqual(testCase, u, ui, 'AbsTol', 1e-10);
+verifyEqual(testCase, v, vi, 'AbsTol', 1e-10);
 
 end

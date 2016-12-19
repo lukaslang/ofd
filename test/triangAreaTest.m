@@ -14,18 +14,26 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = triangAreaTest
-    initTestSuite;
+function tests = triangAreaTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
 
 % Compute area of triangles.
 A = triangArea(F, V);
-assertFalse(isempty(A));
-assertAlmostEqual(A, (4*pi/size(F, 1)) * ones(size(F, 1), 1), 1e-3);
+verifyFalse(testCase, isempty(A));
+verifyEqual(testCase, A, (4*pi/size(F, 1)) * ones(size(F, 1), 1), 'AbsTol', 1e-3);
 
 end

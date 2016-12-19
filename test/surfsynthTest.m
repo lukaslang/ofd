@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = surfsynthTest
-    initTestSuite;
+function tests = surfsynthTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [~, V] = sphTriang(5);
@@ -34,17 +42,17 @@ c = 1/spharm(0, [0, 1, 0]);
 
 % Check if points are still on unit sphere.
 len = sqrt(sum(S .^ 2, 2));
-assertAlmostEqual(len, ones(n, 1));
+verifyEqual(testCase, len, ones(n, 1), 'AbsTol', 1e-15);
 
 % Check if points equal.
-assertAlmostEqual(S, V);
+verifyEqual(testCase, S, V);
 
 % Check if rho is identically one.
-assertAlmostEqual(rho, ones(n, 1));
+verifyEqual(testCase, rho, ones(n, 1));
 
 end
 
-function resultIntervalTest
+function resultIntervalTest(testCase)
 
 % Create triangulation of unit sphere.
 [~, V] = sphTriang(5);
@@ -61,17 +69,17 @@ c = [1/spharm(0, [0, 1, 0]); zeros(dim - 1, 1)];
 
 % Check if points are still on unit sphere.
 len = sqrt(sum(S .^ 2, 2));
-assertAlmostEqual(len, ones(n, 1));
+verifyEqual(testCase, len, ones(n, 1), 'AbsTol', 1e-15);
 
 % Check if points equal.
-assertAlmostEqual(S, V);
+verifyEqual(testCase, S, V);
 
 % Check if rho is identically one.
-assertAlmostEqual(rho, ones(n, 1));
+verifyEqual(testCase, rho, ones(n, 1));
 
 end
 
-function sphereTest
+function sphereTest(testCase)
 
 % Create triangulation of unit sphere.
 [~, V] = sphTriang(5);
@@ -84,26 +92,26 @@ alpha = 1;
 
 % Fit surface to sphere.
 [c, Y] = surffit(N, V, alpha, s);
-assertFalse(isempty(c));
-assertFalse(isempty(Y));
+verifyFalse(testCase, isempty(c));
+verifyFalse(testCase, isempty(Y));
 
 % Compute synthesis from scratch.
 [S, rho1] = surfsynth(N, V, c);
 
 % Compute synthesis with Y.
 [SY, rho2] = surfsynth(N, V, c, Y);
-assertAlmostEqual(S, SY);
-assertAlmostEqual(rho1, rho2);
+verifyEqual(testCase, S, SY);
+verifyEqual(testCase, rho1, rho2);
 
 % Check if points are still on unit sphere.
 len = sqrt(sum(S .^ 2, 2));
-assertAlmostEqual(len, ones(n, 1), 1e-12);
+verifyEqual(testCase, len, ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if points equal.
-assertAlmostEqual(S, V, 1e-12);
+verifyEqual(testCase, S, V, 'AbsTol', 1e-12);
 
 % Check if functions rho are identically one.
-assertAlmostEqual(rho1, ones(n, 1), 1e-12);
-assertAlmostEqual(rho2, ones(n, 1), 1e-12);
+verifyEqual(testCase, rho1, ones(n, 1), 'AbsTol', 1e-12);
+verifyEqual(testCase, rho2, ones(n, 1), 'AbsTol', 1e-12);
 
 end

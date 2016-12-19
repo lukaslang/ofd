@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = ofcTest
-    initTestSuite;
+function tests = ofcTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -35,13 +43,13 @@ alpha = 1;
 
 u = ofc(N, F, V, f1, f2, h, alpha);
 
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3]);
-assertEqual(u, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
 
 end
 
-function sobolevNormTest
+function sobolevNormTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -59,13 +67,13 @@ s = 3/2;
 
 u = ofc(N, F, V, f1, f2, h, alpha, s);
 
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3]);
-assertEqual(u, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -88,8 +96,8 @@ h = 1;
 alpha = 1;
 
 u = ofc(N, F, V, f1, f2, h, alpha);
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3]);
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3]);
 
 % Compute residual.
 [res, ~] = residual(u, F, V, f1, f2, 1e-6);
@@ -122,7 +130,7 @@ quiver3(P(:, 1), P(:, 2), P(:, 3), u(:, 1), u(:, 2), u(:, 3), 0, 'm');
 
 end
 
-function visualiseSobolevNormTest
+function visualiseSobolevNormTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -145,8 +153,8 @@ h = 1;
 alpha = 1;
 
 u = ofc(N, F, V, f1, f2, h, alpha, -1);
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3]);
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3]);
 
 % Compute residual.
 [res, ~] = residual(u, F, V, f1, f2, 1e-6);

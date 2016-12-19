@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = maximumIntensityTest
-    initTestSuite;
+function tests = maximumIntensityTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create cube.
 u = ones(100, 100, 100);
@@ -34,12 +42,12 @@ rs = linspace(r-5, r+5, 10);
 
 [X, Y, Z] = ndgrid(1:100, 1:100, 1:100);
 f = maximumIntensity(c, m, n, rs, X, Y, Z, u);
-assertFalse(isempty(f));
-assertEqual(f, ones(m, n));
+verifyFalse(testCase, isempty(f));
+verifyEqual(testCase, f, ones(m, n));
 
 end
 
-function halfSphereTest
+function halfSphereTest(testCase)
 
 % Create cube.
 u = ones(100, 100, 100);
@@ -55,12 +63,12 @@ rs = linspace(r-5, r+5, 10);
 
 [X, Y, Z] = ndgrid(1:100, 1:100, 1:100);
 f = maximumIntensity(c, m, n, rs, X, Y, Z, u);
-assertFalse(isempty(f));
-assertEqual(f, [zeros(m, n/2), ones(m, n/2)]);
+verifyFalse(testCase, isempty(f));
+verifyEqual(testCase, f, [zeros(m, n/2), ones(m, n/2)]);
 
 end
 
-function regularSphereTest
+function regularSphereTest(testCase)
 
 % Create cube.
 u = ones(100, 100, 100);
@@ -75,7 +83,7 @@ rs = 20;
 
 [X, Y, Z] = ndgrid(1:100, 1:100, 1:100);
 f = maximumIntensity(c, m, n, rs, X, Y, Z, u);
-assertFalse(isempty(f));
-assertEqual(f, ones(m, n));
+verifyFalse(testCase, isempty(f));
+verifyEqual(testCase, f, ones(m, n));
 
 end

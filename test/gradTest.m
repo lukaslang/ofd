@@ -14,38 +14,46 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = gradTest
-    initTestSuite;
+function tests = gradTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Generate icosahedron.
 [F, V] = sphTriang;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [20, 3]);
-assertEqual(size(V), [12, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [20, 3]);
+verifyEqual(testCase, size(V), [12, 3]);
 
 % Create sample function.
 f = ones(12, 1);
 
 % Compute gradient.
 g = grad(F, V, f);
-assertFalse(isempty(g));
-assertEqual(size(g), [20, 3]);
-assertEqual(g, zeros(20, 3));
+verifyFalse(testCase, isempty(g));
+verifyEqual(testCase, size(g), [20, 3]);
+verifyEqual(testCase, g, zeros(20, 3));
 
 end
 
-function resultWithHeightTest
+function resultWithHeightTest(testCase)
 
 % Generate icosahedron.
 [F, V] = sphTriang;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [20, 3]);
-assertEqual(size(V), [12, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [20, 3]);
+verifyEqual(testCase, size(V), [12, 3]);
 
 % Compute heights.
 H = height(F, V);
@@ -56,20 +64,20 @@ f = ones(12, 1);
 
 % Compute gradient.
 g = grad(F, V, f, H);
-assertFalse(isempty(g));
-assertEqual(size(g), [20, 3]);
-assertEqual(g, zeros(20, 3));
+verifyFalse(testCase, isempty(g));
+verifyEqual(testCase, size(g), [20, 3]);
+verifyEqual(testCase, g, zeros(20, 3));
 
 end
 
-function resultWithHeightAndLengthTest
+function resultWithHeightAndLengthTest(testCase)
 
 % Generate icosahedron.
 [F, V] = sphTriang;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [20, 3]);
-assertEqual(size(V), [12, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [20, 3]);
+verifyEqual(testCase, size(V), [12, 3]);
 
 % Compute heights.
 H = height(F, V);
@@ -80,18 +88,18 @@ f = ones(12, 1);
 
 % Compute gradient.
 g = grad(F, V, f, H, lenH);
-assertFalse(isempty(g));
-assertEqual(size(g), [20, 3]);
-assertEqual(g, zeros(20, 3));
+verifyFalse(testCase, isempty(g));
+verifyEqual(testCase, size(g), [20, 3]);
+verifyEqual(testCase, g, zeros(20, 3));
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Generate icosahedron.
 [F, V] = sphTriang(3);
-assertFalse(isempty(F));
-assertFalse(isempty(V));
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
 
 T = TriRep(F, V);
 P = T.incenters;
@@ -104,7 +112,7 @@ figure;
 for k=1:2*N+1
     % Compute gradient of k-th harmonic.
     g = grad(F, V, f(:, k));
-    assertFalse(isempty(g));
+    verifyFalse(testCase, isempty(g));
 
     % Plot spherical harmonics.
     subplot(1, 2*N+1, k);

@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = spharmFitTest
-    initTestSuite;
+function tests = spharmpFitTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create parametrisation and coordinates.
 m = 100;
@@ -50,10 +58,10 @@ view(3);
 % Fit spherical harmonics.
 N = 3;
 [a, Ynj] = spharmpFit(N, phi, t, f);
-assertFalse(isempty(a));
-assertFalse(isempty(Ynj));
-assertEqual(length(a), (N+1)^2);
-assertEqual(size(Ynj), [m*n, (N+1)^2]);
+verifyFalse(testCase, isempty(a));
+verifyFalse(testCase, isempty(Ynj));
+verifyEqual(testCase, length(a), (N+1)^2);
+verifyEqual(testCase, size(Ynj), [m*n, (N+1)^2]);
 
 % Recover fitted solution.
 g = Ynj*a;

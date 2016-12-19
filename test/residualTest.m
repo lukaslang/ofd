@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = residualTest
-    initTestSuite;
+function tests = residualTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -35,19 +43,19 @@ alpha = 1;
 
 u = of(N, F, V, f1, f2, h, alpha);
 
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3]);
-assertEqual(u, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
 
 [res, min] = residual(u, F, V, f1, f2, 1e-6);
-assertFalse(isempty(res));
-assertFalse(isempty(min));
-assertAlmostEqual(res, 0);
-assertAlmostEqual(min, 0);
+verifyFalse(testCase, isempty(res));
+verifyFalse(testCase, isempty(min));
+verifyEqual(testCase, res, 0, 'AbsTol', 1e-15);
+verifyEqual(testCase, min, 0, 'AbsTol', 1e-15);
 
 end
 
-function ofTest
+function ofTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -70,13 +78,13 @@ h = 1;
 alpha = 1;
 
 u = of(N, F, V, f1, f2, h, alpha);
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3]);
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3]);
 
 tic;
 [res, min] = residual(u, F, V, f1, f2, 1e-6);
 toc;
-assertTrue(res > 0);
-assertAlmostEqual(min, 0);
+verifyTrue(testCase, res > 0);
+verifyEqual(testCase, min, 0, 'AbsTol', 1e-15);
 
 end

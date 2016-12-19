@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = vgradTest
-    initTestSuite;
+function tests = vgradTest
+    tests = functiontests(localfunctions);
 end
 
-function vgradZeroVectorFieldTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function vgradZeroVectorFieldTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -30,11 +38,11 @@ Y = zeros(n, 3);
 
 % Compute vectorial gradient of Y.
 G = vgrad(F, V, Y, ones(m, 3));
-assertAlmostEqual(G, zeros(m, 3), 1e-12);
+verifyEqual(testCase, G, zeros(m, 3), 'AbsTol', 1e-12);
 
 end
 
-function vgradHeightTest
+function vgradHeightTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -48,11 +56,11 @@ H = height(F, V);
 
 % Compute vectorial gradient of Y.
 G = vgrad(F, V, Y, ones(m, 3), H);
-assertAlmostEqual(G, zeros(m, 3), 1e-12);
+verifyEqual(testCase, G, zeros(m, 3), 'AbsTol', 1e-12);
 
 end
 
-function vgradlenHTest
+function vgradlenHTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -67,11 +75,11 @@ lenH = sum(H(:, 2:3, :).^2, 3);
 
 % Compute vectorial gradient of Y.
 G = vgrad(F, V, Y, ones(m, 3), H, lenH);
-assertAlmostEqual(G, zeros(m, 3), 1e-12);
+verifyEqual(testCase, G, zeros(m, 3), 'AbsTol', 1e-12);
 
 end
 
-function vgradFaceNormalsTest
+function vgradFaceNormalsTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -88,12 +96,12 @@ FN = -T.faceNormals;
 
 % Compute vectorial gradient of Y.
 G = vgrad(F, V, Y, ones(m, 3), H, lenH, FN);
-assertAlmostEqual(G, zeros(m, 3), 1e-12);
+verifyEqual(testCase, G, zeros(m, 3), 'AbsTol', 1e-12);
 
 end
 
 % TODO: Write testcase for tangent vgrad!
-function vgradTangentTest
+function vgradTangentTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -116,7 +124,7 @@ Z = squeeze(Z(:, 1, :));
 % Project to tangent space.
 FN = -T.faceNormals;
 Z = Z - bsxfun(@times, FN, dot(Z, FN, 2));
-assertAlmostEqual(dot(Z, FN, 2), zeros(m, 1));
+verifyEqual(testCase, dot(Z, FN, 2), zeros(m, 1), 'AbsTol', 1e-15);
 
 % Create piecewise constant vector field on the unit sphere.
 deg = 2;
@@ -130,15 +138,15 @@ G = vgrad(DF, DV, Y, Z);
 % Check if tangential to given triangulation (DF, DV).
 DT = TriRep(DF, DV);
 FN = -DT.faceNormals;
-assertAlmostEqual(dot(G, FN, 2), zeros(m, 1));
+verifyEqual(testCase, dot(G, FN, 2), zeros(m, 1), 'AbsTol', 1e-15);
 
 % Check if tangential to original triangulation (F, V).
 FN = -T.faceNormals;
-assertAlmostEqual(dot(G, FN, 2), zeros(m, 1), 7e-3);
+verifyEqual(testCase, dot(G, FN, 2), zeros(m, 1), 'AbsTol', 7e-3);
 
 end
 
-function vgradSphereVisualisationTest
+function vgradSphereVisualisationTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -229,7 +237,7 @@ end
 
 end
 
-function perturbedSphereVisualisationTest
+function perturbedSphereVisualisationTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -258,17 +266,17 @@ DF = T.neighbors;
 [Z, IC] = surftangentialbasis(Ns, c, F, V);
 Z1 = squeeze(Z(:, 1, :));
 Z2 = squeeze(Z(:, 2, :));
-assertAlmostEqual(dot(Z1, FN, 2), zeros(m, 1), 7e-3);
-assertAlmostEqual(dot(Z2, FN, 2), zeros(m, 1), 7e-3);
+verifyEqual(testCase, dot(Z1, FN, 2), zeros(m, 1), 'AbsTol', 7e-3);
+verifyEqual(testCase, dot(Z2, FN, 2), zeros(m, 1), 'AbsTol', 7e-3);
 
 % Compute orthonormal basis.
 [~, E1, E2] = orthonormalise(Z1, Z2);
-assertAlmostEqual(dot(E1, FN, 2), zeros(m, 1), 7e-3);
-assertAlmostEqual(dot(E2, FN, 2), zeros(m, 1), 7e-3);
+verifyEqual(testCase, dot(E1, FN, 2), zeros(m, 1), 'AbsTol', 7e-3);
+verifyEqual(testCase, dot(E2, FN, 2), zeros(m, 1), 'AbsTol', 7e-3);
 
 % Check if orthogonal.
 ip = sum(E1 .* E2, 2);
-assertAlmostEqual(zeros(m, 1), ip, 1e-12);
+verifyEqual(testCase, zeros(m, 1), ip, 'AbsTol', 1e-12);
 
 % Create spherical harmonics for visualisation.
 Ynj = spharm(deg, V);

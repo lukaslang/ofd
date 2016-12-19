@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = synthTest
-    initTestSuite;
+function tests = synthTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -34,8 +42,8 @@ u = zeros(2*(N(end)^2 + 2*N(end)), 1);
 U = synth(cat(2, Y1, Y2), u);
 
 % Check results.
-assertFalse(isempty(U));
-assertEqual(size(U), [n, 3]);
-assertEqual(U, zeros(n, 3));
+verifyFalse(testCase, isempty(U));
+verifyEqual(testCase, size(U), [n, 3]);
+verifyEqual(testCase, U, zeros(n, 3));
 
 end

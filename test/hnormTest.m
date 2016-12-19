@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = hnormTest
-    initTestSuite;
+function tests = hnormTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 s = 1;
 N = 1:10;
@@ -27,13 +35,13 @@ c = zeros(length(a), 1);
 
 % Compute Sobolev norm.
 n = hnorm(s, a, c);
-assertTrue(isscalar(n));
-assertFalse(isempty(n));
-assertAlmostEqual(n, 0);
+verifyTrue(testCase, isscalar(n));
+verifyFalse(testCase, isempty(n));
+verifyEqual(testCase, n, 0, 'AbsTol', 1e-15);
 
 end
 
-function ofTest
+function ofTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -61,19 +69,19 @@ alpha = 10;
 
 % Solve linear system.
 [u, ~] = ofsolve(dim, U, b, d, alpha, s, 30);
-assertFalse(isempty(u));
-assertTrue(isvector(u));
-assertEqual(length(u), 2*(N^2+2*N));
+verifyFalse(testCase, isempty(u));
+verifyTrue(testCase, isvector(u));
+verifyEqual(testCase, length(u), 2*(N^2+2*N));
 
 % Compute Sobolev norm of the oscillating result.
 n = hnorm(s, d, u);
-assertTrue(isscalar(n));
-assertFalse(isempty(n));
-assertTrue(n > 0);
+verifyTrue(testCase, isscalar(n));
+verifyFalse(testCase, isempty(n));
+verifyTrue(testCase, n > 0);
 
 % Compute Sobolev norm of space H^1. The recovered solution should have a
 % larger norm in the space H^1.
 ns = hnorm(-s, d, u);
-assertTrue(ns > n);
+verifyTrue(testCase, ns > n);
 
 end

@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = facenormalsTest
-    initTestSuite;
+function tests = facenormalsTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 V(1, :) = [0, 0, 0];
@@ -29,16 +37,16 @@ F = 1:3;
 
 % Compute face unit normals.
 Fn = facenormals(F, V);
-assertFalse(isempty(Fn));
-assertEqual(size(Fn), [1, 3]);
-assertAlmostEqual(Fn, [0, 0, 1]);
+verifyFalse(testCase, isempty(Fn));
+verifyEqual(testCase, size(Fn), [1, 3]);
+verifyEqual(testCase, Fn, [0, 0, 1], 'AbsTol', 1e-15);
 
 % Check length.
-assertAlmostEqual(sqrt(sum(Fn.^2, 2)), 1);
+verifyEqual(testCase, sqrt(sum(Fn.^2, 2)), 1, 'AbsTol', 1e-15);
 
 end
 
-function sphTriangTest
+function sphTriangTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -46,28 +54,28 @@ n = size(F, 1);
 
 % Compute face unit normals.
 Fn = facenormals(F, V);
-assertFalse(isempty(Fn));
-assertEqual(size(Fn), [n, 3]);
+verifyFalse(testCase, isempty(Fn));
+verifyEqual(testCase, size(Fn), [n, 3]);
 
 % Check length.
-assertAlmostEqual(sqrt(sum(Fn.^2, 2)), ones(n, 1));
+verifyEqual(testCase, sqrt(sum(Fn.^2, 2)), ones(n, 1), 'AbsTol', 1e-15);
 
 end
 
-function visualisationTest
+function visualisationTest(testCase)
 
 % Generate icosahedron.
 [F, V] = sphTriang(2);
 n = size(F, 1);
-assertFalse(isempty(F));
-assertFalse(isempty(V));
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
 
 % Compute face unit normals.
 Fn = facenormals(F, V);
-assertFalse(isempty(Fn));
+verifyFalse(testCase, isempty(Fn));
 
 % Check length.
-assertAlmostEqual(sqrt(sum(Fn.^2, 2)), ones(n, 1));
+verifyEqual(testCase, sqrt(sum(Fn.^2, 2)), ones(n, 1), 'AbsTol', 1e-15);
 
 figure;
 hold on;

@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = ofdTest
-    initTestSuite;
+function tests = ofdTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -36,16 +44,16 @@ beta = 1;
 
 [u, v] = ofd(N, F, V, f1, f2, h, alpha, beta);
 
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [n, 3]);
-assertEqual(size(v), [n, 3]);
-assertEqual(u, zeros(n, 3));
-assertEqual(v, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, size(v), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
+verifyEqual(testCase, v, zeros(n, 3));
 
 end
 
-function sobolevNormTest
+function sobolevNormTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -63,16 +71,16 @@ beta = 1;
 
 [u, v] = ofd(N, F, V, f1, f2, h, alpha, beta, 1, -1);
 
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [n, 3]);
-assertEqual(size(v), [n, 3]);
-assertEqual(u, zeros(n, 3));
-assertEqual(v, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, size(v), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
+verifyEqual(testCase, v, zeros(n, 3));
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -96,10 +104,10 @@ alpha = 10;
 beta = 1000;
 
 [u, v] = ofd(N, F, V, f1, f2, h, alpha, beta);
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [n, 3]);
-assertEqual(size(v), [n, 3]);
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, size(v), [n, 3]);
 
 % Compute residual.
 gradf = grad(F, V, f1);
@@ -154,7 +162,7 @@ quiver3(P(:, 1), P(:, 2), P(:, 3), u(:, 1)+v(:, 1), u(:, 2)+v(:, 2), u(:, 3)+v(:
 
 end
 
-function visualiseSobolevNormsTest
+function visualiseSobolevNormsTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -178,10 +186,10 @@ alpha = 1;
 beta = 10;
 
 [u, v] = ofd(N, F, V, f1, f2, h, alpha, beta, 1.5, -1.5);
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [n, 3]);
-assertEqual(size(v), [n, 3]);
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, size(v), [n, 3]);
 
 % Compute residual.
 gradf = grad(F, V, f1);

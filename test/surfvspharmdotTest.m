@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = surfvspharmdotTest
-    initTestSuite;
+function tests = surfvspharmdotTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -46,25 +54,25 @@ Y2nj = squeeze(surfpushforward(Ns, c, F, V, Y2(:, ord, :)));
 % Compute dot product with vector spherical harmonics of degrees N.
 N = 1;
 Z = surfvspharmdot(Y1nj, F, V, N, Ns, c);
-assertFalse(isempty(Z));
-assertEqual(size(Z), [n, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
-assertAlmostEqual(triangIntegral(F, Vs, Z(:, 1), a), 1, 1e-2);
+verifyFalse(testCase, isempty(Z));
+verifyEqual(testCase, size(Z), [n, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
+verifyEqual(testCase, triangIntegral(F, Vs, Z(:, 1), a), 1, 'AbsTol', 1e-2);
 for k=2:size(Z, 2)
-    assertAlmostEqual(triangIntegral(F, Vs, Z(:, k), a), 0, 1e-2);
+    verifyEqual(testCase, triangIntegral(F, Vs, Z(:, k), a), 0, 'AbsTol', 1e-2);
 end
 
 % Compute dot product with vector spherical harmonics of degrees N.
 Z = surfvspharmdot(Y2nj, F, V, N, Ns, c);
-assertFalse(isempty(Z));
-assertEqual(size(Z), [n, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
-assertAlmostEqual(triangIntegral(F, Vs, Z(:, 4), a), 1, 1e-2);
+verifyFalse(testCase, isempty(Z));
+verifyEqual(testCase, size(Z), [n, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
+verifyEqual(testCase, triangIntegral(F, Vs, Z(:, 4), a), 1, 'AbsTol', 1e-2);
 for k=[1:3, 5:6]
-    assertAlmostEqual(triangIntegral(F, Vs, Z(:, k), a), 0, 1e-2);
+    verifyEqual(testCase, triangIntegral(F, Vs, Z(:, k), a), 0, 'AbsTol', 1e-2);
 end
 
 end
 
-function noDataTest
+function noDataTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -81,7 +89,7 @@ Y = zeros(n, 3);
 % Compute dot product with vector spherical harmonics of degrees N.
 N = 1:5;
 Z = surfvspharmdot(Y, F, V, N, Ns, c);
-assertFalse(isempty(Z));
-assertEqual(Z, zeros(n, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)));
+verifyFalse(testCase, isempty(Z));
+verifyEqual(testCase, Z, zeros(n, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)));
 
 end

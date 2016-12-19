@@ -14,38 +14,46 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = spharmeigsTest
-    initTestSuite;
+function tests = spharmeigsTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 N = 0:3;
 dim = N(end)^2 + 2*N(end) - N(1)^2 + 1;
 
 % Compute eigenvalues.
 d = spharmeigs(N);
-assertTrue(isvector(d));
-assertEqual(length(d), dim);
+verifyTrue(testCase, isvector(d));
+verifyEqual(testCase, length(d), dim);
 
-assertEqual(d(1), 0);
-assertEqual(d(2:4), 2*ones(3, 1));
-assertEqual(d(5:9), 6*ones(5, 1));
-assertEqual(d(10:16), 12*ones(7, 1));
+verifyEqual(testCase, d(1), 0);
+verifyEqual(testCase, d(2:4), 2*ones(3, 1));
+verifyEqual(testCase, d(5:9), 6*ones(5, 1));
+verifyEqual(testCase, d(10:16), 12*ones(7, 1));
 
 end
 
-function intervalTest
+function intervalTest(testCase)
 
 N = 2:3;
 dim = N(end)^2 + 2*N(end) - N(1)^2 + 1;
 
 % Compute eigenvalues.
 d = spharmeigs(N);
-assertTrue(isvector(d));
-assertEqual(length(d), dim);
+verifyTrue(testCase, isvector(d));
+verifyEqual(testCase, length(d), dim);
 
-assertEqual(d(1:5), 6*ones(5, 1));
-assertEqual(d(6:12), 12*ones(7, 1));
+verifyEqual(testCase, d(1:5), 6*ones(5, 1));
+verifyEqual(testCase, d(6:12), 12*ones(7, 1));
 
 end

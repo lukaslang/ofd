@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = vspharmsynthTest
-    initTestSuite;
+function tests = vspharmsynthTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -31,16 +39,16 @@ u = zeros(2*(N^2 + 2*N), 1);
 [U1, U2] = vspharmsynth(1:N, Faces, Verts, u);
 
 % Check results.
-assertFalse(isempty(U1));
-assertFalse(isempty(U2));
-assertEqual(size(U1), [n, 3]);
-assertEqual(size(U2), [n, 3]);
-assertEqual(U1, zeros(n, 3));
-assertEqual(U2, zeros(n, 3));
+verifyFalse(testCase, isempty(U1));
+verifyFalse(testCase, isempty(U2));
+verifyEqual(testCase, size(U1), [n, 3]);
+verifyEqual(testCase, size(U2), [n, 3]);
+verifyEqual(testCase, U1, zeros(n, 3));
+verifyEqual(testCase, U2, zeros(n, 3));
 
 end
 
-function intervalTest
+function intervalTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -53,12 +61,12 @@ u = zeros(2*(N(end)^2 + 2*N(end) - N(1)^2 + 1), 1);
 [U1, U2] = vspharmsynth(N, Faces, Verts, u);
 
 % Check results.
-assertFalse(isempty(U1));
-assertFalse(isempty(U2));
-assertEqual(size(U1), [n, 3]);
-assertEqual(size(U2), [n, 3]);
-assertEqual(U1, zeros(n, 3));
-assertEqual(U2, zeros(n, 3));
+verifyFalse(testCase, isempty(U1));
+verifyFalse(testCase, isempty(U2));
+verifyEqual(testCase, size(U1), [n, 3]);
+verifyEqual(testCase, size(U2), [n, 3]);
+verifyEqual(testCase, U1, zeros(n, 3));
+verifyEqual(testCase, U2, zeros(n, 3));
 
 N = 1:10;
 % Create coefficients.
@@ -67,16 +75,16 @@ u = zeros(2*(N(end)^2 + 2*N(end) - N(1)^2 + 1), 1);
 [U1, U2] = vspharmsynth(N, Faces, Verts, u);
 
 % Check results.
-assertFalse(isempty(U1));
-assertFalse(isempty(U2));
-assertEqual(size(U1), [n, 3]);
-assertEqual(size(U2), [n, 3]);
-assertEqual(U1, zeros(n, 3));
-assertEqual(U2, zeros(n, 3));
+verifyFalse(testCase, isempty(U1));
+verifyFalse(testCase, isempty(U2));
+verifyEqual(testCase, size(U1), [n, 3]);
+verifyEqual(testCase, size(U2), [n, 3]);
+verifyEqual(testCase, U1, zeros(n, 3));
+verifyEqual(testCase, U2, zeros(n, 3));
 
 end
 
-function memConstraintTest
+function memConstraintTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -90,16 +98,16 @@ mem = 2e6;
 [U1, U2] = vspharmsynth(1:N, Faces, Verts, u, mem);
 
 % Check results.
-assertFalse(isempty(U1));
-assertFalse(isempty(U2));
-assertEqual(size(U1), [n, 3]);
-assertEqual(size(U2), [n, 3]);
-assertEqual(U1, zeros(n, 3));
-assertEqual(U2, zeros(n, 3));
+verifyFalse(testCase, isempty(U1));
+verifyFalse(testCase, isempty(U2));
+verifyEqual(testCase, size(U1), [n, 3]);
+verifyEqual(testCase, size(U2), [n, 3]);
+verifyEqual(testCase, U1, zeros(n, 3));
+verifyEqual(testCase, U2, zeros(n, 3));
 
 end
 
-function matrixTest
+function matrixTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -114,16 +122,16 @@ mem = 2e9;
 [U1, U2] = vspharmsynth(1:N, Faces, Verts, u, mem);
 
 % Check results.
-assertFalse(isempty(U1));
-assertFalse(isempty(U2));
-assertEqual(size(U1), [n, 3, dim]);
-assertEqual(size(U2), [n, 3, dim]);
-assertEqual(U1, zeros(n, 3, dim));
-assertEqual(U2, zeros(n, 3, dim));
+verifyFalse(testCase, isempty(U1));
+verifyFalse(testCase, isempty(U2));
+verifyEqual(testCase, size(U1), [n, 3, dim]);
+verifyEqual(testCase, size(U2), [n, 3, dim]);
+verifyEqual(testCase, U1, zeros(n, 3, dim));
+verifyEqual(testCase, U2, zeros(n, 3, dim));
 
 end
 
-function matrixPerformanceTest
+function matrixPerformanceTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -147,6 +155,6 @@ end
 elapsed2 = toc(t);
 disp(elapsed2);
 
-assertTrue(elapsed < elapsed2);
+verifyTrue(testCase, elapsed < elapsed2);
 
 end

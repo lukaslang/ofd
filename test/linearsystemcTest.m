@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = linearsystemcTest
-    initTestSuite;
+function tests = linearsystemcTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -36,22 +44,22 @@ N = 10;
 [dim, U, d, b] = linearsystemc(Faces, Verts, 1:N, f1, f2, h, 1e-6);
 
 % Check results.
-assertEqual(dim, 2*(N^2 + 2*N));
-assertFalse(isempty(U));
-assertEqual(size(U), [2*(N^2 + 2*N), 2*(N^2 + 2*N)]);
-assertFalse(isempty(d));
-assertTrue(isvector(d));
-assertEqual(size(d), [2*(N^2 + 2*N), 1]);
-assertFalse(isempty(b));
-assertTrue(isvector(b));
-assertEqual(size(b), [2*(N^2 + 2*N), 1]);
+verifyEqual(testCase, dim, 2*(N^2 + 2*N));
+verifyFalse(testCase, isempty(U));
+verifyEqual(testCase, size(U), [2*(N^2 + 2*N), 2*(N^2 + 2*N)]);
+verifyFalse(testCase, isempty(d));
+verifyTrue(testCase, isvector(d));
+verifyEqual(testCase, size(d), [2*(N^2 + 2*N), 1]);
+verifyFalse(testCase, isempty(b));
+verifyTrue(testCase, isvector(b));
+verifyEqual(testCase, size(b), [2*(N^2 + 2*N), 1]);
 
 % Check if matrix is symmetric.
-assertAlmostEqual(U, U');
+verifyEqual(testCase, U, U', 'AbsTol', 1e-15);
 
 end
 
-function intervalTest
+function intervalTest(testCase)
 
 % Create triangulation of unit sphere.
 [Faces, Verts] = sphTriang(3);
@@ -70,17 +78,17 @@ N = 3:10;
 
 % Check results.
 expDim = 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1);
-assertEqual(dim, expDim);
-assertFalse(isempty(U));
-assertEqual(size(U), [expDim, expDim]);
-assertFalse(isempty(d));
-assertTrue(isvector(d));
-assertEqual(size(d), [expDim, 1]);
-assertFalse(isempty(b));
-assertTrue(isvector(b));
-assertEqual(size(b), [expDim, 1]);
+verifyEqual(testCase, dim, expDim);
+verifyFalse(testCase, isempty(U));
+verifyEqual(testCase, size(U), [expDim, expDim]);
+verifyFalse(testCase, isempty(d));
+verifyTrue(testCase, isvector(d));
+verifyEqual(testCase, size(d), [expDim, 1]);
+verifyFalse(testCase, isempty(b));
+verifyTrue(testCase, isvector(b));
+verifyEqual(testCase, size(b), [expDim, 1]);
 
 % Check if matrix is symmetric.
-assertAlmostEqual(U, U');
+verifyEqual(testCase, U, U', 'AbsTol', 1e-15);
 
 end

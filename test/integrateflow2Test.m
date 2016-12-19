@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = integrateflow2Test
-    initTestSuite;
+function tests = integrateflow2Test
+    tests = functiontests(localfunctions);
 end
 
-function resultTest   
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
     h = 0.1;
     maxit = 1;
     P = [1, 1;
@@ -28,6 +36,6 @@ function resultTest
     v = ones(4, 2);
     s = [0, 0];
     verts = integrateflow2(P, v, s, h, maxit);
-    assertEqual(length(verts), 1);
-    assertEqual(verts{1}, [0, 0; 0.1, 0.1]);
+    verifyEqual(testCase, length(verts), 1);
+    verifyEqual(testCase, verts{1}, [0, 0; 0.1, 0.1]);
 end

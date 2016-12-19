@@ -14,16 +14,24 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = spherefitTest
-    initTestSuite;
+function tests = spherefitTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Generate icosahedron.
 [F, V] = sphTriang(3);
-assertFalse(isempty(F));
-assertFalse(isempty(V));
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
 
 m = size(V, 1);
 

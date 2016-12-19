@@ -14,72 +14,80 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = halfsphTriangTest
-    initTestSuite;
+function tests = halfsphTriangTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Generate icosahedron.
 [F, V] = halfsphTriang;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [8, 3]);
-assertEqual(size(V), [8, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [8, 3]);
+verifyEqual(testCase, size(V), [8, 3]);
 assert(all(V(:, 3) >= 0));
 
 % Generate icosahedron.
 [F, V] = halfsphTriang(0);
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [8, 3]);
-assertEqual(size(V), [8, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [8, 3]);
+verifyEqual(testCase, size(V), [8, 3]);
 assert(all(V(:, 3) >= 0));
 
 end
 
-function resultWithRefinementTest
+function resultWithRefinementTest(testCase)
 
 % Generate icosahedron.
 [F, V] = halfsphTriang(1);
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [36, 3]);
-assertEqual(size(V), [25, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [36, 3]);
+verifyEqual(testCase, size(V), [25, 3]);
 assert(all(V(:, 3) >= 0));
 
 % Check if vertices lie on unit sphere.
-assertAlmostEqual(sqrt(sum(V.^2, 2)), ones(25, 1));
+verifyEqual(testCase, sqrt(sum(V.^2, 2)), ones(25, 1), 'AbsTol', 1e-15);
 
 % Generate icosahedron.
 [F, V] = halfsphTriang(3);
-assertFalse(isempty(F));
-assertFalse(isempty(V));
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
 assert(all(V(:, 3) >= 0));
 
 % Check if vertices lie on unit sphere.
-assertAlmostEqual(sqrt(sum(V.^2, 2)), ones(size(V, 1), 1));
+verifyEqual(testCase, sqrt(sum(V.^2, 2)), ones(size(V, 1), 1), 'AbsTol', 1e-15);
 
 end
 
-function createTriRepTest
+function createTriRepTest(testCase)
 
 % Generate icosahedron.
 [F, V] = halfsphTriang;
 T = TriRep(F, V);
-assertFalse(isempty(T));
-assertEqual(T.size, [8, 3]);
+verifyFalse(testCase, isempty(T));
+verifyEqual(testCase, T.size, [8, 3]);
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Generate icosahedron.
 [F, V] = halfsphTriang;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [8, 3]);
-assertEqual(size(V), [8, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [8, 3]);
+verifyEqual(testCase, size(V), [8, 3]);
 assert(all(V(:, 3) >= 0));
 
 figure;
@@ -88,14 +96,14 @@ daspect([1, 1, 1]);
 
 end
 
-function visualiseRefinementTest
+function visualiseRefinementTest(testCase)
 
 % Generate icosahedron.
 tic;
 [F, V] = halfsphTriang(4);
 toc;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
 assert(all(V(:, 3) >= 0));
 
 figure;

@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = surffitTest
-    initTestSuite;
+function tests = surffitTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [~, V] = sphTriang(5);
@@ -31,8 +39,8 @@ alpha = 1;
 
 % Fit surface to sphere.
 [c, Y] = surffit(N, V, alpha, s);
-assertFalse(isempty(c));
-assertFalse(isempty(Y));
+verifyFalse(testCase, isempty(c));
+verifyFalse(testCase, isempty(Y));
 
 % Recover function at specified vertices.
 rho = Y*c;
@@ -42,14 +50,14 @@ F = bsxfun(@times, V, rho);
 
 % Check if points are still on unit sphere.
 len = sqrt(sum(F .^ 2,2));
-assertAlmostEqual(len, ones(n, 1), 1e-12);
+verifyEqual(testCase, len, ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if points equal.
-assertAlmostEqual(F, V, 1e-12);
+verifyEqual(testCase, F, V, 'AbsTol', 1e-12);
 
 end
 
-function result2Test
+function result2Test(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(6);
@@ -75,8 +83,8 @@ alpha = 1;
 
 % Fit surface.
 [c, Y] = surffit(N, X, alpha, s);
-assertFalse(isempty(c));
-assertFalse(isempty(Y));
+verifyFalse(testCase, isempty(c));
+verifyFalse(testCase, isempty(Y));
 
 % Recover function at specified vertices.
 rho = Y*c;
@@ -87,10 +95,10 @@ S = bsxfun(@times, V, rho);
 % Check if radial error of fitted points is small.
 lenS = sqrt(sum(S .^ 2,2));
 lenX = sqrt(sum(X .^ 2,2));
-assertAlmostEqual(lenS, lenX, 1e-2);
+verifyEqual(testCase, lenS, lenX, 'AbsTol', 1e-2);
 
 % Check if points are almost equal.
-assertAlmostEqual(S, X, 1e-2);
+verifyEqual(testCase, S, X, 'AbsTol', 1e-2);
 
 % Plot surface.
 figure;

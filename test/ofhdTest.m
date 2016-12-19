@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = ofhdTest
-    initTestSuite;
+function tests = ofhdTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -37,8 +45,8 @@ s = ones(k, 1);
 
 % Compute hierarchical decomposition.
 u = ofhd(N, F, V, f1, f2, h, alpha, s);
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3, k]);
-assertEqual(u, zeros(n, 3, k));
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3, k]);
+verifyEqual(testCase, u, zeros(n, 3, k));
 
 end

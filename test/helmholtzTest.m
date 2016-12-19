@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = helmholtzTest
-    initTestSuite;
+function tests = helmholtzTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -35,16 +43,16 @@ alpha = 1;
 
 [u, v] = helmholtz(N, F, V, f1, f2, h, alpha);
 
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [n, 3]);
-assertEqual(size(v), [n, 3]);
-assertEqual(u, zeros(n, 3));
-assertEqual(v, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, size(v), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
+verifyEqual(testCase, v, zeros(n, 3));
 
 end
 
-function compareToOfTest
+function compareToOfTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -61,19 +69,19 @@ alpha = 1;
 
 [u, v] = helmholtz(N, F, V, f1, f2, h, alpha);
 
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [n, 3]);
-assertEqual(size(v), [n, 3]);
-assertEqual(u, zeros(n, 3));
-assertEqual(v, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, size(v), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
+verifyEqual(testCase, v, zeros(n, 3));
 
 f = of(N, F, V, f1, f2, h, alpha);
-assertAlmostEqual(f, u+v);
+verifyEqual(testCase, f, u+v);
 
 end
 
-function sobolevNormTest
+function sobolevNormTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -91,16 +99,16 @@ s = 3/2;
 
 [u, v] = helmholtz(N, F, V, f1, f2, h, alpha, s);
 
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [n, 3]);
-assertEqual(size(v), [n, 3]);
-assertEqual(u, zeros(n, 3));
-assertEqual(v, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, size(v), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
+verifyEqual(testCase, v, zeros(n, 3));
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -123,10 +131,10 @@ h = 1;
 alpha = 1;
 
 [u, v] = helmholtz(N, F, V, f1, f2, h, alpha);
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [n, 3]);
-assertEqual(size(v), [n, 3]);
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, size(v), [n, 3]);
 
 TR = TriRep(F, V);
 P = TR.incenters;

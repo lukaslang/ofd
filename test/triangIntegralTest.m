@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = triangIntegralTest
-    initTestSuite;
+function tests = triangIntegralTest
+    tests = functiontests(localfunctions);
 end
 
-function constantFunctionTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function constantFunctionTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -27,12 +35,12 @@ n = size(F, 1);
 % Compute surface integral over function which is constant one.
 v = triangIntegral(F, V, ones(n, 1));
 
-assertTrue(isscalar(v));
-assertAlmostEqual(v, 4*pi, 1e-2);
+verifyTrue(testCase, isscalar(v));
+verifyEqual(testCase, v, 4*pi, 'AbsTol', 2e-2);
 
 end
 
-function constantFunctionWithAreaTest
+function constantFunctionWithAreaTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -41,12 +49,12 @@ n = size(F, 1);
 % Compute surface integral over function which is constant one.
 v = triangIntegral(F, V, ones(n, 1), triangArea(F, V));
 
-assertTrue(isscalar(v));
-assertAlmostEqual(v, 4*pi, 1e-2);
+verifyTrue(testCase, isscalar(v));
+verifyEqual(testCase, v, 4*pi, 'AbsTol', 2e-2);
 
 end
 
-function vspharmOnbTest
+function vspharmOnbTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -64,18 +72,18 @@ for N=1:5
         
         % Compute surface integral.
         v = triangIntegral(F, V, dot(Y1(:, k, :), Y1(:, k, :), 3), a);
-        assertTrue(isscalar(v));
-        assertAlmostEqual(sqrt(v), 1, 1e-2);
+        verifyTrue(testCase, isscalar(v));
+        verifyEqual(testCase, sqrt(v), 1, 'AbsTol', 1e-2);
         
         % Compute surface integral.
         v = triangIntegral(F, V, dot(Y2(:, k, :), Y2(:, k, :), 3), a);
-        assertTrue(isscalar(v));
-        assertAlmostEqual(sqrt(v), 1, 1e-2);
+        verifyTrue(testCase, isscalar(v));
+        verifyEqual(testCase, sqrt(v), 1, 'AbsTol', 1e-2);
     end
 end
 end
 
-function vspharmIntegralTest
+function vspharmIntegralTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -92,23 +100,23 @@ for N=1:4
             fprintf('Checking int Y_nj^i cdot Y_nk^j of degree n=%i, orders j=%i and k=%i...\n', N, k, l);
             % Compute surface integral.
             v = triangIntegral(F, V, dot(Y1(:, k, :), Y1(:, l, :), 3), a);
-            assertTrue(isscalar(v));
+            verifyTrue(testCase, isscalar(v));
             if(l == k)
-                assertAlmostEqual(v, 1, 1e-2);
+                verifyEqual(testCase, v, 1, 'AbsTol', 1e-2);
             else
-                assertAlmostEqual(v, 0, 1e-2);
+                verifyEqual(testCase, v, 0, 'AbsTol', 1e-2);
             end
             % Compute surface integral.
             v = triangIntegral(F, V, dot(Y1(:, k, :), Y2(:, l, :), 3), a);
-            assertTrue(isscalar(v));
-            assertAlmostEqual(sqrt(v), 0, 1e-2);
+            verifyTrue(testCase, isscalar(v));
+            verifyEqual(testCase, sqrt(v), 0, 'AbsTol', 1e-2);
             % Compute surface integral.
             v = triangIntegral(F, V, dot(Y2(:, k, :), Y2(:, l, :), 3), a);
-            assertTrue(isscalar(v));
+            verifyTrue(testCase, isscalar(v));
             if(l == k)
-                assertAlmostEqual(v, 1, 1e-2);
+                verifyEqual(testCase, v, 1, 'AbsTol', 1e-2);
             else
-                assertAlmostEqual(v, 0, 1e-2);
+                verifyEqual(testCase, v, 0, 'AbsTol', 1e-2);
             end
         end
     end

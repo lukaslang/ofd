@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = surfvspharmgradTest
-    initTestSuite;
+function tests = surfvspharmgradTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -36,13 +44,13 @@ B = surftangentialbasis(Ns, c, F, V);
 % Compute covariant derivative of vector spherical harmonics of degrees N.
 N = 10;
 [Z1, Z2, Z3, Z4] = surfvspharmgrad(E1, E2, F, V, N, Ns, c);
-assertFalse(isempty(Z1));
-assertFalse(isempty(Z2));
-assertFalse(isempty(Z3));
-assertFalse(isempty(Z4));
-assertEqual(size(Z1), [m, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
-assertEqual(size(Z2), [m, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
-assertEqual(size(Z3), [m, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
-assertEqual(size(Z4), [m, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
+verifyFalse(testCase, isempty(Z1));
+verifyFalse(testCase, isempty(Z2));
+verifyFalse(testCase, isempty(Z3));
+verifyFalse(testCase, isempty(Z4));
+verifyEqual(testCase, size(Z1), [m, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
+verifyEqual(testCase, size(Z2), [m, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
+verifyEqual(testCase, size(Z3), [m, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
+verifyEqual(testCase, size(Z4), [m, 2*(N(end)^2 + 2*N(end) - N(1)^2 + 1)]);
 
 end

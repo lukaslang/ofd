@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = surfpushforwardTest
-    initTestSuite;
+function tests = surfpushforwardTest
+    tests = functiontests(localfunctions);
 end
 
-function identityMapTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function identityMapTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -35,15 +43,15 @@ c = 1 / Y;
 
 % Check if surface is unit sphere.
 len = sqrt(sum(Vs .^ 2, 2));
-assertAlmostEqual(len, ones(n, 1), 1e-12);
+verifyEqual(testCase, len, ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if function rho ise identically one.
-assertAlmostEqual(rho, ones(n, 1), 1e-12);
+verifyEqual(testCase, rho, ones(n, 1), 'AbsTol', 1e-12);
 
 % Compute gradient of rho on triangulation.
 g = grad(F, V, rho);
 % Check if gradient is zero.
-assertAlmostEqual(g, zeros(m, 3), 1e-12);
+verifyEqual(testCase, g, zeros(m, 3), 'AbsTol', 1e-12);
 
 % Compute incenters.
 T = TriRep(F, V);
@@ -55,17 +63,17 @@ deg = 2;
 
 % Compute the pushforward.
 [Z1, ICs] = surfpushforward(Ns, c, F, V, Y1);
-assertAlmostEqual(Y1, Z1, 1e-12);
-assertAlmostEqual(IC, ICs, 5e-3);
+verifyEqual(testCase, Y1, Z1, 'AbsTol', 1e-12);
+verifyEqual(testCase, IC, ICs, 'AbsTol', 5e-3);
 
 % Compute the pushforward.
 [Z2, ICs] = surfpushforward(Ns, c, F, V, Y2);
-assertAlmostEqual(Y2, Z2, 1e-12);
-assertAlmostEqual(IC, ICs, 5e-3);
+verifyEqual(testCase, Y2, Z2, 'AbsTol', 1e-12);
+verifyEqual(testCase, IC, ICs, 'AbsTol', 5e-3);
 
 end
 
-function identityMapTangentialTest
+function identityMapTangentialTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -87,22 +95,22 @@ deg = 2;
 
 % Compute the pushforward.
 [Z1, ICs] = surfpushforward(Ns, c, F, V, Y1);
-assertAlmostEqual(Y1, Z1, 1e-12);
-assertAlmostEqual(IC, ICs, 3e-4);
+verifyEqual(testCase, Y1, Z1, 'AbsTol', 1e-12);
+verifyEqual(testCase, IC, ICs, 'AbsTol', 3e-4);
 
 % Compute the pushforward.
 [Z2, ICs] = surfpushforward(Ns, c, F, V, Y2);
-assertAlmostEqual(Y2, Z2, 1e-12);
-assertAlmostEqual(IC, ICs, 3e-4);
+verifyEqual(testCase, Y2, Z2, 'AbsTol', 1e-12);
+verifyEqual(testCase, IC, ICs, 'AbsTol', 3e-4);
 
 % Check if orthogonal to surface normal.
 for k=1:size(Z1, 2)
-    assertAlmostEqual(dot(squeeze(Z1(:, k, :)), FN, 2), zeros(m, 1), 1e-12);
-    assertAlmostEqual(dot(squeeze(Z2(:, k, :)), FN, 2), zeros(m, 1), 1e-12);
+    verifyEqual(testCase, dot(squeeze(Z1(:, k, :)), FN, 2), zeros(m, 1), 'AbsTol', 1e-12);
+    verifyEqual(testCase, dot(squeeze(Z2(:, k, :)), FN, 2), zeros(m, 1), 'AbsTol', 1e-12);
 end
 end
 
-function scaledSphereTest
+function scaledSphereTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -118,10 +126,10 @@ c = 2 / Y;
 
 % Check if surface is sphere with radius 2.
 len = sqrt(sum(Vs .^ 2, 2));
-assertAlmostEqual(len, 2*ones(n, 1), 1e-12);
+verifyEqual(testCase, len, 2*ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if function rho ise identically two.
-assertAlmostEqual(rho, 2*ones(n, 1), 1e-12);
+verifyEqual(testCase, rho, 2*ones(n, 1), 'AbsTol', 1e-12);
 
 % Create piecewise constant vector field on the unit sphere.
 deg = 2;
@@ -130,8 +138,8 @@ deg = 2;
 % Compute the pushforwards.
 [Z1, ~] = surfpushforward(Ns, c, F, V, Y1);
 [Z2, ICs] = surfpushforward(Ns, c, F, V, Y2);
-assertAlmostEqual(Z1, 2 * Y1, 1e-12);
-assertAlmostEqual(Z2, 2 * Y2, 1e-12);
+verifyEqual(testCase, Z1, 2 * Y1, 'AbsTol', 1e-12);
+verifyEqual(testCase, Z2, 2 * Y2, 'AbsTol', 1e-12);
 
 % Create spherical harmonics for visualisation.
 Ynj = spharm(deg, V);
@@ -153,7 +161,7 @@ end
 
 end
 
-function scaledSphereTangentialTest
+function scaledSphereTangentialTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -170,10 +178,10 @@ c = 2 / Y;
 
 % Check if surface is sphere with radius 2.
 len = sqrt(sum(Vs .^ 2, 2));
-assertAlmostEqual(len, 2*ones(n, 1), 1e-12);
+verifyEqual(testCase, len, 2*ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if function rho ise identically two.
-assertAlmostEqual(rho, 2*ones(n, 1), 1e-12);
+verifyEqual(testCase, rho, 2*ones(n, 1), 'AbsTol', 1e-12);
 
 % Compute face normals.
 T = TriRep(F, Vs);
@@ -186,18 +194,18 @@ deg = 2;
 % Compute the pushforwards.
 [Z1, ~] = surfpushforward(Ns, c, F, V, Y1);
 [Z2, ~] = surfpushforward(Ns, c, F, V, Y2);
-assertAlmostEqual(Z1, 2 * Y1, 1e-12);
-assertAlmostEqual(Z2, 2 * Y2, 1e-12);
+verifyEqual(testCase, Z1, 2 * Y1, 'AbsTol', 1e-12);
+verifyEqual(testCase, Z2, 2 * Y2, 'AbsTol', 1e-12);
 
 % Check if orthogonal to surface normal.
 for k=1:size(Z1, 2)
-    assertAlmostEqual(dot(squeeze(Z1(:, k, :)), FN, 2), zeros(m, 1), 1e-12);
-    assertAlmostEqual(dot(squeeze(Z2(:, k, :)), FN, 2), zeros(m, 1), 1e-12);
+    verifyEqual(testCase, dot(squeeze(Z1(:, k, :)), FN, 2), zeros(m, 1), 'AbsTol', 1e-12);
+    verifyEqual(testCase, dot(squeeze(Z2(:, k, :)), FN, 2), zeros(m, 1), 'AbsTol', 1e-12);
 end
 
 end
 
-function perturbedSphereTangentialTest
+function perturbedSphereTangentialTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -225,13 +233,13 @@ deg = 2;
 
 % Check if orthogonal to surface normal.
 for k=1:size(Z1, 2)
-    assertAlmostEqual(dot(squeeze(Z1(:, k, :)), FN, 2), zeros(m, 1), 2e-3);
-    assertAlmostEqual(dot(squeeze(Z2(:, k, :)), FN, 2), zeros(m, 1), 2e-3);
+    verifyEqual(testCase, dot(squeeze(Z1(:, k, :)), FN, 2), zeros(m, 1), 'AbsTol', 2e-3);
+    verifyEqual(testCase, dot(squeeze(Z2(:, k, :)), FN, 2), zeros(m, 1), 'AbsTol', 2e-3);
 end
 
 end
 
-function perturbedSphereVisualisationTest
+function perturbedSphereVisualisationTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);

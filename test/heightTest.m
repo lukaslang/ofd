@@ -14,37 +14,45 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = heightTest
-    initTestSuite;
+function tests = heightTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Generate icosahedron.
 [F, V] = sphTriang;
-assertFalse(isempty(F));
-assertFalse(isempty(V));
-assertEqual(size(F), [20, 3]);
-assertEqual(size(V), [12, 3]);
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
+verifyEqual(testCase, size(F), [20, 3]);
+verifyEqual(testCase, size(V), [12, 3]);
 
 % Compute height vectors.
 H = height(F, V);
-assertFalse(isempty(H));
-assertEqual(size(H), [20, 3, 3]);
+verifyFalse(testCase, isempty(H));
+verifyEqual(testCase, size(H), [20, 3, 3]);
 
 end
 
-function visualisationTest
+function visualisationTest(testCase)
 
 % Generate icosahedron.
 [F, V] = sphTriang(3);
-assertFalse(isempty(F));
-assertFalse(isempty(V));
+verifyFalse(testCase, isempty(F));
+verifyFalse(testCase, isempty(V));
 
 % Compute height vectors.
 H = height(F, V);
-assertFalse(isempty(H));
-assertEqual(size(H), [size(F, 1), 3, 3]);
+verifyFalse(testCase, isempty(H));
+verifyEqual(testCase, size(H), [size(F, 1), 3, 3]);
 
 figure;
 hold on;

@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = spharmnTest
-    initTestSuite;
+function tests = spharmnTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [~, V] = sphTriang(3);
@@ -27,12 +35,12 @@ m = size(V, 1);
 % Create scalar spherical harmonics up to degree N.
 N = 5;
 Y = spharmn(0:N, V);
-assertFalse(isempty(Y));
-assertEqual(size(Y), [m, N^2 + 2*N + 1]);
+verifyFalse(testCase, isempty(Y));
+verifyEqual(testCase, size(Y), [m, N^2 + 2*N + 1]);
 
 end
 
-function intervalTest
+function intervalTest(testCase)
 
 % Create triangulation of unit sphere.
 [~, V] = sphTriang(3);
@@ -42,21 +50,21 @@ m = size(V, 1);
 l = 2;
 Nu = 5;
 Y = spharmn(l:Nu, V);
-assertFalse(isempty(Y));
-assertEqual(size(Y), [m, (Nu^2 + 2*Nu - l^2 + 1)]);
+verifyFalse(testCase, isempty(Y));
+verifyEqual(testCase, size(Y), [m, (Nu^2 + 2*Nu - l^2 + 1)]);
 
 end
 
-function interval2Test
+function interval2Test(testCase)
 
 % Create triangulation of unit sphere.
 [~, V] = sphTriang(3);
 
 % Create scalar spherical harmonics up to degree 5.
 Y = spharmn(5, V);
-assertEqual(size(Y, 2), 11);
+verifyEqual(testCase, size(Y, 2), 11);
 
 Y = spharmn(1:5, V);
-assertEqual(size(Y, 2), 35);
+verifyEqual(testCase, size(Y, 2), 35);
 
 end

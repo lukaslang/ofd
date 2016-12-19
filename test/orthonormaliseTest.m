@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = orthonormaliseTest
-    initTestSuite;
+function tests = orthonormaliseTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create two test vectors.
 v = [3, 1, 0];
@@ -28,29 +36,29 @@ w = [2, 2, 0];
 [A, e, f] = orthonormalise(v, w);
 
 % Check first basis vector.
-assertAlmostEqual(e, [3/sqrt(10), 1/sqrt(10), 0]);
+verifyEqual(testCase, e, [3/sqrt(10), 1/sqrt(10), 0], 'AbsTol', 1e-15);
 % Check second basis vector.
-assertAlmostEqual(f, [-1/sqrt(10), 3/sqrt(10), 0]);
+verifyEqual(testCase, f, [-1/sqrt(10), 3/sqrt(10), 0], 'AbsTol', 1e-15);
 
 % Check lengths.
-assertAlmostEqual(sqrt(sum(e .^ 2, 2)), 1);
-assertAlmostEqual(sqrt(sum(f .^ 2, 2)), 1);
+verifyEqual(testCase, sqrt(sum(e .^ 2, 2)), 1, 'AbsTol', 1e-15);
+verifyEqual(testCase, sqrt(sum(f .^ 2, 2)), 1, 'AbsTol', 1e-15);
 
 % Check orthogonality.
-assertAlmostEqual(e * f', 0);
+verifyEqual(testCase, e * f', 0, 'AbsTol', 1e-15);
 
 % Check coefficients.
-assertAlmostEqual(A(1, 1, :), 1/sqrt(10));
-assertAlmostEqual(A(1, 2, :), 0);
-assertAlmostEqual(A(2, 1, :), -8/(10 * sqrt(4/25 + 36/25)));
-assertAlmostEqual(A(2, 2, :), 1/sqrt(4/25 + 36/25));
+verifyEqual(testCase, A(1, 1, :), 1/sqrt(10), 'AbsTol', 1e-15);
+verifyEqual(testCase, A(1, 2, :), 0, 'AbsTol', 1e-15);
+verifyEqual(testCase, A(2, 1, :), -8/(10 * sqrt(4/25 + 36/25)), 'AbsTol', 1e-15);
+verifyEqual(testCase, A(2, 2, :), 1/sqrt(4/25 + 36/25), 'AbsTol', 1e-15);
 
 % Check that A transforms {v, w} into {e, f}.
-assertAlmostEqual(A * [v; w], [e; f]);
+verifyEqual(testCase, A * [v; w], [e; f], 'AbsTol', 1e-15);
 
 end
 
-function perturbedSphereTest
+function perturbedSphereTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(3);
@@ -74,11 +82,11 @@ Z2 = squeeze(Z(:, 2, :));
 
 % Check if orthogonal.
 ip = sum(e .* f, 2);
-assertAlmostEqual(zeros(m, 1), ip, 1e-12);
+verifyEqual(testCase, zeros(m, 1), ip, 'AbsTol', 1e-12);
 
 % Check length one.
-assertAlmostEqual(sqrt(sum(e.^2, 2)), ones(m, 1), 1e-12);
-assertAlmostEqual(sqrt(sum(f.^2, 2)), ones(m, 1), 1e-12);
+verifyEqual(testCase, sqrt(sum(e.^2, 2)), ones(m, 1), 'AbsTol', 1e-12);
+verifyEqual(testCase, sqrt(sum(f.^2, 2)), ones(m, 1), 'AbsTol', 1e-12);
 
 % Plot tangential basis and dot product.
 figure;

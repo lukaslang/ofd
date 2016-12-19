@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = ofdpTest
-    initTestSuite;
+function tests = ofdpTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 m = 30;
 n = 20;
@@ -34,16 +42,16 @@ beta = 1;
 
 [u, v] = ofdp(N, f1, f2, h, alpha, beta);
 
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [m, n, 3]);
-assertEqual(size(v), [m, n, 3]);
-assertEqual(u, zeros(m, n, 3));
-assertEqual(v, zeros(m, n, 3));
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [m, n, 3]);
+verifyEqual(testCase, size(v), [m, n, 3]);
+verifyEqual(testCase, u, zeros(m, n, 3));
+verifyEqual(testCase, v, zeros(m, n, 3));
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Create parametrisation and coordinates.
 m = 100;
@@ -65,10 +73,10 @@ beta = 1000;
 
 [u, v] = ofdp(N, f1, f2, h, alpha, beta);
 
-assertFalse(isempty(u));
-assertFalse(isempty(v));
-assertEqual(size(u), [m, n, 3]);
-assertEqual(size(v), [m, n, 3]);
+verifyFalse(testCase, isempty(u));
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(u), [m, n, 3]);
+verifyEqual(testCase, size(v), [m, n, 3]);
 
 % Convert to cartesian coordinates.
 x = sqrt(1 - t .^2) .* cos(phi);

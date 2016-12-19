@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = sphericalIntegralTest
-    initTestSuite;
+function tests = sphericalIntegralTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create parametrisation and coordinates.
 m = 500;
@@ -31,8 +39,8 @@ for d=0:5
     % Create spherical harmonics.
     N = d;
     Ynj = spharmp(N, phi, t);
-    assertFalse(isempty(Ynj));
-    assertEqual(size(Ynj), [m*n, 2*N + 1]);
+    verifyFalse(testCase, isempty(Ynj));
+    verifyEqual(testCase, size(Ynj), [m*n, 2*N + 1]);
 
     for k=1:2*N+1
         fprintf('Checking norm of degree %i, order %i...\n', d, k);
@@ -42,13 +50,13 @@ for d=0:5
         % Compute surface integral.
         v = sphericalIntegral(phi, t, f);
 
-        assertTrue(isscalar(v));
-        assertAlmostEqual(sqrt(v), 1, 1e-3);
+        verifyTrue(testCase, isscalar(v));
+        verifyEqual(testCase, sqrt(v), 1, 'AbsTol', 1e-3);
     end
 end
 end
 
-function constantFunctionTest
+function constantFunctionTest(testCase)
 
 % Create parametrisation and coordinates.
 m = 100;
@@ -60,7 +68,7 @@ n = 100;
 % Compute surface integral over function which is constant one.
 v = sphericalIntegral(phi, t, ones(m, n));
 
-assertTrue(isscalar(v));
-assertAlmostEqual(v, 4*pi, 1e-6);
+verifyTrue(testCase, isscalar(v));
+verifyEqual(testCase, v, 4*pi, 'AbsTol', 1e-6);
 
 end

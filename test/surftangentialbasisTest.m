@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = surftangentialbasisTest
-    initTestSuite;
+function tests = surftangentialbasisTest
+    tests = functiontests(localfunctions);
 end
 
-function identityMapTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function identityMapTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -35,10 +43,10 @@ c = 1 / Y;
 
 % Check if surface is unit sphere.
 len = sqrt(sum(Vs .^ 2, 2));
-assertAlmostEqual(len, ones(n, 1), 1e-12);
+verifyEqual(testCase, len, ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if function rho is identically one.
-assertAlmostEqual(rho, ones(n, 1), 1e-12);
+verifyEqual(testCase, rho, ones(n, 1), 'AbsTol', 1e-12);
 
 % Compute tangential basis at incenters.
 [Z, IC] = surftangentialbasis(N, c, F, V);
@@ -47,11 +55,11 @@ Z2 = squeeze(Z(:, 2, :));
 
 % Check if orthogonal.
 ip = sum(Z1 .* Z2, 2);
-assertAlmostEqual(zeros(m, 1), ip, 1e-12);
+verifyEqual(testCase, zeros(m, 1), ip, 'AbsTol', 1e-12);
 
 % Check length one.
-assertAlmostEqual(sqrt(sum(Z1.^2, 2)), ones(m, 1), 1e-12);
-assertAlmostEqual(sqrt(sum(Z2.^2, 2)), ones(m, 1), 1e-12);
+verifyEqual(testCase, sqrt(sum(Z1.^2, 2)), ones(m, 1), 'AbsTol', 1e-12);
+verifyEqual(testCase, sqrt(sum(Z2.^2, 2)), ones(m, 1), 'AbsTol', 1e-12);
 
 % Plot tangential basis and dot product.
 figure;
@@ -65,7 +73,7 @@ quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z1(:, 1), Z1(:, 2), Z1(:, 3), 1, 'r');
 quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z2(:, 1), Z2(:, 2), Z2(:, 3), 1, 'b');
 end
 
-function identityMapIncentersTest
+function identityMapIncentersTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -81,11 +89,11 @@ c = 1 / Y;
 % Check if orthogonal to surface normal.
 T = TriRep(F, V);
 len = sqrt(sum(T.incenters .^2, 2));
-assertAlmostEqual(bsxfun(@rdivide, T.incenters, len), IC, 1e-12);
+verifyEqual(testCase, bsxfun(@rdivide, T.incenters, len), IC, 'AbsTol', 1e-12);
 
 end
 
-function identityMapTangentialTest
+function identityMapTangentialTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -129,12 +137,12 @@ quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z2(:, 1), Z2(:, 2), Z2(:, 3), 1, 'b');
 
 % Check if orthogonal to surface normal.
 warning('Note that surftangentialbasis does not return vectors tangent to face normals!');
-assertAlmostEqual(dot(Z1, FN, 2), zeros(m, 1), 4e-3);
-assertAlmostEqual(dot(Z2, FN, 2), zeros(m, 1), 4e-3);
+verifyEqual(testCase, dot(Z1, FN, 2), zeros(m, 1), 'AbsTol', 4e-3);
+verifyEqual(testCase, dot(Z2, FN, 2), zeros(m, 1), 'AbsTol', 4e-3);
 
 end
 
-function scaledSphereTest
+function scaledSphereTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -151,10 +159,10 @@ c = 2 / Y;
 
 % Check if surface is sphere of radius two.
 len = sqrt(sum(Vs .^ 2, 2));
-assertAlmostEqual(len, 2 * ones(n, 1), 1e-12);
+verifyEqual(testCase, len, 2 * ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if function rho ise identically two.
-assertAlmostEqual(rho, 2 * ones(n, 1), 1e-12);
+verifyEqual(testCase, rho, 2 * ones(n, 1), 'AbsTol', 1e-12);
 
 % Compute tangential basis at incenters.
 [Z, IC] = surftangentialbasis(Ns, c, F, V);
@@ -163,7 +171,7 @@ Z2 = squeeze(Z(:, 2, :));
 
 % Check if orthogonal.
 ip = sum(Z1 .* Z2, 2);
-assertAlmostEqual(zeros(m, 1), ip, 1e-12);
+verifyEqual(testCase, ip, zeros(m, 1), 'AbsTol', 1e-12);
 
 % Plot tangential basis and dot product.
 figure;
@@ -177,7 +185,7 @@ quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z1(:, 1), Z1(:, 2), Z1(:, 3), 1, 'r');
 quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z2(:, 1), Z2(:, 2), Z2(:, 3), 1, 'b');
 end
 
-function perturbedSphereVisualisationTest
+function perturbedSphereVisualisationTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -216,7 +224,7 @@ quiver3(IC(:, 1), IC(:, 2), IC(:, 3), Z2(:, 1), Z2(:, 2), Z2(:, 3), 1, 'b');
 
 % Check if orthogonal to surface normal.
 warning('Note that surftangentialbasis does not return vectors tangent to face normals!');
-assertAlmostEqual(dot(Z1, FN, 2), zeros(m, 1), 7e-3);
-assertAlmostEqual(dot(Z2, FN, 2), zeros(m, 1), 7e-3);
+verifyEqual(testCase, dot(Z1, FN, 2), zeros(m, 1), 'AbsTol', 7e-3);
+verifyEqual(testCase, dot(Z2, FN, 2), zeros(m, 1), 'AbsTol', 7e-3);
 
 end

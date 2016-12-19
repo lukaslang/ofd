@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = spharmTest
-    initTestSuite;
+function tests = spharmTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create triangulation of unit sphere.
 [~, V] = sphTriang(3);
@@ -26,12 +34,12 @@ function resultTest
 % Create spherical harmonics.
 N = 5;
 Ynj = spharm(N, V);
-assertFalse(isempty(Ynj));
-assertEqual(size(Ynj), [size(V, 1), 2*N + 1]);
+verifyFalse(testCase, isempty(Ynj));
+verifyEqual(testCase, size(Ynj), [size(V, 1), 2*N + 1]);
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -39,8 +47,8 @@ function visualiseTest
 % Create spherical harmonics.
 N = 3;
 Ynj = spharm(N, V);
-assertFalse(isempty(Ynj));
-assertEqual(size(Ynj), [size(V, 1), 2*N + 1]);
+verifyFalse(testCase, isempty(Ynj));
+verifyEqual(testCase, size(Ynj), [size(V, 1), 2*N + 1]);
 
 figure;
 for k=1:2*N + 1

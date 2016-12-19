@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = ofsTest
-    initTestSuite;
+function tests = ofsTest
+    tests = functiontests(localfunctions);
 end
 
-function identityMapTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function identityMapTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -40,13 +48,13 @@ alpha = 1;
 
 u = ofs(N, Ns, c, F, V, f1, f2, h, alpha);
 
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3]);
-assertEqual(u, zeros(n, 3));
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3]);
+verifyEqual(testCase, u, zeros(n, 3));
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(4);
@@ -74,8 +82,8 @@ h = 1;
 alpha = 1;
 
 u = ofs(N, Ns, c, F, V, f1, f2, h, alpha);
-assertFalse(isempty(u));
-assertEqual(size(u), [n, 3]);
+verifyFalse(testCase, isempty(u));
+verifyEqual(testCase, size(u), [n, 3]);
 
 % Compute residual.
 [res, ~] = residual(u, F, V, f1, f2, 1e-6);
@@ -83,14 +91,14 @@ fprintf('Residual: %f.\n', res);
 
 % Compare to other optical flow implementation.
 v = of(N, F, V, f1, f2, h, alpha);
-assertFalse(isempty(v));
-assertEqual(size(v), [n, 3]);
+verifyFalse(testCase, isempty(v));
+verifyEqual(testCase, size(v), [n, 3]);
 % Compute residual.
 [res, ~] = residual(v, F, V, f1, f2, 1e-6);
 fprintf('Residual: %f.\n', res);
 
 % Check if flow is almost equal.
-assertAlmostEqual(u, v, 0.05);
+verifyEqual(testCase, u, v, 'AbsTol', 0.05);
 
 TR = TriRep(F, V);
 P = TR.incenters;

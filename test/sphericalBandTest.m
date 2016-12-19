@@ -14,40 +14,48 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = sphericalBandTest
-    initTestSuite;
+function tests = sphericalBandTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 m = 10;
 n = 10;
 k = 5;
 [x, y, z] = sphericalBand(m, n, linspace(5, 10, k));
 
-assertFalse(isempty(x));
-assertFalse(isempty(y));
-assertFalse(isempty(z));
+verifyFalse(testCase, isempty(x));
+verifyFalse(testCase, isempty(y));
+verifyFalse(testCase, isempty(z));
 
-assertEqual(size(x), [m, n, k]);
-assertEqual(size(y), [m, n, k]);
-assertEqual(size(z), [m, n, k]);
+verifyEqual(testCase, size(x), [m, n, k]);
+verifyEqual(testCase, size(y), [m, n, k]);
+verifyEqual(testCase, size(z), [m, n, k]);
 
 end
 
-function singleSphereTest
+function singleSphereTest(testCase)
 
 m = 10;
 n = 10;
 r = 1;
 [x, y, z] = sphericalBand(m, n, r);
 
-assertFalse(isempty(x));
-assertFalse(isempty(y));
-assertFalse(isempty(z));
+verifyFalse(testCase, isempty(x));
+verifyFalse(testCase, isempty(y));
+verifyFalse(testCase, isempty(z));
 
-assertEqual(size(x), [m, n]);
-assertEqual(size(y), [m, n]);
-assertEqual(size(z), [m, n]);
+verifyEqual(testCase, size(x), [m, n]);
+verifyEqual(testCase, size(y), [m, n]);
+verifyEqual(testCase, size(z), [m, n]);
 
 end

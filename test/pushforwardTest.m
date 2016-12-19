@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = pushforwardTest
-    initTestSuite;
+function tests = pushforwardTest
+    tests = functiontests(localfunctions);
 end
 
-function identityMapTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function identityMapTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -35,15 +43,15 @@ c = 1 / Y;
 
 % Check if surface is unit sphere.
 len = sqrt(sum(Vs .^ 2, 2));
-assertAlmostEqual(len, ones(n, 1), 1e-12);
+verifyEqual(testCase, len, ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if function rho ise identically one.
-assertAlmostEqual(rho, ones(n, 1), 1e-12);
+verifyEqual(testCase, rho, ones(n, 1), 'AbsTol', 1e-12);
 
 % Compute gradient of rho on triangulation.
 g = grad(F, V, rho);
 % Check if gradient is zero.
-assertAlmostEqual(g, zeros(m, 3), 1e-12);
+verifyEqual(testCase, g, zeros(m, 3), 'AbsTol', 1e-12);
 
 % Compute triangle incenters and project to unit sphere.
 TR = TriRep(F, V);
@@ -58,15 +66,15 @@ deg = 2;
 
 % Compute the pushforward.
 Z1 = pushforward(Y1, IC, rhoic, g);
-assertAlmostEqual(Y1, Z1, 1e-12);
+verifyEqual(testCase, Y1, Z1, 'AbsTol', 1e-12);
 
 % Compute the pushforward.
 Z2 = pushforward(Y2, IC, rhoic, g);
-assertAlmostEqual(Y2, Z2, 1e-12);
+verifyEqual(testCase, Y2, Z2, 'AbsTol', 1e-12);
 
 end
 
-function scaledSphereTest
+function scaledSphereTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);
@@ -83,15 +91,15 @@ c = 2 / Y;
 
 % Check if surface is sphere with radius 2.
 len = sqrt(sum(Vs .^ 2, 2));
-assertAlmostEqual(len, 2*ones(n, 1), 1e-12);
+verifyEqual(testCase, len, 2*ones(n, 1), 'AbsTol', 1e-12);
 
 % Check if function rho ise identically two.
-assertAlmostEqual(rho, 2*ones(n, 1), 1e-12);
+verifyEqual(testCase, rho, 2*ones(n, 1), 'AbsTol', 1e-12);
 
 % Compute gradient of rho on triangulation.
 g = grad(F, V, rho);
 % Check if gradient is zero.
-assertAlmostEqual(g, zeros(m, 3), 1e-12);
+verifyEqual(testCase, g, zeros(m, 3), 'AbsTol', 1e-12);
 
 % Compute triangle incenters and project to unit sphere.
 TR = TriRep(F, V);
@@ -107,8 +115,8 @@ deg = 2;
 % Compute the pushforwards.
 Z1 = pushforward(Y1, IC, rhoic, g);
 Z2 = pushforward(Y2, IC, rhoic, g);
-assertAlmostEqual(Z1, 2 * Y1, 1e-12);
-assertAlmostEqual(Z2, 2 * Y2, 1e-12);
+verifyEqual(testCase, Z1, 2 * Y1, 'AbsTol', 1e-12);
+verifyEqual(testCase, Z2, 2 * Y2, 'AbsTol', 1e-12);
 
 % Compute incenters.
 T = TriRep(F, Vs);
@@ -134,7 +142,7 @@ end
 
 end
 
-function perturbedSphereVisualisationTest
+function perturbedSphereVisualisationTest(testCase)
 
 % Create triangulation of unit sphere.
 [F, V] = sphTriang(5);

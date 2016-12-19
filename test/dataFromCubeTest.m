@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = dataFromCubeTest
-    initTestSuite;
+function tests = dataFromCubeTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 m = 30;
 n = 20;
@@ -30,13 +38,13 @@ u = ones(m, n, o);
 [X, Y, Z] = ndgrid(1:m, 1:n, 1:o);
 f = dataFromCube(x(:), y(:), z(:), X, Y, Z, u);
 
-assertFalse(isempty(f));
-assertEqual(size(f), [m*n*o, 1]);
-assertEqual(f, ones(m*n*o, 1));
+verifyFalse(testCase, isempty(f));
+verifyEqual(testCase, size(f), [m*n*o, 1]);
+verifyEqual(testCase, f, ones(m*n*o, 1));
 
 end
 
-function pointsOutsideCubeTest
+function pointsOutsideCubeTest(testCase)
 
 m = 30;
 n = 20;
@@ -52,14 +60,14 @@ z = [1, 1, o+1];
 [X, Y, Z] = ndgrid(1:m, 1:n, 1:o);
 f = dataFromCube(x(:), y(:), z(:), X, Y, Z, u);
 
-assertFalse(isempty(f));
-assertEqual(size(f), [3, 1]);
-assertEqual(f, zeros(3, 1));
+verifyFalse(testCase, isempty(f));
+verifyEqual(testCase, size(f), [3, 1]);
+verifyEqual(testCase, f, zeros(3, 1));
 
 end
 
 
-function interpolatingTest
+function interpolatingTest(testCase)
 
 m = 30;
 n = 20;
@@ -77,8 +85,8 @@ z = z + 0.5;
 [X, Y, Z] = ndgrid(1:m, 1:n, 1:o);
 f = dataFromCube(x(:), y(:), z(:), X, Y, Z, u);
 
-assertFalse(isempty(f));
-assertEqual(size(f), [(m-1)*(n-1)*(o-1), 1]);
-assertEqual(f, ones((m-1)*(n-1)*(o-1), 1));
+verifyFalse(testCase, isempty(f));
+verifyEqual(testCase, size(f), [(m-1)*(n-1)*(o-1), 1]);
+verifyEqual(testCase, f, ones((m-1)*(n-1)*(o-1), 1));
 
 end

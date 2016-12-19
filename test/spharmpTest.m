@@ -14,11 +14,19 @@
 %
 %    You should have received a copy of the GNU General Public License
 %    along with OFD.  If not, see <http://www.gnu.org/licenses/>.
-function test_suite = spharmpTest
-    initTestSuite;
+function tests = spharmpTest
+    tests = functiontests(localfunctions);
 end
 
-function resultTest
+function setupOnce(testCase)
+    cd('../');
+end
+
+function teardownOnce(testCase)
+    cd('test');
+end
+
+function resultTest(testCase)
 
 % Create parametrisation and coordinates.
 m = 10;
@@ -29,12 +37,12 @@ n = 20;
 
 % Create spherical harmonics.
 Ynj = spharmp(5, phi, t);
-assertFalse(isempty(Ynj));
-assertEqual(size(Ynj), [m*n, 11]);
+verifyFalse(testCase, isempty(Ynj));
+verifyEqual(testCase, size(Ynj), [m*n, 11]);
 
 end
 
-function visualiseTest
+function visualiseTest(testCase)
 
 % Create parametrisation and coordinates.
 m = 200;
@@ -46,8 +54,8 @@ n = 200;
 % Create spherical harmonics.
 N = 3;
 Ynj = spharmp(N, phi, t);
-assertFalse(isempty(Ynj));
-assertEqual(size(Ynj), [m*n, 2*N + 1]);
+verifyFalse(testCase, isempty(Ynj));
+verifyEqual(testCase, size(Ynj), [m*n, 2*N + 1]);
 
 % Convert to cartesian coordinates.
 x = sqrt(1 - t .^2) .* cos(phi);

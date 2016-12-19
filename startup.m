@@ -20,8 +20,6 @@
 % Set library path.
 libraryPath = 'Z:\libraries\';
 
-% xUnit is required for testing.
-addpath(genpath(fullfile(libraryPath, 'matlab_xunit\')));
 % Export Figure is required for saving figures.
 addpath(genpath(fullfile(libraryPath, 'export_fig\')));
 
