@@ -61,6 +61,6 @@ D = alpha * diag(spharmeigs(N) .^ s);
 b = sum(bsxfun(@times, Y, len), 1)';
 
 % Solve linear system.
-c = gmres(A + D, b, [], 1e-6, 1000);
+c = gmres(A + D, b, [], 1e-6, min(1000, size(A, 1)));
 
 end
