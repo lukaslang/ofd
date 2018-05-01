@@ -18,10 +18,10 @@
 % This script sets up the paths of the libraries and adds all subfolders.
 
 % Set library path.
-libraryPath = 'Z:\libraries\';
+libraryPath = '../';
 
 % Export Figure is required for saving figures.
-addpath(genpath(fullfile(libraryPath, 'export_fig\')));
+addpath(genpath(fullfile(libraryPath, 'export_fig')));
 
 % Add all subfolders.
 y = dir('.');
